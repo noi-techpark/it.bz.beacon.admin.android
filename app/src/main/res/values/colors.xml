@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#3cadda</color>
+    <color name="primaryLight">#82d8f2</color>
+    <color name="primaryDark">#3cadda</color>
+    <!--<color name="primaryDark">#25a8d9</color>-->
+    <color name="accent">#f6dd00</color>
+
+    <color name="primaryText">#222222</color>
+    <color name="secondaryText">#666666</color>
+    <color name="navigationItemSelected">#82d8f2</color>
+
+    <color name="icons">#212121</color>
+    <color name="divider">#e3e3e3</color>
+    <color name="backgroundActivity">@color/primary</color>
+    <color name="backgroundBox">#0a000000</color>
+
+    <color name="status_ok">#60da3c</color>
+    <color name="status_warning">#f6dd00</color>
+
+</resources>

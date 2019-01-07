@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Beacon Administration</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="beacons">Beacons</string>
+    <string name="network_problems">Network Problems</string>
+    <string name="disturbances">Disturbances</string>
+    <string name="about">About</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="map">Map</string>
+    <string name="list">List</string>
+    <string name="search">Search</string>
+    <string name="empty_list">No data found</string>
+    <string name="about_title">Beacon South Tyrol</string>
+    <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies. Because the time for Internet of Things is now.</string>
+</resources>
