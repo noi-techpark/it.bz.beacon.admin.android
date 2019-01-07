@@ -69,7 +69,7 @@
                 android:adjustViewBounds="true"
                 app:layout_constraintTop_toBottomOf="@id/about_text"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:srcCompat="@drawable/logo_efre_fesr" />
+                app:srcCompat="@drawable/logo" />
 
         </android.support.constraint.ConstraintLayout>
 

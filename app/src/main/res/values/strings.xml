@@ -18,4 +18,8 @@
     <string name="empty_list">No data found</string>
     <string name="about_title">Beacon South Tyrol</string>
     <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies. Because the time for Internet of Things is now.</string>
+    <string name="location_permission_title">Location permission needed</string>
+    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
+    <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
+    <string name="reload_map">Reload map</string>
 </resources>
