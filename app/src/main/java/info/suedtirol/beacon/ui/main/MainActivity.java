@@ -69,7 +69,7 @@ public class MainActivity extends BaseActivity
 
         switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
         setupNavigationDrawer();
-
+        navigationView.getMenu().getItem(0).setChecked(true);
 
     }
 
@@ -159,6 +159,8 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        navigationView.setCheckedItem(id);
 
         switch (id) {
             case R.id.navigation_beacons:

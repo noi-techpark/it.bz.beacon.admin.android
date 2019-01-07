@@ -8,7 +8,7 @@
 
     <color name="primaryText">#222222</color>
     <color name="secondaryText">#666666</color>
-    <color name="navigationItemSelected">#82d8f2</color>
+    <color name="navigationItemSelected">#3382d8f2</color>
 
     <color name="icons">#212121</color>
     <color name="divider">#e3e3e3</color>
