@@ -39,7 +39,7 @@ abstract class BaseBeaconsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_disturbances, container, false);
+        View view = inflater.inflate(R.layout.fragment_beacons, container, false);
         ButterKnife.bind(this, view);
 
         adapter = new BeaconAdapter(getContext());

@@ -22,4 +22,6 @@
     <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
     <string name="reload_map">Reload map</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
 </resources>

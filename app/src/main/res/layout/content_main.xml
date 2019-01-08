@@ -19,5 +19,5 @@
         android:id="@+id/corners"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/top_rounded_bg" />
+        android:background="@drawable/background_top_rounded" />
 </FrameLayout>

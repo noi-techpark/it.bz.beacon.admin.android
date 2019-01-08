@@ -31,8 +31,8 @@
                 android:width="8dp"
                 android:color="@color/primary"/>
             <corners
-                android:topLeftRadius="16dp"
-                android:topRightRadius="16dp"
+                android:topLeftRadius="12dp"
+                android:topRightRadius="12dp"
                 />
         </shape>
     </item>
