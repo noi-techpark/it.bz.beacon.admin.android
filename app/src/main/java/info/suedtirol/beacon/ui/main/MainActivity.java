@@ -14,6 +14,9 @@ import butterknife.ButterKnife;
 import info.suedtirol.beacon.R;
 import info.suedtirol.beacon.ui.BaseActivity;
 import info.suedtirol.beacon.ui.about.AboutFragment;
+import info.suedtirol.beacon.ui.main.beacon.DisturbancesFragment;
+import info.suedtirol.beacon.ui.main.beacon.BeaconsFragment;
+import info.suedtirol.beacon.ui.main.beacon.ProblemsFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {

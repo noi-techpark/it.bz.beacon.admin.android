@@ -1,4 +1,4 @@
-package info.suedtirol.beacon.ui.main;
+package info.suedtirol.beacon.ui.main.map;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package info.suedtirol.beacon.ui.main;
+package info.suedtirol.beacon.ui.main.beacon;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,9 +18,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.suedtirol.beacon.R;
 import info.suedtirol.beacon.data.entity.Beacon;
-import info.suedtirol.beacon.ui.main.adapter.BeaconAdapter;
+import info.suedtirol.beacon.ui.adapter.BeaconAdapter;
 
-public class DisturbancesFragment extends Fragment {
+abstract class BaseBeaconsFragment extends Fragment {
 
     @BindView(R.id.beacons_list)
     protected RecyclerView recyclerBeacons;
@@ -30,19 +30,10 @@ public class DisturbancesFragment extends Fragment {
 
     private BeaconAdapter adapter;
 
-    public DisturbancesFragment() {
-        // Required empty public constructor
-    }
-
-    public static DisturbancesFragment newInstance() {
-        DisturbancesFragment fragment = new DisturbancesFragment();
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        viewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -60,61 +51,14 @@ public class DisturbancesFragment extends Fragment {
         return view;
     }
 
-//    private void loadData() {
-//        showLoading();
-//        final LiveData<List<IncidentHistory>> liveData = viewModel.getAllByMatriculationNumber(matriculationNumber);
-//        liveData.observe(this, new Observer<List<IncidentHistory>>() {
-//            @Override
-//            public void onChanged(@Nullable List<IncidentHistory> incidentHistories) {
-//                liveData.removeObserver(this);
-//                if (incidentHistories != null) {
-//                    adapter.setIncidentHistorys(incidentHistories);
-//                    if (incidentHistories.size() > 0) {
-//                        showList();
-//                    }
-//                    else {
-//                        showNoData();
-//                    }
-//                }
-//                else {
-//                    showNoData();
-//                }
-//            }
-//        });
-//    }
-
-    // TODO: Replace this fake method
+    // TODO: use LiveData here
     private void loadData() {
         showLoading();
-        List<Beacon> beacons = new ArrayList<>();
-
-        Beacon b = new Beacon();
-        b.setId(4L);
-        b.setTitle("Beacon 42");
-        b.setDescription("A2039847270");
-        b.setBattery(5.5);
-        b.setWarning(true);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(5L);
-        b.setTitle("Beacon 53");
-        b.setDescription("A6143983537");
-        b.setBattery(50);
-        b.setWarning(true);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(6L);
-        b.setTitle("Beacon 68");
-        b.setDescription("A3495783439");
-        b.setBattery(90);
-        b.setWarning(true);
-        beacons.add(b);
-
-        adapter.setBeacons(beacons);
+        adapter.setBeacons(getBeacons());
         showList();
     }
+
+    abstract protected ArrayList<Beacon> getBeacons();
 
     private void showLoading() {
         txtEmpty.setVisibility(View.GONE);
