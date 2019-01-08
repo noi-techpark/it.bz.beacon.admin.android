@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -131,6 +132,13 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
          //   status.setBackgroundTintList(ColorStateList.valueOf(col));
             title.setText(beacon.getTitle());
             description.setText(beacon.getDescription());
+
+            if (beacon.hasWarning()) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
+            }
+            else{
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
+            }
 
             if (beacon.getBattery() < 33.3) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));

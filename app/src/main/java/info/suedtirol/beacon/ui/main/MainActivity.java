@@ -109,8 +109,10 @@ public class MainActivity extends BaseActivity
                 switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
                 break;
             case R.id.navigation_problems:
+                switchFragment(getString(R.string.network_problems), ProblemsFragment.newInstance());
                 break;
             case R.id.navigation_disturbances:
+                switchFragment(getString(R.string.disturbances), DisturbancesFragment.newInstance());
                 break;
             case R.id.navigation_about:
                 switchFragment(getString(R.string.about), AboutFragment.newInstance());

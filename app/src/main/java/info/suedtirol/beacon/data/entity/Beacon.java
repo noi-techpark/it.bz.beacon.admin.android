@@ -13,6 +13,7 @@ public class Beacon {
     private String title;
     private String description;
     private double battery;
+    private boolean warning;
 
     public Beacon() {
     }
@@ -48,5 +49,13 @@ public class Beacon {
 
     public void setBattery(double battery) {
         this.battery = battery;
+    }
+
+    public boolean hasWarning() {
+        return warning;
+    }
+
+    public void setWarning(boolean warning) {
+        this.warning = warning;
     }
 }

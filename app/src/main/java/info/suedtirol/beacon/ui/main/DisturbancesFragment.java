@@ -2,7 +2,6 @@ package info.suedtirol.beacon.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,7 +20,7 @@ import info.suedtirol.beacon.R;
 import info.suedtirol.beacon.data.entity.Beacon;
 import info.suedtirol.beacon.ui.main.adapter.BeaconAdapter;
 
-public class BeaconsFragment extends Fragment {
+public class DisturbancesFragment extends Fragment {
 
     @BindView(R.id.beacons_list)
     protected RecyclerView recyclerBeacons;
@@ -31,12 +30,12 @@ public class BeaconsFragment extends Fragment {
 
     private BeaconAdapter adapter;
 
-    public BeaconsFragment() {
+    public DisturbancesFragment() {
         // Required empty public constructor
     }
 
-    public static BeaconsFragment newInstance() {
-        BeaconsFragment fragment = new BeaconsFragment();
+    public static DisturbancesFragment newInstance() {
+        DisturbancesFragment fragment = new DisturbancesFragment();
         return fragment;
     }
 
@@ -49,7 +48,7 @@ public class BeaconsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_beacons, container, false);
+        View view = inflater.inflate(R.layout.fragment_disturbances, container, false);
         ButterKnife.bind(this, view);
 
         adapter = new BeaconAdapter(getContext());
@@ -90,51 +89,27 @@ public class BeaconsFragment extends Fragment {
         List<Beacon> beacons = new ArrayList<>();
 
         Beacon b = new Beacon();
-        b.setId(1L);
-        b.setTitle("Beacon 1");
-        b.setDescription("A2039847270");
-        b.setBattery(45.5);
-        b.setWarning(false);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(2L);
-        b.setTitle("Beacon 2");
-        b.setDescription("A6143983537");
-        b.setBattery(11.2);
-        b.setWarning(true);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(3L);
-        b.setTitle("Beacon 3");
-        b.setDescription("A3495783439");
-        b.setBattery(87);
-        b.setWarning(true);
-        beacons.add(b);
-
-        b = new Beacon();
         b.setId(4L);
-        b.setTitle("Beacon 4");
-        b.setDescription("A4439847270");
+        b.setTitle("Beacon 42");
+        b.setDescription("A2039847270");
         b.setBattery(5.5);
-        b.setWarning(false);
+        b.setWarning(true);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(5L);
-        b.setTitle("Beacon 5");
-        b.setDescription("A1143983537");
+        b.setTitle("Beacon 53");
+        b.setDescription("A6143983537");
         b.setBattery(50);
-        b.setWarning(false);
+        b.setWarning(true);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(6L);
-        b.setTitle("Beacon 6");
-        b.setDescription("A6547783439");
+        b.setTitle("Beacon 68");
+        b.setDescription("A3495783439");
         b.setBattery(90);
-        b.setWarning(false);
+        b.setWarning(true);
         beacons.add(b);
 
         adapter.setBeacons(beacons);
