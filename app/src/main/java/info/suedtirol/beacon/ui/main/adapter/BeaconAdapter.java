@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -46,14 +47,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
     }
 
     public void setBeacons(List<Beacon> beacons) {
-        beacons.sort(new Comparator<Beacon>() {
-            @Override
-            public int compare(Beacon Beacon1, Beacon Beacon2) {
-                if (!TextUtils.isEmpty(Beacon1.getTitle()) && !TextUtils.isEmpty(Beacon2.getTitle()))
-                    return Beacon1.getTitle().compareTo(Beacon2.getTitle());
-                return 0;
-            }
-        });
+//        beacons.sort(new Comparator<Beacon>() {
+//            @Override
+//            public int compare(Beacon Beacon1, Beacon Beacon2) {
+//                if (!TextUtils.isEmpty(Beacon1.getTitle()) && !TextUtils.isEmpty(Beacon2.getTitle()))
+//                    return Beacon1.getTitle().compareTo(Beacon2.getTitle());
+//                return 0;
+//            }
+//        });
         this.beacons.clear();
         this.beacons.addAll(beacons);
         notifyDataSetChanged();
@@ -108,14 +109,17 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     class BeaconViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.beacon_status)
-        ImageView status;
-
         @BindView(R.id.beacon_title)
         TextView title;
 
         @BindView(R.id.beacon_description)
         TextView description;
+
+        @BindView(R.id.beacon_status)
+        ImageView status;
+
+        @BindView(R.id.beacon_battery)
+        ImageView battery;
 
         private BeaconViewHolder(View itemView) {
             super(itemView);
@@ -127,6 +131,18 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
          //   status.setBackgroundTintList(ColorStateList.valueOf(col));
             title.setText(beacon.getTitle());
             description.setText(beacon.getDescription());
+
+            if (beacon.getBattery() < 33.3) {
+                battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
+            }
+            else {
+                if (beacon.getBattery() < 66.6) {
+                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
+                }
+                else {
+                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
+                }
+            }
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {

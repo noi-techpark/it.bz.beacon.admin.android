@@ -12,6 +12,7 @@ public class Beacon {
     private long id;
     private String title;
     private String description;
+    private double battery;
 
     public Beacon() {
     }
@@ -39,5 +40,13 @@ public class Beacon {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getBattery() {
+        return battery;
+    }
+
+    public void setBattery(double battery) {
+        this.battery = battery;
     }
 }
