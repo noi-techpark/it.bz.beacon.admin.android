@@ -47,16 +47,8 @@ public class DisturbancesFragment extends BaseBeaconsFragment {
         b = new Beacon();
         b.setId(5L);
         b.setTitle("Beacon 53");
-        b.setDescription("A6143983537");
+        b.setDescription("A2223983537");
         b.setBattery(50);
-        b.setWarning(true);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(6L);
-        b.setTitle("Beacon 68");
-        b.setDescription("A3495783439");
-        b.setBattery(90);
         b.setWarning(true);
         beacons.add(b);
 

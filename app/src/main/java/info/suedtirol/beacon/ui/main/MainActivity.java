@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.beacons, menu);
         return true;
     }
 
@@ -90,8 +90,6 @@ public class MainActivity extends BaseActivity
             case R.id.menu_map:
                 break;
             case R.id.menu_list:
-                break;
-            case R.id.menu_search:
                 break;
             default:
                 break;

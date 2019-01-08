@@ -1,6 +1,7 @@
 package info.suedtirol.beacon.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.suedtirol.beacon.R;
 import info.suedtirol.beacon.data.entity.Beacon;
+import info.suedtirol.beacon.ui.detail.DetailActivity;
 
 public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconViewHolder> implements Filterable {
 
@@ -147,16 +149,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
                 }
             }
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent intent = new Intent(context, BeaconActivity.class);
-//                    intent.putExtra(BeaconActivity.EXTRA_Beacon_ID, Beacon.getBeaconId());
-//                    intent.putExtra(BeaconActivity.EXTRA_Beacon_NAME, Beacon.getName1());
-//                    context.startActivity(intent);
-//
-//                }
-//            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beacon.getId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

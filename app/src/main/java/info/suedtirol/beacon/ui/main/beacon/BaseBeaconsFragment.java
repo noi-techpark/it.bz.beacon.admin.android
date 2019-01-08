@@ -7,6 +7,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -59,6 +62,25 @@ abstract class BaseBeaconsFragment extends Fragment {
     }
 
     abstract protected ArrayList<Beacon> getBeacons();
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.menu_search:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     private void showLoading() {
         txtEmpty.setVisibility(View.GONE);

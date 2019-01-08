@@ -24,4 +24,11 @@
     <string name="reload_map">Reload map</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
+    <string name="details_edit">Edit</string>
+    <string name="details_delete">Delete</string>
+    <string name="details_exit_edit">Exit edit mode</string>
+    <string name="details_config">iBeacon Config</string>
+    <string name="details_location">Location</string>
+    <string name="details_images">Images</string>
+
 </resources>
