@@ -1,13 +1,26 @@
 package info.suedtirol.beacon.ui.main;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,15 +30,22 @@ import info.suedtirol.beacon.ui.about.AboutFragment;
 import info.suedtirol.beacon.ui.main.beacon.DisturbancesFragment;
 import info.suedtirol.beacon.ui.main.beacon.BeaconsFragment;
 import info.suedtirol.beacon.ui.main.beacon.ProblemsFragment;
+import info.suedtirol.beacon.ui.main.map.LocationDisabledFragment;
+import info.suedtirol.beacon.ui.main.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, OnRetryLoadMapListener {
+
+    private static final int LOCATION_PERMISSION_REQUEST = 1;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout drawer;
 
     @BindView(R.id.nav_view)
     protected NavigationView navigationView;
+
+    protected GoogleMap googleMap;
+    protected boolean isMapShowing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +54,6 @@ public class MainActivity extends BaseActivity
 
         setSupportActionBar(toolbar);
         initBottomSheet();
-     //   initMapFragment();
-
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
         setupNavigationDrawer();
@@ -63,7 +73,7 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 //        TextView textView = mNavigationView.getHeaderView(0).findViewById(R.id.username);
-//        textView.setText(getString(R.string.nav_header_subtitle, SchreyoeggApplication.getStorage().getUser().getName()));
+//        textView.setText(getString(R.string.nav_header_subtitle, getStorage().getUser().getName()));
     }
 
     @Override
@@ -88,14 +98,34 @@ public class MainActivity extends BaseActivity
 
         switch (id) {
             case R.id.menu_map:
+                initMapFragment();
                 break;
             case R.id.menu_list:
+                isMapShowing = false;
+                switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
+                invalidateOptionsMenu();
                 break;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem listItem =  menu.findItem(R.id.menu_list);
+        MenuItem mapItem =  menu.findItem(R.id.menu_map);
+
+        if (isMapShowing) {
+            mapItem.setVisible(false);
+            listItem.setVisible(true);
+        }
+        else{
+            mapItem.setVisible(true);
+            listItem.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -123,6 +153,91 @@ public class MainActivity extends BaseActivity
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void initMapFragment() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.location_permission_title)
+                        .setMessage(R.string.location_permission_message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_PERMISSION_REQUEST);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST);
+            }
+        } else {
+            showMapFragment();
+        }
+    }
+
+    private void showMapFragment() {
+        if (!isMapShowing && getSupportFragmentManager() != null) {
+            isMapShowing = true;
+            SupportMapFragment fragment = new SupportMapFragment();
+            switchFragment(getString(R.string.beacons), fragment);
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.containerView, fragment).commit();
+            fragment.getMapAsync(this);
+            invalidateOptionsMenu();
+        }
+    }
+
+    private void showLocationDisabledFragment() {
+        if (getSupportFragmentManager() != null) {
+            isMapShowing = false;
+            LocationDisabledFragment fragment = LocationDisabledFragment.newInstance(this);
+            switchFragment(getString(R.string.beacons), fragment);
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.map_container, fragment).commit();
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), 18));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        showMapFragment();
+                    } else {
+                        showLocationDisabledFragment();
+                    }
+                } else {
+                    showLocationDisabledFragment();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
+    }
+
+    @Override
+    public void onRetry() {
+        initMapFragment();
     }
 
     private void switchFragment(final String title, final Fragment fragment) {
