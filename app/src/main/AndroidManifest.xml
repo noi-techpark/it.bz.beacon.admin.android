@@ -33,6 +33,7 @@
         <activity android:name=".ui.detail.DetailActivity"
             android:label="@string/beacons"
             android:parentActivityName=".ui.main.MainActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
