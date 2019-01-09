@@ -19,12 +19,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="NoShadowButton" parent="android:style/Widget.Button">
-        <item name="android:stateListAnimator">@null</item>
+    <style name="TextAppearance.Hint.Login" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#fff</item>
     </style>
 
-    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
-        <item name="android:textColor">#fff</item>
+    <style name="TextAppearance.Hint" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/secondaryText</item>
     </style>
 
 </resources>

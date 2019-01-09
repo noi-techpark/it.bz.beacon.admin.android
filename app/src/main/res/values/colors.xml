@@ -13,7 +13,7 @@
     <color name="icons">#212121</color>
     <color name="divider">#e3e3e3</color>
     <color name="backgroundActivity">@android:color/white</color>
-    <color name="backgroundBox">#0a000000</color>
+    <color name="backgroundBox">#0d000000</color>
 
     <color name="status_ok">#60da3c</color>
     <color name="status_warning">#f6dd00</color>

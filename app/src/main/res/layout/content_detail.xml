@@ -6,132 +6,553 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-    tools:context=".ui.main.MainActivity"
-    tools:showIn="@layout/container_main">
+    tools:context=".ui.detail.DetailActivity"
+    tools:showIn="@layout/activity_detail">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/containerView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/backgroundActivity"
-        android:padding="@dimen/activity_horizontal_margin"
-        tools:context=".ui.detail.DetailActivity">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/details_last_seen"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Last seen: 19.12.2018" />
 
-        <ImageView
-            android:id="@+id/details_status"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:contentDescription="@string/nav_header_desc"
-            android:tint="@color/status_ok"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_status" />
-
-        <LinearLayout
-            android:id="@+id/details_config_layout"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/containerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/background_config_card"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_last_seen">
+            android:layout_height="match_parent"
+            android:background="@color/backgroundActivity"
+            android:padding="@dimen/activity_horizontal_margin"
+            tools:context=".ui.detail.DetailActivity">
 
             <TextView
-                android:id="@+id/details_config"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="match_parent"
+                android:id="@+id/details_last_seen"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin"
-                android:text="@string/details_section_config"
+                android:text="Last seen: 19.12.2018"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/config_tablayout"
+            <ImageView
+                android:id="@+id/details_status"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:contentDescription="@string/nav_header_desc"
+                android:tint="@color/status_ok"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_status" />
+
+            <LinearLayout
+                android:id="@+id/details_config_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/primaryLight"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/primaryLight"
-                app:tabTextColor="@color/secondaryText" />
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/config_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/details_location_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/background_config_card"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_config_layout">
-
-            <TextView
-                android:id="@+id/details_"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin"
-                android:text="@string/details_section_location"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/details_last_seen">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/info_tablayout"
+                <TextView
+                    android:id="@+id/details_config"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:text="@string/details_section_config"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/config_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/primaryLight"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/primaryLight"
+                    app:tabTextColor="@color/secondaryText">
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_config" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_info" />
+
+                </android.support.design.widget.TabLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/config_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/uuidContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/uuid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="UUID"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="A73745563790B"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/majorContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="4dp"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintEnd_toStartOf="@+id/minorContainer"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/uuidContainer">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/major"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="@string/details_config_major"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="1"
+                            android:textCursorDrawable="@null" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/minorContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/majorContainer"
+                        app:layout_constraintTop_toBottomOf="@id/uuidContainer">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/minor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="@string/details_config_major"
+                            android:imeOptions="actionDone"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="2"
+                            android:textCursorDrawable="@null" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <com.appyvet.materialrangebar.RangeBar
+                        android:id="@+id/rangebar"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:padding="0dp"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/majorContainer"
+                        app:mrb_connectingLineColor="@color/primary"
+                        app:mrb_pinColor="@color/primary"
+                        app:mrb_pinMaxFont="14sp"
+                        app:mrb_pinMinFont="14sp"
+                        app:mrb_pinPadding="8dp"
+                        app:mrb_pinRadius="16dp"
+                        app:mrb_rangeBar="false"
+                        app:mrb_selectorColor="@color/primary"
+                        app:mrb_temporaryPins="false"
+                        app:mrb_tickColor="@color/primary"
+                        app:mrb_tickEnd="100"
+                        app:mrb_tickInterval="1"
+                        app:mrb_tickStart="0" />
+
+                    <TextView
+                        android:id="@+id/signal_strength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/details_config_signalstrength"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="14sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/rangebar" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/intervalContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/signal_strength">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/interval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="@string/details_config_signalinterval"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:enabled="false"
+                            android:singleLine="true"
+                            android:text="100"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+                <GridLayout
+                    android:id="@+id/info_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:columnCount="3"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:useDefaultMargins="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:text="@string/details_info_battery"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/battery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="60 %" />
+
+                    <ImageView
+                        android:id="@+id/beacon_battery"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/nav_header_desc"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:srcCompat="@drawable/ic_battery_50" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_columnSpan="3"
+                        android:background="@color/divider" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:text="@string/details_info_devicestatus"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/devicestatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="OK" />
+
+                    <ImageView
+                        android:id="@+id/beacon_status"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/nav_header_desc"
+                        android:padding="6dp"
+                        android:tint="@color/status_ok"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_status" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_columnSpan="3"
+                        android:background="@color/divider" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:text="@string/details_info_temperature"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="30 °" />
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@android:color/transparent" />
+
+                </GridLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details_location_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/primaryLight"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/primaryLight"
-                app:tabTextColor="@color/secondaryText" />
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/info_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/details_images_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/background_config_card"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_location_layout">
-
-            <TextView
-                android:id="@+id/details_config_title"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin"
-                android:text="@string/details_section_images"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@id/details_config_layout">
+
+                <TextView
+                    android:id="@+id/details_"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:text="@string/details_section_location"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/info_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/primaryLight"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/primaryLight"
+                    app:tabTextColor="@color/secondaryText">
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_map" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_gps" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_description" />
+
+                </android.support.design.widget.TabLayout>
+
+                <FrameLayout
+                    android:id="@+id/map_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/info_tablayout" />
+
+                <LinearLayout
+                    android:id="@+id/gps_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:minHeight="300dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/info_tablayout">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/gpsnContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/gps_n"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="GPS - N"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="46.49765"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/gpseContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hintTextAppearance="@style/TextAppearance.Hint"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/gps_e"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="GPS - E"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="11.35494"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
+
+                    </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/description_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:minHeight="300dp"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <Button
+                        android:id="@+id/toggle_outdoor"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/background_toggle_on"
+                        android:drawableStart="@drawable/ic_check"
+                        android:drawablePadding="0dp"
+                        android:drawableTint="@color/secondaryText"
+                        android:paddingStart="@dimen/activity_horizontal_margin"
+                        android:paddingEnd="@dimen/activity_horizontal_margin"
+                        android:text="@string/outdoor"
+                        android:textColor="@color/secondaryText"
+                        app:layout_constraintEnd_toStartOf="@+id/toggle_indoor"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/toggle_indoor"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/background_toggle_off"
+                        android:drawableTint="@color/secondaryText"
+                        android:paddingStart="@dimen/activity_horizontal_margin"
+                        android:paddingEnd="@dimen/activity_horizontal_margin"
+                        android:text="@string/indoor"
+                        android:textColor="@color/divider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/toggle_outdoor"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/divider"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/toggle_outdoor" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="beacon is located outdoor near the entrance under the window"
+                        android:textSize="16sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/separator" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details_images_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_location_layout">
+
+                <TextView
+                    android:id="@+id/details_config_title"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:text="@string/details_section_images"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/corners"
