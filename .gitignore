@@ -19,3 +19,20 @@ Thumbs.db
 .signing/
 .externalNativeBuild
 /swagger/build
+
+# fastlane specific
+fastlane/report.xml
+
+# deliver temporary files
+fastlane/Preview.html
+
+# snapshot generated screenshots
+fastlane/screenshots
+
+# scan temporary files
+fastlane/test_output
+
+# exclude configuration files
+/keystore.keystore
+keystore.jks
+google_maps_api.xml
