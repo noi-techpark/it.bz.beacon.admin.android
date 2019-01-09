@@ -27,8 +27,20 @@
     <string name="details_edit">Edit</string>
     <string name="details_delete">Delete</string>
     <string name="details_exit_edit">Exit edit mode</string>
-    <string name="details_config">iBeacon Config</string>
-    <string name="details_location">Location</string>
-    <string name="details_images">Images</string>
+    <string name="details_section_config">iBeacon Config</string>
+    <string name="details_section_location">Location</string>
+    <string name="details_section_images">Images</string>
+    <string name="details_config">Config</string>
+    <string name="details_config_major">Major</string>
+    <string name="details_config_minor">Minor</string>
+    <string name="details_config_signalstrength">Signal strength</string>
+    <string name="details_config_signalinterval">Signal interval (ms)</string>
+    <string name="details_config_battery">Battery</string>
+    <string name="details_config_devicestatus">Device status</string>
+    <string name="details_config_temperature">Temperature</string>
+    <string name="details_info">Info</string>
+    <string name="details_map">Map</string>
+    <string name="details_gps">GPS</string>
+    <string name="details_description">Description</string>
 
 </resources>

@@ -11,16 +11,16 @@
         android:id="@+id/details_last_seen"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="Last seen: 19.12.2018"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        tools:text="Last seen: 19.12.2018" />
 
     <ImageView
         android:id="@+id/details_status"
         android:layout_width="12dp"
         android:layout_height="12dp"
-        android:tint="@color/status_ok"
         android:contentDescription="@string/nav_header_desc"
+        android:tint="@color/status_ok"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_status" />
@@ -30,20 +30,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:orientation="vertical"
         android:background="@drawable/background_config_card"
-        app:layout_constraintTop_toBottomOf="@id/details_last_seen" >
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_last_seen">
 
         <TextView
             android:id="@+id/details_config"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/details_config"
             android:padding="@dimen/activity_horizontal_margin"
-            style="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:text="@string/details_section_config"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/config_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/primaryLight"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/primaryLight"
+            app:tabTextColor="@color/secondaryText" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/config_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -51,20 +68,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:orientation="vertical"
         android:background="@drawable/background_config_card"
-        app:layout_constraintTop_toBottomOf="@id/details_config_layout" >
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_config_layout">
 
         <TextView
             android:id="@+id/details_"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/details_location"
             android:padding="@dimen/activity_horizontal_margin"
-            style="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:text="@string/details_section_location"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/info_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/primaryLight"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/primaryLight"
+            app:tabTextColor="@color/secondaryText" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/info_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -72,22 +104,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:orientation="vertical"
         android:background="@drawable/background_config_card"
-        app:layout_constraintTop_toBottomOf="@id/details_location_layout" >
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_location_layout">
 
         <TextView
             android:id="@+id/details_config_title"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/details_images"
             android:padding="@dimen/activity_horizontal_margin"
-            style="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:text="@string/details_section_images"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
-
 
 
 </android.support.constraint.ConstraintLayout>
