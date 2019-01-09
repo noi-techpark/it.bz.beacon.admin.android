@@ -1,124 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
+    android:id="@+id/container"
     tools:context=".ui.detail.DetailActivity">
 
-    <TextView
-        android:id="@+id/details_last_seen"
-        android:layout_width="0dp"
+    <include layout="@layout/app_bar" />
+
+    <include layout="@layout/content_detail" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Last seen: 19.12.2018" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/ic_menu_add" />
 
-    <ImageView
-        android:id="@+id/details_status"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:contentDescription="@string/nav_header_desc"
-        android:tint="@color/status_ok"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_status" />
-
-    <LinearLayout
-        android:id="@+id/details_config_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/background_config_card"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/details_last_seen">
-
-        <TextView
-            android:id="@+id/details_config"
-            style="@style/TextAppearance.AppCompat.Large"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:text="@string/details_section_config"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/config_tablayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/primaryLight"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/primaryLight"
-            app:tabTextColor="@color/secondaryText" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/config_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/details_location_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/background_config_card"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/details_config_layout">
-
-        <TextView
-            android:id="@+id/details_"
-            style="@style/TextAppearance.AppCompat.Large"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:text="@string/details_section_location"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/info_tablayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/primaryLight"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/primaryLight"
-            app:tabTextColor="@color/secondaryText" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/info_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/details_images_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/background_config_card"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/details_location_layout">
-
-        <TextView
-            android:id="@+id/details_config_title"
-            style="@style/TextAppearance.AppCompat.Large"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:text="@string/details_section_images"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </LinearLayout>
-
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

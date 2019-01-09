@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
     tools:context=".ui.main.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/container_main">
 
     <FrameLayout
         android:id="@+id/containerView"
