@@ -64,21 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
 
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
 
-            @Override
-            public void onStateChanged(@NonNull View view, int i) {
-            }
-
-            @Override
-            public void onSlide(@NonNull View view, float v) {
-//                if (googleMap != null) {
-//                    int paddingBottom = (int)((1 - v) * toolbarHeight);
-//                    googleMap.setPadding(0, 0, 0, paddingBottom);
-//
-//                    corners.setAlpha((1 - v));
-//                }
-            }
-        });
     }
 }
