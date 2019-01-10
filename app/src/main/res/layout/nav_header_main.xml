@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="wrap_content"
@@ -20,27 +21,31 @@
             android:paddingTop="40dp"
             android:paddingEnd="36dp"
             android:paddingBottom="36dp"
-            app:layout_constraintBottom_toTopOf="@id/navigation_header_user"
+            app:layout_constraintBottom_toTopOf="@id/navigation_username"
             app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/navigation_header_user"
+            android:id="@+id/navigation_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/activity_vertical_margin"
-            android:text="username"
+            tools:text="username"
             android:textColor="@color/primary"
             android:textSize="14sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/navigation_header_logout"
+        <Button
+            android:id="@+id/navigation_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:text="@string/logout"
             android:textAllCaps="false"
             android:textSize="14sp"
+            android:minHeight="0dp"
+            android:gravity="end"
+            android:textColor="@color/secondaryText"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 

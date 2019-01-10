@@ -15,6 +15,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -72,8 +76,25 @@ public class MainActivity extends BaseActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-//        TextView textView = mNavigationView.getHeaderView(0).findViewById(R.id.username);
-//        textView.setText(getString(R.string.nav_header_subtitle, getStorage().getUser().getName()));
+        TextView txtUsername = navigationView.getHeaderView(0).findViewById(R.id.navigation_username);
+        txtUsername.setText("Wilhelm Raiffeisen");
+        // TODO: set real username here
+//        txtUsername.setText(getString(R.string.nav_header_subtitle, getStorage().getUser().getName()));
+
+        Button btnLogout = navigationView.getHeaderView(0).findViewById(R.id.navigation_logout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    logout();
+                }
+            });
+        }
+    }
+
+    private void logout() {
+//         TODO: implement logout
+        Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
     }
 
     @Override
