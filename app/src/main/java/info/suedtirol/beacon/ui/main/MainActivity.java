@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -209,10 +210,28 @@ public class MainActivity extends BaseActivity
             isMapShowing = true;
             SupportMapFragment fragment = new SupportMapFragment();
             switchFragment(getString(R.string.beacons), fragment);
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.containerView, fragment).commit();
             fragment.getMapAsync(this);
             invalidateOptionsMenu();
+
+            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
+                @Override
+                public void onStateChanged(@NonNull View view, int i) {
+                }
+
+                @Override
+                public void onSlide(@NonNull View view, float v) {
+                    setMapPadding(v);
+                }
+            });
+        }
+    }
+
+    private void setMapPadding(float v) {
+        if (googleMap != null) {
+            int paddingBottom = (int)((1 - v) * toolbarHeight);
+            googleMap.setPadding(0, 0, 0, paddingBottom);
+//            corners.setAlpha((1 - v));
         }
     }
 
@@ -221,8 +240,6 @@ public class MainActivity extends BaseActivity
             isMapShowing = false;
             LocationDisabledFragment fragment = LocationDisabledFragment.newInstance(this);
             switchFragment(getString(R.string.beacons), fragment);
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.map_container, fragment).commit();
         }
     }
 
@@ -231,6 +248,7 @@ public class MainActivity extends BaseActivity
         this.googleMap = googleMap;
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), 18));
+        setMapPadding(0);
     }
 
     @Override
