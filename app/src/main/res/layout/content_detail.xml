@@ -2,18 +2,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
     tools:context=".ui.detail.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/containerView"
@@ -179,8 +177,8 @@
                         android:id="@+id/rangebar"
                         android:layout_width="match_parent"
                         android:layout_height="72dp"
-                        android:padding="0dp"
                         android:layout_marginTop="@dimen/app_default_margin"
+                        android:padding="0dp"
                         android:textColor="@android:color/white"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/majorContainer"
@@ -225,11 +223,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@null"
+                            android:enabled="false"
                             android:hint="@string/details_config_signalinterval"
                             android:imeOptions="actionNext"
                             android:inputType="text"
                             android:maxLines="1"
-                            android:enabled="false"
                             android:singleLine="true"
                             android:text="100"
                             android:textCursorDrawable="@null"

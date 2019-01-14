@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -32,8 +31,8 @@ import butterknife.ButterKnife;
 import info.suedtirol.beacon.R;
 import info.suedtirol.beacon.ui.BaseActivity;
 import info.suedtirol.beacon.ui.about.AboutFragment;
-import info.suedtirol.beacon.ui.main.beacon.DisturbancesFragment;
 import info.suedtirol.beacon.ui.main.beacon.BeaconsFragment;
+import info.suedtirol.beacon.ui.main.beacon.DisturbancesFragment;
 import info.suedtirol.beacon.ui.main.beacon.ProblemsFragment;
 import info.suedtirol.beacon.ui.main.map.LocationDisabledFragment;
 import info.suedtirol.beacon.ui.main.map.OnRetryLoadMapListener;
@@ -58,7 +57,6 @@ public class MainActivity extends BaseActivity
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        initBottomSheet();
 
         switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
         setupNavigationDrawer();
@@ -212,26 +210,6 @@ public class MainActivity extends BaseActivity
             switchFragment(getString(R.string.beacons), fragment);
             fragment.getMapAsync(this);
             invalidateOptionsMenu();
-
-            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-
-                @Override
-                public void onStateChanged(@NonNull View view, int i) {
-                }
-
-                @Override
-                public void onSlide(@NonNull View view, float v) {
-                    setMapPadding(v);
-                }
-            });
-        }
-    }
-
-    private void setMapPadding(float v) {
-        if (googleMap != null) {
-            int paddingBottom = (int)((1 - v) * toolbarHeight);
-            googleMap.setPadding(0, 0, 0, paddingBottom);
-//            corners.setAlpha((1 - v));
         }
     }
 
@@ -248,7 +226,6 @@ public class MainActivity extends BaseActivity
         this.googleMap = googleMap;
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), 18));
-        setMapPadding(0);
     }
 
     @Override
