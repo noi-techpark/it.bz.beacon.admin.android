@@ -107,7 +107,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 onLocationTabTapped(tab.getPosition());
             }
         });
-        rangeBar.setRangePinsByIndices(0, 50);
+        rangeBar.setRangePinsByIndices(0, 3);
 
         initMapFragment();
     }
