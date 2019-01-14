@@ -12,13 +12,9 @@
             android:icon="@drawable/ic_beacon"
             android:title="@string/beacons" />
         <item
-            android:id="@+id/navigation_problems"
+            android:id="@+id/navigation_issues"
             android:icon="@drawable/ic_problem"
-            android:title="@string/network_problems" />
-        <item
-            android:id="@+id/navigation_disturbances"
-            android:icon="@drawable/ic_disturbances"
-            android:title="@string/disturbances" />
+            android:title="@string/issues" />
         <item
             android:id="@+id/navigation_about"
             android:icon="@drawable/ic_about"

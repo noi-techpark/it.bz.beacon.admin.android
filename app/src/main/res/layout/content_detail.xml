@@ -192,9 +192,9 @@
                         app:mrb_selectorColor="@color/primary"
                         app:mrb_temporaryPins="false"
                         app:mrb_tickColor="@color/primary"
-                        app:mrb_tickEnd="100"
+                        app:mrb_tickEnd="7"
                         app:mrb_tickInterval="1"
-                        app:mrb_tickStart="0" />
+                        app:mrb_tickStart="1" />
 
                     <TextView
                         android:id="@+id/signal_strength"

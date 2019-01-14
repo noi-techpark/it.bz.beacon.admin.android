@@ -9,12 +9,14 @@
     <string name="beacons">Beacons</string>
     <string name="network_problems">Network Problems</string>
     <string name="disturbances">Disturbances</string>
+    <string name="issues">Issues</string>
     <string name="about">About</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="map">Map</string>
     <string name="list">List</string>
     <string name="search">Search</string>
+    <string name="filter">Filter</string>
     <string name="empty_list">No data found</string>
     <string name="about_title">Beacon South Tyrol</string>
     <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies. Because the time for Internet of Things is now.</string>
