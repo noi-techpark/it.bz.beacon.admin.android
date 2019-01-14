@@ -71,8 +71,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        initBottomSheet();
-
         // TODO: Set beacon name as title
         setTitle("Beacon584");
 
