@@ -32,7 +32,6 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconsFragment;
-import it.bz.beacon.adminapp.ui.main.beacon.DisturbancesFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.ProblemsFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
@@ -45,7 +44,7 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.drawer_layout)
     protected DrawerLayout drawer;
 
-    @BindView(R.id.nav_view)
+    @BindView(R.id.navigation_view)
     protected NavigationView navigationView;
 
     protected GoogleMap googleMap;
