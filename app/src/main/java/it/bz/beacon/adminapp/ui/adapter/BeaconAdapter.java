@@ -111,8 +111,11 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         @BindView(R.id.beacon_title)
         TextView title;
 
-        @BindView(R.id.beacon_description)
-        TextView description;
+        @BindView(R.id.beacon_major)
+        TextView major;
+
+        @BindView(R.id.beacon_minor)
+        TextView minor;
 
         @BindView(R.id.beacon_status)
         ImageView status;
@@ -129,7 +132,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
          //   status.setBackgroundTintList(ColorStateList.valueOf(col));
             title.setText(beacon.getTitle());
-            description.setText(beacon.getDescription());
+     //       major.setText(beacon.getDescription().substring(-5));
 
             if (beacon.hasWarning()) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));

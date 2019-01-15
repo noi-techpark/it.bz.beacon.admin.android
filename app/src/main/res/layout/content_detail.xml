@@ -16,7 +16,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/containerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/backgroundActivity"
             android:padding="@dimen/app_default_margin"
             tools:context=".ui.detail.DetailActivity">
@@ -73,21 +73,188 @@
                     <android.support.design.widget.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/details_config" />
+                        android:text="@string/details_info" />
 
                     <android.support.design.widget.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/details_info" />
+                        android:text="@string/details_ibeacon" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_eddystone" />
 
                 </android.support.design.widget.TabLayout>
 
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/config_content"
+                <LinearLayout
+                    android:id="@+id/config_info_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/backgroundBox"
+                    android:orientation="vertical"
                     android:padding="@dimen/app_default_margin">
+
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="3"
+                        android:orientation="horizontal"
+                        android:useDefaultMargins="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" >
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:text="@string/details_info_battery"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/battery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:text="60 %" />
+
+                        <ImageView
+                            android:id="@+id/beacon_battery"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/nav_header_desc"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:srcCompat="@drawable/ic_battery_50" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:layout_columnSpan="3"
+                            android:background="@color/divider" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:text="@string/details_info_devicestatus"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/devicestatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:text="OK" />
+
+                        <ImageView
+                            android:id="@+id/beacon_status"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/nav_header_desc"
+                            android:padding="6dp"
+                            android:tint="@color/status_ok"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_status" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:layout_columnSpan="3"
+                            android:background="@color/divider" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:text="@string/details_info_temperature"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/temperature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:text="30 °" />
+
+                        <View
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent" />
+
+                    </GridLayout>
+
+                    <com.appyvet.materialrangebar.RangeBar
+                        android:id="@+id/rangebar"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:layout_marginTop="@dimen/app_default_margin"
+                        android:padding="0dp"
+                        android:textColor="@android:color/white"
+                        app:mrb_connectingLineColor="@color/primary"
+                        app:mrb_pinColor="@color/primary"
+                        app:mrb_pinMaxFont="14sp"
+                        app:mrb_pinMinFont="14sp"
+                        app:mrb_pinPadding="8dp"
+                        app:mrb_pinRadius="16dp"
+                        app:mrb_rangeBar="false"
+                        app:mrb_selectorColor="@color/primary"
+                        app:mrb_temporaryPins="false"
+                        app:mrb_tickColor="@color/primary"
+                        app:mrb_tickEnd="7"
+                        app:mrb_tickInterval="1"
+                        app:mrb_tickStart="1" />
+
+                    <TextView
+                        android:id="@+id/signal_strength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/details_config_signalstrength"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="14sp" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/intervalContainer"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/app_default_margin"
+                        app:hintTextAppearance="@style/TextAppearance.Hint">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/interval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="@string/details_config_signalinterval"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="100"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/config_ibeacon_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:padding="@dimen/app_default_margin"
+                    android:visibility="gone">
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/uuidContainer"
@@ -120,8 +287,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="8dp"
                         app:hintTextAppearance="@style/TextAppearance.Hint"
                         app:layout_constraintEnd_toStartOf="@+id/minorContainer"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -149,8 +315,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="8dp"
                         app:hintTextAppearance="@style/TextAppearance.Hint"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -173,169 +338,87 @@
 
                     </android.support.design.widget.TextInputLayout>
 
-                    <com.appyvet.materialrangebar.RangeBar
-                        android:id="@+id/rangebar"
-                        android:layout_width="match_parent"
-                        android:layout_height="72dp"
-                        android:layout_marginTop="@dimen/app_default_margin"
-                        android:padding="0dp"
-                        android:textColor="@android:color/white"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/majorContainer"
-                        app:mrb_connectingLineColor="@color/primary"
-                        app:mrb_pinColor="@color/primary"
-                        app:mrb_pinMaxFont="14sp"
-                        app:mrb_pinMinFont="14sp"
-                        app:mrb_pinPadding="8dp"
-                        app:mrb_pinRadius="16dp"
-                        app:mrb_rangeBar="false"
-                        app:mrb_selectorColor="@color/primary"
-                        app:mrb_temporaryPins="false"
-                        app:mrb_tickColor="@color/primary"
-                        app:mrb_tickEnd="7"
-                        app:mrb_tickInterval="1"
-                        app:mrb_tickStart="1" />
+                </android.support.constraint.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/signal_strength"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/details_config_signalstrength"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="14sp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rangebar" />
+                <LinearLayout
+                    android:id="@+id/config_eddystone_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/backgroundBox"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:padding="@dimen/app_default_margin">
 
                     <android.support.design.widget.TextInputLayout
-                        android:id="@+id/intervalContainer"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/app_default_margin"
-                        app:hintTextAppearance="@style/TextAppearance.Hint"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/signal_strength">
+                        app:hintTextAppearance="@style/TextAppearance.Hint">
 
                         <android.support.design.widget.TextInputEditText
-                            android:id="@+id/interval"
+                            android:id="@+id/eddystone_namespace"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@null"
                             android:enabled="false"
-                            android:hint="@string/details_config_signalinterval"
+                            android:hint="@string/details_config_namespace"
                             android:imeOptions="actionNext"
                             android:inputType="text"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="100"
+                            android:text="f04958fa3095482ae394"
                             android:textCursorDrawable="@null"
                             tools:ignore="HardcodedText" />
 
                     </android.support.design.widget.TextInputLayout>
 
-                </android.support.constraint.ConstraintLayout>
-
-                <GridLayout
-                    android:id="@+id/info_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/backgroundBox"
-                    android:columnCount="3"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:useDefaultMargins="true"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:text="@string/details_info_battery"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/battery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:text="60 %" />
-
-                    <ImageView
-                        android:id="@+id/beacon_battery"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@string/nav_header_desc"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:srcCompat="@drawable/ic_battery_50" />
-
-                    <View
+                    <android.support.design.widget.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_columnSpan="3"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:text="@string/details_info_devicestatus"
-                        android:textStyle="bold" />
+                        app:hintTextAppearance="@style/TextAppearance.Hint">
 
-                    <TextView
-                        android:id="@+id/devicestatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:text="OK" />
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/eddystone_instanceid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="@string/details_config_instanceid"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="431ac35d9v78a"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
 
-                    <ImageView
-                        android:id="@+id/beacon_status"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@string/nav_header_desc"
-                        android:padding="6dp"
-                        android:tint="@color/status_ok"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_status" />
+                    </android.support.design.widget.TextInputLayout>
 
-                    <View
+                    <android.support.design.widget.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_columnSpan="3"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:text="@string/details_info_temperature"
-                        android:textStyle="bold" />
+                        app:hintTextAppearance="@style/TextAppearance.Hint">
 
-                    <TextView
-                        android:id="@+id/temperature"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:text="30 °" />
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/eddystone_url"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="false"
+                            android:hint="@string/details_config_url"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="https://kntk.io/eddystone"
+                            android:textCursorDrawable="@null"
+                            tools:ignore="HardcodedText" />
 
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@android:color/transparent" />
+                    </android.support.design.widget.TextInputLayout>
 
-                </GridLayout>
+                </LinearLayout>
 
             </LinearLayout>
 

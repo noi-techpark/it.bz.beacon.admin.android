@@ -39,11 +39,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.info_tablayout)
     protected TabLayout tabLayoutLocation;
 
-    @BindView(R.id.info_content)
+    @BindView(R.id.config_info_content)
     protected View contentInfo;
 
-    @BindView(R.id.config_content)
-    protected View contentConfig;
+    @BindView(R.id.config_ibeacon_content)
+    protected View contentIBeacon;
+
+    @BindView(R.id.config_eddystone_content)
+    protected View contentEddystone;
 
     @BindView(R.id.map_container)
     protected View contentMap;
@@ -115,12 +118,19 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private void onConfigTabTapped(int position) {
         switch (position) {
             case 0:
-                contentConfig.setVisibility(View.VISIBLE);
-                contentInfo.setVisibility(View.GONE);
+                contentInfo.setVisibility(View.VISIBLE);
+                contentIBeacon.setVisibility(View.GONE);
+                contentEddystone.setVisibility(View.GONE);
                 break;
             case 1:
-                contentConfig.setVisibility(View.GONE);
-                contentInfo.setVisibility(View.VISIBLE);
+                contentInfo.setVisibility(View.GONE);
+                contentIBeacon.setVisibility(View.VISIBLE);
+                contentEddystone.setVisibility(View.GONE);
+                break;
+            case 2:
+                contentInfo.setVisibility(View.GONE);
+                contentIBeacon.setVisibility(View.GONE);
+                contentEddystone.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -245,9 +255,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         switch (id) {
             case R.id.menu_edit:
                 break;
-            case R.id.menu_delete:
-                break;
-            case R.id.menu_exit_edit:
+            case R.id.menu_save:
                 break;
             default:
                 break;
