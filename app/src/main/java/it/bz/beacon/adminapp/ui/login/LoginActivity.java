@@ -27,16 +27,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @BindView(R.id.username)
-    protected EditText mUsernameView;
+    protected EditText editUsername;
 
     @BindView(R.id.password)
-    protected EditText mPasswordView;
+    protected EditText editPassword;
 
     @BindView(R.id.login_progress)
     protected View mProgressView;
 
     @BindView(R.id.login_form)
-    protected View mLoginFormView;
+    protected View loginForm;
 
     private Storage mStorage;
 //    private AuthApi mAuthApi;
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        editPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -85,12 +85,12 @@ public class LoginActivity extends AppCompatActivity {
 
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+        loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        loginForm.animate().setDuration(shortAnimTime).alpha(
                 show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
             }
         });
 

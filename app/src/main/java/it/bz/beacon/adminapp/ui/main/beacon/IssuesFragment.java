@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import it.bz.beacon.adminapp.data.entity.Beacon;
 
-public class ProblemsFragment extends BaseBeaconsFragment {
+public class IssuesFragment extends BaseBeaconsFragment {
 
-    public ProblemsFragment() {
+    public IssuesFragment() {
         // Required empty public constructor
     }
 
-    public static ProblemsFragment newInstance() {
-        ProblemsFragment fragment = new ProblemsFragment();
+    public static IssuesFragment newInstance() {
+        IssuesFragment fragment = new IssuesFragment();
         return fragment;
     }
 
@@ -45,5 +45,10 @@ public class ProblemsFragment extends BaseBeaconsFragment {
         beacons.add(b);
 
         return beacons;
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }
