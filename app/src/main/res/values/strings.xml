@@ -51,5 +51,8 @@
     <string name="details_description">Description</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>
+    <string name="error_invalid_password">Password is to short</string>
+    <string name="error_incorrect_login">Wrong username or password</string>
+    <string name="error_field_required">Required field</string>
 
 </resources>

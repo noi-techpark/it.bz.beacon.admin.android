@@ -53,98 +53,86 @@ public class BeaconsFragment extends BaseBeaconsFragment {
 
         Beacon b = new Beacon();
         b.setId(1L);
-        b.setTitle("Beacon 1");
+        b.setName("Beacon 1");
         b.setDescription("A2039847270");
-        b.setBattery(45.5);
-        b.setWarning(false);
+        b.setBatteryLevel(45);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(2L);
-        b.setTitle("Beacon 2");
+        b.setName("Beacon 2");
         b.setDescription("A6143983537");
-        b.setBattery(11.2);
-        b.setWarning(true);
+        b.setBatteryLevel(11);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(3L);
-        b.setTitle("Beacon 3");
+        b.setName("Beacon 3");
         b.setDescription("A3495783439");
-        b.setBattery(87);
-        b.setWarning(true);
+        b.setBatteryLevel(87);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(4L);
-        b.setTitle("Beacon 4");
+        b.setName("Beacon 4");
         b.setDescription("A4439847270");
-        b.setBattery(5.5);
-        b.setWarning(false);
+        b.setBatteryLevel(5);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(5L);
-        b.setTitle("Beacon 5");
+        b.setName("Beacon 5");
         b.setDescription("A1143983537");
-        b.setBattery(50);
-        b.setWarning(false);
+        b.setBatteryLevel(50);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(6L);
-        b.setTitle("Beacon 6");
+        b.setName("Beacon 6");
         b.setDescription("A6547783439");
-        b.setBattery(90);
-        b.setWarning(false);
+        b.setBatteryLevel(90);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(1L);
-        b.setTitle("Beacon 1");
+        b.setName("Beacon 1");
         b.setDescription("A2039847270");
-        b.setBattery(45.5);
-        b.setWarning(false);
+        b.setBatteryLevel(45);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(2L);
-        b.setTitle("Beacon 2");
+        b.setName("Beacon 2");
         b.setDescription("A6143983537");
-        b.setBattery(11.2);
-        b.setWarning(true);
+        b.setBatteryLevel(11);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(3L);
-        b.setTitle("Beacon 3");
+        b.setName("Beacon 3");
         b.setDescription("A3495783439");
-        b.setBattery(87);
-        b.setWarning(true);
+        b.setBatteryLevel(87);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(4L);
-        b.setTitle("Beacon 4");
+        b.setName("Beacon 4");
         b.setDescription("A4439847270");
-        b.setBattery(5.5);
-        b.setWarning(false);
+        b.setBatteryLevel(5);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(5L);
-        b.setTitle("Beacon 5");
+        b.setName("Beacon 5");
         b.setDescription("A1143983537");
-        b.setBattery(50);
-        b.setWarning(false);
+        b.setBatteryLevel(50);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(6L);
-        b.setTitle("Beacon 6");
+        b.setName("Beacon 6");
         b.setDescription("A6547783439");
-        b.setBattery(90);
-        b.setWarning(false);
+        b.setBatteryLevel(90);
         beacons.add(b);
 
         return beacons;

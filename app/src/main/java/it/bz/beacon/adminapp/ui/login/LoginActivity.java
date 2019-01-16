@@ -1,16 +1,18 @@
 package it.bz.beacon.adminapp.ui.login;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 import com.google.android.gms.auth.api.signin.internal.Storage;
 
@@ -20,11 +22,7 @@ import butterknife.OnClick;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.ui.main.MainActivity;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity {
-
 
     @BindView(R.id.username)
     protected EditText editUsername;
@@ -33,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected EditText editPassword;
 
     @BindView(R.id.login_progress)
-    protected View mProgressView;
+    protected LinearLayout progress;
 
     @BindView(R.id.login_form)
     protected View loginForm;
@@ -66,9 +64,109 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-     openMain();
+
+        editUsername.setError(null);
+        editPassword.setError(null);
+
+        // Store values at the time of the login attempt.
+        String username = editUsername.getText().toString();
+        String password = editPassword.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            editPassword.setError(getString(R.string.error_invalid_password));
+            focusView = editPassword;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(username)) {
+            editUsername.setError(getString(R.string.error_field_required));
+            focusView = editUsername;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            doLogin(username, password);
+        }
     }
 
+    private class FakeLoginTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgress(true);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            openMain();
+            finish();
+        }
+    }
+
+    private void doLogin(final String username, final String password) {
+        try {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+
+            FakeLoginTask task = new FakeLoginTask();
+            task.execute();
+
+
+//            Login login = new Login();
+//            login.setUsername(username);
+//            login.setPassword(password);
+//            mAuthApi.routingV1AuthLoginPostAsync(login, new ApiCallback<FeUser>() {
+//                @Override
+//                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+//                    runOnUiThread(new Runnable() {
+//                        public void run() {
+//                            showProgress(false);
+//                            Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_login), Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                }
+//
+//                @Override
+//                public void onSuccess(final FeUser result, int statusCode, Map<String, List<String>> responseHeaders) {
+//                    runOnUiThread(new Runnable() {
+//                        public void run() {
+//
+////                                mStorage.setUser(result, username, password, isAdmin, isTechnician);
+//                                openMain();
+//                                showProgress(false);
+//                        }
+//
+//                    });
+//                }
+//
+//                @Override
+//                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {}
+//
+//                @Override
+//                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {}
+//            });
+        } catch (Exception e) {
+            Log.d("Beacon", e.getMessage());
+        }
+    }
 
     private boolean isEmailValid(String email) {
         return email.contains("@");
@@ -86,22 +184,22 @@ public class LoginActivity extends AppCompatActivity {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-        loginForm.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
+//        loginForm.animate().setDuration(shortAnimTime).alpha(
+//                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+//            }
+//        });
 
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
+        progress.setVisibility(show ? View.VISIBLE : View.GONE);
+//        progress.animate().setDuration(shortAnimTime).alpha(
+//                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                progress.setVisibility(show ? View.VISIBLE : View.GONE);
+//            }
+//        });
     }
 
     protected void openMain() {
