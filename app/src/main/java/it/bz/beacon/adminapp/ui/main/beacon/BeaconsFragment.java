@@ -149,4 +149,9 @@ public class BeaconsFragment extends BaseBeaconsFragment {
 
         return beacons;
     }
+
+    @Override
+    public void onRefresh() {
+
+    }
 }

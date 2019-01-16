@@ -31,9 +31,11 @@ import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
+import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconsFragment;
-import it.bz.beacon.adminapp.ui.main.beacon.ProblemsFragment;
+import it.bz.beacon.adminapp.ui.main.beacon.IssuesFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
+import it.bz.beacon.adminapp.ui.main.map.MapFragment;
 import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
@@ -49,6 +51,7 @@ public class MainActivity extends BaseActivity
 
     protected GoogleMap googleMap;
     protected boolean isMapShowing = false;
+    protected boolean isFilterActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,7 @@ public class MainActivity extends BaseActivity
 
         setSupportActionBar(toolbar);
 
-        switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
+        switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
         setupNavigationDrawer();
         navigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -106,12 +109,6 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.beacons, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -121,7 +118,11 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.menu_list:
                 isMapShowing = false;
-                switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
+                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                invalidateOptionsMenu();
+                break;
+            case R.id.menu_filter:
+                isFilterActive = !isFilterActive;
                 invalidateOptionsMenu();
                 break;
             default:
@@ -133,16 +134,25 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem listItem =  menu.findItem(R.id.menu_list);
-        MenuItem mapItem =  menu.findItem(R.id.menu_map);
+//        MenuItem listItem =  menu.findItem(R.id.menu_list);
+//        MenuItem mapItem =  menu.findItem(R.id.menu_map);
+        MenuItem filterItem =  menu.findItem(R.id.menu_filter);
 
-        if (isMapShowing) {
-            mapItem.setVisible(false);
-            listItem.setVisible(true);
-        }
-        else{
-            mapItem.setVisible(true);
-            listItem.setVisible(false);
+//        if (isMapShowing) {
+//            mapItem.setVisible(false);
+//            listItem.setVisible(true);
+//        }
+//        else{
+//            mapItem.setVisible(true);
+//            listItem.setVisible(false);
+//        }
+        if (filterItem != null) {
+            if (isFilterActive) {
+                filterItem.setIcon(R.drawable.ic_menu_filter);
+            }
+            else {
+                filterItem.setIcon(R.drawable.ic_menu_filter_outline);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -156,10 +166,10 @@ public class MainActivity extends BaseActivity
 
         switch (id) {
             case R.id.navigation_beacons:
-                switchFragment(getString(R.string.beacons), BeaconsFragment.newInstance());
+                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
                 break;
             case R.id.navigation_issues:
-                switchFragment(getString(R.string.issues), ProblemsFragment.newInstance());
+                switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
                 break;
             case R.id.navigation_about:
                 switchFragment(getString(R.string.about), AboutFragment.newInstance());
@@ -202,7 +212,7 @@ public class MainActivity extends BaseActivity
     private void showMapFragment() {
         if (!isMapShowing && getSupportFragmentManager() != null) {
             isMapShowing = true;
-            SupportMapFragment fragment = new SupportMapFragment();
+            MapFragment fragment = new MapFragment();
             switchFragment(getString(R.string.beacons), fragment);
             fragment.getMapAsync(this);
             invalidateOptionsMenu();
