@@ -95,11 +95,11 @@ public class Beacon {
         this.eddystoneUrl = eddystoneUrl;
     }
 
-    public boolean isiBeacon() {
+    public boolean getIBeacon() {
         return iBeacon;
     }
 
-    public void setiBeacon(boolean iBeacon) {
+    public void setIBeacon(boolean iBeacon) {
         this.iBeacon = iBeacon;
     }
 

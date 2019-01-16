@@ -93,8 +93,9 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         Beacon Beacon = originalValues.get(i);
-                        if (Beacon.getTitle().toLowerCase().contains(constraint.toString())
-                                || Beacon.getDescription().toLowerCase().contains(constraint.toString())) {
+                        if (Beacon.getName().toLowerCase().contains(constraint.toString())
+                                || Beacon.getDescription().toLowerCase().contains(constraint.toString())
+                                || Beacon.getManufacturerId().toLowerCase().contains(constraint.toString())) {
                             filteredBeacons.add(Beacon);
                         }
                     }
@@ -130,22 +131,17 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
         private void setBeacon(final Beacon beacon) {
 
-         //   status.setBackgroundTintList(ColorStateList.valueOf(col));
-            title.setText(beacon.getTitle());
-     //       major.setText(beacon.getDescription().substring(-5));
+            title.setText(beacon.getName());
+            major.setText("" + beacon.getMajor());
+            minor.setText("" + beacon.getMinor());
 
-            if (beacon.hasWarning()) {
-                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
-            }
-            else{
-                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
-            }
+            ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
 
-            if (beacon.getBattery() < 33.3) {
+            if (beacon.getBatteryLevel() < 34) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
             }
             else {
-                if (beacon.getBattery() < 66.6) {
+                if (beacon.getBatteryLevel() < 66) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
                 }
                 else {

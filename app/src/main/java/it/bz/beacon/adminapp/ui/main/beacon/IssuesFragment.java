@@ -22,26 +22,23 @@ public class IssuesFragment extends BaseBeaconsFragment {
 
         Beacon b = new Beacon();
         b.setId(1L);
-        b.setTitle("Beacon 71");
+        b.setName("Beacon 71");
         b.setDescription("A2039847270");
-        b.setBattery(45.5);
-        b.setWarning(true);
+        b.setBatteryLevel(45);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(2L);
-        b.setTitle("Beacon 22");
+        b.setName("Beacon 22");
         b.setDescription("A6143983537");
-        b.setBattery(11.2);
-        b.setWarning(true);
+        b.setBatteryLevel(11);
         beacons.add(b);
 
         b = new Beacon();
         b.setId(3L);
-        b.setTitle("Beacon 32");
+        b.setName("Beacon 32");
         b.setDescription("A3495783439");
-        b.setBattery(87);
-        b.setWarning(true);
+        b.setBatteryLevel(87);
         beacons.add(b);
 
         return beacons;
