@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             openMain();
-            finish();
         }
     }
 
@@ -126,9 +125,9 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
+            // TODO: do real login here
             FakeLoginTask task = new FakeLoginTask();
             task.execute();
-
 
 //            Login login = new Login();
 //            login.setUsername(username);
@@ -205,8 +204,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void openMain() {
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
+        finish();
     }
-
 
 }
 

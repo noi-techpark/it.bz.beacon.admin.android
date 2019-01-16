@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.main;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
+import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.IssuesFragment;
@@ -94,8 +96,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void logout() {
-//         TODO: implement logout
-        Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+//         TODO: delete local data
+        openLogin();
     }
 
     @Override
@@ -106,6 +108,12 @@ public class MainActivity extends BaseActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void openLogin() {
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 
     @Override
