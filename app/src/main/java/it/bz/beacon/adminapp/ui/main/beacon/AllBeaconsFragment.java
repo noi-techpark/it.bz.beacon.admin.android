@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 import it.bz.beacon.adminapp.data.entity.Beacon;
 
-public class BeaconsFragment extends BaseBeaconsFragment {
+public class AllBeaconsFragment extends BaseBeaconsFragment {
 
-    public BeaconsFragment() {
+    public AllBeaconsFragment() {
         // Required empty public constructor
     }
 
-    public static BeaconsFragment newInstance() {
-        BeaconsFragment fragment = new BeaconsFragment();
+    public static AllBeaconsFragment newInstance() {
+        AllBeaconsFragment fragment = new AllBeaconsFragment();
         return fragment;
     }
 

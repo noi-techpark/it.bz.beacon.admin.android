@@ -8,6 +8,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import java.util.Random;
+
 import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
@@ -52,26 +54,40 @@ public abstract class BeaconDatabase extends RoomDatabase {
                 @Override
                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                     super.onOpen(db);
+                }
+
+                @Override
+                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                    super.onCreate(db);
+                    // TODO: remove this in production
                     new PopulateDbAsync(INSTANCE).execute();
                 }
             };
 
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
-        private final BeaconDao mDao;
+        private final BeaconDao beaconDao;
 
         PopulateDbAsync(BeaconDatabase db) {
-            mDao = db.beaconDao();
+            beaconDao = db.beaconDao();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
-            // TODO: create some fake beacons
-//            mDao.deleteAll();
-//            Word word = new Word("Hello");
-//            mDao.insert(word);
-//            word = new Word("World");
-//            mDao.insert(word);
+
+            Random random = new Random();
+
+            for (int i = 0; i < 10; i++) {
+                Beacon beacon = new Beacon();
+                beacon.setId(i);
+                beacon.setName("Beacon " + i);
+                beacon.setBatteryLevel(random.nextInt(100));
+                beacon.setManufacturerId("fJ" + (10 + random.nextInt(80)) + "le"+ (10 + random.nextInt(80)));
+                beacon.setStatus("ok");
+                beacon.setMajor(100 + random.nextInt(50));
+                beacon.setMinor(random.nextInt(1000));
+                beaconDao.insert(beacon);
+            }
             return null;
         }
     }
