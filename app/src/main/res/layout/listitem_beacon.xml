@@ -8,7 +8,7 @@
     android:paddingTop="10dp">
 
     <TextView
-        android:id="@+id/beacon_title"
+        android:id="@+id/beacon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/primaryText"
@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toStartOf="@+id/beacon_minor"
         app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Major: 12" />
+        tools:text="Major: 12" />
 
     <TextView
         android:id="@+id/beacon_minor"
@@ -37,13 +37,13 @@
         android:textColor="@color/secondaryText"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/beacon_id"
+        app:layout_constraintEnd_toStartOf="@id/beacon_manufacturer_id"
         app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toEndOf="@+id/beacon_major"
-        android:text="Minor: 65" />
+        tools:text="Minor: 65" />
 
     <TextView
-        android:id="@+id/beacon_id"
+        android:id="@+id/beacon_manufacturer_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -53,7 +53,7 @@
         app:layout_constraintEnd_toStartOf="@id/beacon_status"
         app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toEndOf="@+id/beacon_minor"
-        android:text="fS830L1ab" />
+        tools:text="fS830L1ab" />
 
     <ImageView
         android:id="@+id/beacon_status"
