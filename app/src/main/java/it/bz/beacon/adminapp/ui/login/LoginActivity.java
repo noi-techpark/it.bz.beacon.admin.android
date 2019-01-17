@@ -3,7 +3,6 @@ package it.bz.beacon.adminapp.ui.login;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,12 +13,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.ui.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,14 +35,19 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.login_form)
     protected View loginForm;
 
-    private Storage mStorage;
+    private Storage storage;
 //    private AuthApi mAuthApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
+        storage = AdminApplication.getStorage();
+        if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
+           openMain();
+        }
+
+        setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
         editPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -96,14 +100,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private class FakeLoginTask extends AsyncTask<Void, Void, Void> {
+    private class FakeLoginTask extends AsyncTask<String, Void, Void> {
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... params) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            storage.setUser(params[0], params[1]);
             return null;
         }
 
@@ -122,12 +127,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void doLogin(final String username, final String password) {
         try {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-
             // TODO: do real login here
             FakeLoginTask task = new FakeLoginTask();
-            task.execute();
+            task.execute(username, password);
 
 //            Login login = new Login();
 //            login.setUsername(username);

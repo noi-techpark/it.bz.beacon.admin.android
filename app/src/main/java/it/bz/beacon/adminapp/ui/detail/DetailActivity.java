@@ -60,6 +60,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.rangebar)
     protected RangeBar rangeBar;
 
+    private long beaconId;
     protected GoogleMap googleMap;
     protected boolean mapShowing = false;
 

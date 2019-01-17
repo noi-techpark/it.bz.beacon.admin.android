@@ -27,7 +27,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.BeaconDatabase;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
@@ -51,17 +54,19 @@ public class MainActivity extends BaseActivity
     protected GoogleMap googleMap;
     protected boolean isMapShowing = false;
     protected boolean isFilterActive = false;
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
+        storage = AdminApplication.getStorage();
         setSupportActionBar(toolbar);
 
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
         setupNavigationDrawer();
         navigationView.getMenu().getItem(0).setChecked(true);
+
     }
 
     @Override
@@ -77,9 +82,7 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         TextView txtUsername = navigationView.getHeaderView(0).findViewById(R.id.navigation_username);
-        txtUsername.setText("Wilhelm Raiffeisen");
-        // TODO: set real username here
-//        txtUsername.setText(getString(R.string.nav_header_subtitle, getStorage().getUser().getName()));
+        txtUsername.setText(storage.getLoginUserName());
 
         Button btnLogout = navigationView.getHeaderView(0).findViewById(R.id.navigation_logout);
         if (btnLogout != null) {
@@ -93,7 +96,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void logout() {
-//         TODO: delete local data
+        storage.clearStorage();
+        deleteDatabase(BeaconDatabase.DB_NAME);
         openLogin();
     }
 

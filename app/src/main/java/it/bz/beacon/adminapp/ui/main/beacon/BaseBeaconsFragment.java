@@ -37,9 +37,6 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
     @BindView(R.id.beacons_empty)
     protected TextView txtEmpty;
 
-    @BindView(R.id.beacons_loading)
-    protected ContentLoadingProgressBar progressBar;
-
     private BeaconAdapter adapter;
 
     @Override
@@ -66,8 +63,8 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
         return view;
     }
 
-    // TODO: use LiveData here
     private void loadData() {
+        showLoading();
         getBeacons(new Observer<List<BeaconMinimal>>() {
             @Override
             public void onChanged(@Nullable List<BeaconMinimal> beacons) {
@@ -79,7 +76,6 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
                 }
             }
         });
-
         showList();
     }
 
@@ -105,17 +101,20 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
 
     private void showLoading() {
         txtEmpty.setVisibility(View.GONE);
-        //  loader.setVisibility(View.VISIBLE);
+        recyclerBeacons.setVisibility(View.GONE);
+        swipeBeacons.setRefreshing(true);
     }
 
     private void showList() {
         txtEmpty.setVisibility(View.GONE);
         recyclerBeacons.setVisibility(View.VISIBLE);
+        swipeBeacons.setRefreshing(false);
     }
 
     private void showNoData() {
         recyclerBeacons.setVisibility(View.GONE);
         txtEmpty.setVisibility(View.VISIBLE);
+        swipeBeacons.setRefreshing(false);
     }
 
     @Override
@@ -131,6 +130,5 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         loadData();
-        swipeBeacons.setRefreshing(false);
     }
 }
