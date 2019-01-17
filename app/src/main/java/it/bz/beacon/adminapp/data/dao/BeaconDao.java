@@ -14,9 +14,8 @@ import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 @Dao
 public abstract class BeaconDao implements BaseDao<Beacon> {
 
-    // TODO: Check if all fields have to be specified explicitly (or if "SELECT *" is fine as well)
     @Transaction
-    @Query("SELECT * FROM Beacon ORDER BY name ASC")
+    @Query("SELECT id, batteryLevel, lat, lng, major, minor, manufacturerId, name, status FROM Beacon ORDER BY name ASC")
     public abstract LiveData<List<BeaconMinimal>> getAll();
 
     @Query("SELECT * FROM Beacon WHERE id = :id")

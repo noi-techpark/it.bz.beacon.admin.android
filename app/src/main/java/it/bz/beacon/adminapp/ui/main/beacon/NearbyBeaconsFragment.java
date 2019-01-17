@@ -9,16 +9,16 @@ import java.util.List;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 
-public class AllBeaconsFragment extends BaseBeaconsFragment {
+public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     private BeaconViewModel beaconViewModel;
 
-    public AllBeaconsFragment() {
+    public NearbyBeaconsFragment() {
         // Required empty public constructor
     }
 
-    public static AllBeaconsFragment newInstance() {
-        AllBeaconsFragment fragment = new AllBeaconsFragment();
+    public static NearbyBeaconsFragment newInstance() {
+        NearbyBeaconsFragment fragment = new NearbyBeaconsFragment();
         return fragment;
     }
 
@@ -30,6 +30,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     protected void getBeacons(Observer<List<BeaconMinimal>> observer) {
+        // TODO: find nearby beacons (Bluetooth)
         beaconViewModel.getAll().observe(this, observer);
     }
 }

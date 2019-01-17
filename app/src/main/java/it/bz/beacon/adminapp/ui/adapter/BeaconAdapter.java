@@ -21,14 +21,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 
 public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconViewHolder> implements Filterable {
 
     private Context context;
-    private List<Beacon> originalValues;
-    private List<Beacon> beacons = new ArrayList<>();
+    private List<BeaconMinimal> originalValues;
+    private List<BeaconMinimal> beacons = new ArrayList<>();
 
     public BeaconAdapter(Context context) {
         this.context = context;
@@ -45,7 +45,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         holder.setBeacon(beacons.get(position));
     }
 
-    public void setBeacons(List<Beacon> beacons) {
+    public void setBeacons(List<BeaconMinimal> beacons) {
 //        beacons.sort(new Comparator<Beacon>() {
 //            @Override
 //            public int compare(Beacon Beacon1, Beacon Beacon2) {
@@ -72,14 +72,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             @Override
             protected void publishResults(CharSequence constraint,FilterResults results) {
 
-                beacons = (List<Beacon>) results.values; // has the filtered values
+                beacons = (List<BeaconMinimal>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                List<Beacon> filteredBeacons = new ArrayList<>();
+                List<BeaconMinimal> filteredBeacons = new ArrayList<>();
 
                 if (originalValues == null) {
                     originalValues = new ArrayList<>(beacons);
@@ -92,11 +92,11 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 } else {
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
-                        Beacon Beacon = originalValues.get(i);
-                        if (Beacon.getName().toLowerCase().contains(constraint.toString())
-                                || Beacon.getDescription().toLowerCase().contains(constraint.toString())
-                                || Beacon.getManufacturerId().toLowerCase().contains(constraint.toString())) {
-                            filteredBeacons.add(Beacon);
+                        BeaconMinimal beaconMinimal = originalValues.get(i);
+                        if (beaconMinimal.getName().toLowerCase().contains(constraint.toString())
+                                || beaconMinimal.getName().toLowerCase().contains(constraint.toString())
+                                || beaconMinimal.getManufacturerId().toLowerCase().contains(constraint.toString())) {
+                            filteredBeacons.add(beaconMinimal);
                         }
                     }
                     results.count = filteredBeacons.size();
@@ -109,8 +109,8 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     class BeaconViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.beacon_title)
-        TextView title;
+        @BindView(R.id.beacon_name)
+        TextView name;
 
         @BindView(R.id.beacon_major)
         TextView major;
@@ -124,24 +124,28 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         @BindView(R.id.beacon_battery)
         ImageView battery;
 
+        @BindView(R.id.beacon_manufacturer_id)
+        TextView manufacturerId;
+
         private BeaconViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        private void setBeacon(final Beacon beacon) {
+        private void setBeacon(final BeaconMinimal beaconMinimal) {
 
-            title.setText(beacon.getName());
-            major.setText("" + beacon.getMajor());
-            minor.setText("" + beacon.getMinor());
+            name.setText(beaconMinimal.getName());
+            major.setText("Major: " + beaconMinimal.getMajor());
+            minor.setText("Minor: " + beaconMinimal.getMinor());
+            manufacturerId.setText(beaconMinimal.getManufacturerId());
 
             ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
 
-            if (beacon.getBatteryLevel() < 34) {
+            if (beaconMinimal.getBatteryLevel() < 34) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
             }
             else {
-                if (beacon.getBatteryLevel() < 66) {
+                if (beaconMinimal.getBatteryLevel() < 66) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
                 }
                 else {
@@ -152,7 +156,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, DetailActivity.class);
-                    intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beacon.getId());
+                    intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     context.startActivity(intent);
                 }
             });

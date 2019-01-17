@@ -1,7 +1,9 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,13 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -40,8 +41,6 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
     protected ContentLoadingProgressBar progressBar;
 
     private BeaconAdapter adapter;
-
-    private BeaconViewModel beaconViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,21 +62,28 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
         swipeBeacons.setOnRefreshListener(this);
         swipeBeacons.setColorSchemeResources(R.color.primary);
 
-      //  beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
-
         loadData();
         return view;
     }
 
     // TODO: use LiveData here
     private void loadData() {
-        showLoading();
-        adapter.setBeacons(getBeacons());
+        getBeacons(new Observer<List<BeaconMinimal>>() {
+            @Override
+            public void onChanged(@Nullable List<BeaconMinimal> beacons) {
+                if (beacons == null || beacons.size() <= 0) {
+                    showNoData();
+                } else {
+                    adapter.setBeacons(beacons);
+                    showList();
+                }
+            }
+        });
+
         showList();
     }
 
-    abstract protected ArrayList<Beacon> getBeacons();
-
+    abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -120,5 +126,11 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
+        swipeBeacons.setRefreshing(false);
     }
 }

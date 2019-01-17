@@ -1,10 +1,19 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 
 public class IssuesFragment extends BaseBeaconsFragment {
+
+    private BeaconViewModel beaconViewModel;
 
     public IssuesFragment() {
         // Required empty public constructor
@@ -15,37 +24,14 @@ public class IssuesFragment extends BaseBeaconsFragment {
         return fragment;
     }
 
-    // TODO: Replace this fake method
     @Override
-    protected ArrayList<Beacon> getBeacons() {
-        ArrayList<Beacon> beacons = new ArrayList<>();
-
-        Beacon b = new Beacon();
-        b.setId(1L);
-        b.setName("Beacon 71");
-        b.setDescription("A2039847270");
-        b.setBatteryLevel(45);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(2L);
-        b.setName("Beacon 22");
-        b.setDescription("A6143983537");
-        b.setBatteryLevel(11);
-        beacons.add(b);
-
-        b = new Beacon();
-        b.setId(3L);
-        b.setName("Beacon 32");
-        b.setDescription("A3495783439");
-        b.setBatteryLevel(87);
-        beacons.add(b);
-
-        return beacons;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
     }
 
     @Override
-    public void onRefresh() {
-
+    protected void getBeacons(Observer<List<BeaconMinimal>> observer) {
+        beaconViewModel.getAll().observe(this, observer);
     }
 }

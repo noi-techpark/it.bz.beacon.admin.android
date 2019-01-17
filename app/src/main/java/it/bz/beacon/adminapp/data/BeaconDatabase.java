@@ -77,7 +77,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
 
             Random random = new Random();
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1000; i++) {
                 Beacon beacon = new Beacon();
                 beacon.setId(i);
                 beacon.setName("Beacon " + i);
