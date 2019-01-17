@@ -28,6 +28,7 @@ import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 public abstract class BeaconDatabase extends RoomDatabase {
 
     private static BeaconDatabase INSTANCE;
+    public static String DB_NAME = "beacon_db";
 
     public abstract BeaconDao beaconDao();
     public abstract BeaconImageDao beaconImageDao();
@@ -38,7 +39,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
             synchronized (BeaconDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            BeaconDatabase.class, "beacon_db")
+                            BeaconDatabase.class, DB_NAME)
                             .addCallback(roomDatabaseCallback)
                             .fallbackToDestructiveMigration()
                             .build();
@@ -60,15 +61,15 @@ public abstract class BeaconDatabase extends RoomDatabase {
                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                     super.onCreate(db);
                     // TODO: remove this in production
-                    new PopulateDbAsync(INSTANCE).execute();
+                    new PopulateDbTask(INSTANCE).execute();
                 }
             };
 
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
+    private static class PopulateDbTask extends AsyncTask<Void, Void, Void> {
 
         private final BeaconDao beaconDao;
 
-        PopulateDbAsync(BeaconDatabase db) {
+        PopulateDbTask(BeaconDatabase db) {
             beaconDao = db.beaconDao();
         }
 
@@ -77,7 +78,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
 
             Random random = new Random();
 
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100; i++) {
                 Beacon beacon = new Beacon();
                 beacon.setId(i);
                 beacon.setName("Beacon " + i);
