@@ -19,12 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
@@ -34,7 +32,6 @@ import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
-import it.bz.beacon.adminapp.ui.main.beacon.BeaconsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.IssuesFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.MapFragment;
