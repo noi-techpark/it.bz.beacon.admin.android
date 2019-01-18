@@ -7,12 +7,15 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import io.swagger.client.ApiClient;
+import io.swagger.client.api.AuthControllerApi;
+import io.swagger.client.api.BeaconControllerApi;
 import it.bz.beacon.adminapp.data.Storage;
 
 public class AdminApplication extends Application {
 
-//    private static AuthApi authApi;
-//    private static DefaultApi defaultApi;
+    private static AuthControllerApi authControllerApi;
+    private static BeaconControllerApi beaconControllerApi;
     private static Storage storage;
     public static final String LOG_TAG = "Beacon";
 
@@ -20,16 +23,17 @@ public class AdminApplication extends Application {
     public void onCreate() {
         super.onCreate();
         storage = new Storage(getApplicationContext());
-//        ApiClient apiClient = new ApiClient();
-//        apiClient.setBasePath(getApplicationContext().getString(R.string.basePath));
-//        apiClient.setConnectTimeout(getApplicationContext().getResources().getInteger(R.integer.connection_timeout)); // connect timeout
-//        apiClient.setReadTimeout(getApplicationContext().getResources().getInteger(R.integer.read_timeout));    // socket timeout
+
+        ApiClient apiClient = new ApiClient();
+        apiClient.setBasePath(getApplicationContext().getString(R.string.basePath));
+        apiClient.setConnectTimeout(getApplicationContext().getResources().getInteger(R.integer.connection_timeout));
+        apiClient.setReadTimeout(getApplicationContext().getResources().getInteger(R.integer.read_timeout));
 //        apiClient.setUsername(getString(R.string.basic_username));
 //        apiClient.setPassword(getString(R.string.basic_password));
-//        io.swagger.client.Configuration.setDefaultApiClient(apiClient);
+        io.swagger.client.Configuration.setDefaultApiClient(apiClient);
 
-//        authApi = new AuthApi();
-//        defaultApi = new DefaultApi();
+        authControllerApi = new AuthControllerApi();
+        beaconControllerApi = new BeaconControllerApi();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -61,11 +65,11 @@ public class AdminApplication extends Application {
         return storage;
     }
 
-//    public static AuthApi getAuthApi() {
-//        return authApi;
-//    }
-//
-//    public static DefaultApi getDefaultApi() {
-//        return defaultApi;
-//    }
+    public static AuthControllerApi getAuthApi() {
+        return authControllerApi;
+    }
+
+    public static BeaconControllerApi getBeaconApi() {
+        return beaconControllerApi;
+    }
 }
