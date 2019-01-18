@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import io.swagger.client.model.Beacon;
 import io.swagger.client.model.BeaconUpdate;
+import io.swagger.client.model.Order;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -57,14 +58,14 @@ public class BeaconControllerApi {
 
     /**
      * Build call for createUsingPOST
-     * @param orderId orderId (required)
+     * @param order order (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOSTCall(String orderId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = orderId;
+    public com.squareup.okhttp.Call createUsingPOSTCall(Order order, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = order;
 
         // create path and map variables
         String localVarPath = "/v1/admin/beacons/createByOrder";
@@ -105,15 +106,15 @@ public class BeaconControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createUsingPOSTValidateBeforeCall(String orderId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call createUsingPOSTValidateBeforeCall(Order order, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        // verify the required parameter 'orderId' is set
-        if (orderId == null) {
-            throw new ApiException("Missing the required parameter 'orderId' when calling createUsingPOST(Async)");
+        // verify the required parameter 'order' is set
+        if (order == null) {
+            throw new ApiException("Missing the required parameter 'order' when calling createUsingPOST(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = createUsingPOSTCall(orderId, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUsingPOSTCall(order, progressListener, progressRequestListener);
         return call;
 
     }
@@ -121,24 +122,24 @@ public class BeaconControllerApi {
     /**
      * Create a beacon
      * 
-     * @param orderId orderId (required)
+     * @param order order (required)
      * @return List&lt;Beacon&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<Beacon> createUsingPOST(String orderId) throws ApiException {
-        ApiResponse<List<Beacon>> resp = createUsingPOSTWithHttpInfo(orderId);
+    public List<Beacon> createUsingPOST(Order order) throws ApiException {
+        ApiResponse<List<Beacon>> resp = createUsingPOSTWithHttpInfo(order);
         return resp.getData();
     }
 
     /**
      * Create a beacon
      * 
-     * @param orderId orderId (required)
+     * @param order order (required)
      * @return ApiResponse&lt;List&lt;Beacon&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<Beacon>> createUsingPOSTWithHttpInfo(String orderId) throws ApiException {
-        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(orderId, null, null);
+    public ApiResponse<List<Beacon>> createUsingPOSTWithHttpInfo(Order order) throws ApiException {
+        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(order, null, null);
         Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -146,12 +147,12 @@ public class BeaconControllerApi {
     /**
      * Create a beacon (asynchronously)
      * 
-     * @param orderId orderId (required)
+     * @param order order (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOSTAsync(String orderId, final ApiCallback<List<Beacon>> callback) throws ApiException {
+    public com.squareup.okhttp.Call createUsingPOSTAsync(Order order, final ApiCallback<List<Beacon>> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -172,7 +173,7 @@ public class BeaconControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(orderId, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(order, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
