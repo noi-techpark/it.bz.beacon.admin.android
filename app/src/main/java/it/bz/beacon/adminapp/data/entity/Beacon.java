@@ -3,9 +3,28 @@ package it.bz.beacon.adminapp.data.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 @Entity
 public class Beacon {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_CONFIGURATION_PENDING})
+    public @interface FilterStatus {}
+
+    public static final String STATUS_OK = "OK";
+    public static final String STATUS_BATTERY_LOW = "BATTERY_LOW";
+    public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({LOCATION_OUTDOOR, LOCATION_INDOOR})
+    public @interface FilterLocation {}
+
+    public static final String LOCATION_OUTDOOR = "OUTDOOR";
+    public static final String LOCATION_INDOOR = "INDOOR";
 
     @NonNull
     @PrimaryKey
@@ -31,6 +50,7 @@ public class Beacon {
     private String name;
     private String namespace;
     private String status;
+    private int temperature;
     private int txPower;
     private String url;
     private String uuid;
@@ -95,7 +115,7 @@ public class Beacon {
         this.eddystoneUrl = eddystoneUrl;
     }
 
-    public boolean getIBeacon() {
+    public boolean isIBeacon() {
         return iBeacon;
     }
 
@@ -155,7 +175,7 @@ public class Beacon {
         return locationType;
     }
 
-    public void setLocationType(String locationType) {
+    public void setLocationType(@FilterLocation String locationType) {
         this.locationType = locationType;
     }
 
@@ -211,8 +231,16 @@ public class Beacon {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(@FilterStatus String status) {
         this.status = status;
+    }
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(int temperature) {
+        this.temperature = temperature;
     }
 
     public int getTxPower() {

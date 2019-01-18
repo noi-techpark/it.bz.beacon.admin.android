@@ -21,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 
@@ -118,10 +119,10 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         @BindView(R.id.beacon_minor)
         TextView minor;
 
-        @BindView(R.id.beacon_status)
+        @BindView(R.id.info_status_icon)
         ImageView status;
 
-        @BindView(R.id.beacon_battery)
+        @BindView(R.id.info_battery_icon)
         ImageView battery;
 
         @BindView(R.id.beacon_manufacturer_id)
@@ -139,7 +140,15 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             minor.setText("Minor: " + beaconMinimal.getMinor());
             manufacturerId.setText(beaconMinimal.getManufacturerId());
 
-            ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
+            }
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
+            }
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
+            }
 
             if (beaconMinimal.getBatteryLevel() < 34) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
@@ -157,6 +166,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 public void onClick(View view) {
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
+                    intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
                     context.startActivity(intent);
                 }
             });

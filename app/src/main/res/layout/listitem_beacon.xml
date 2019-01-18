@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="64dp"
+    android:background="@drawable/background_listitem"
     android:paddingStart="16dp"
     android:paddingTop="10dp">
 
@@ -50,13 +51,13 @@
         android:textColor="@color/secondaryText"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/beacon_status"
+        app:layout_constraintEnd_toStartOf="@id/info_status_icon"
         app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toEndOf="@+id/beacon_minor"
         tools:text="fS830L1ab" />
 
     <ImageView
-        android:id="@+id/beacon_status"
+        android:id="@+id/info_status_icon"
         android:layout_width="24dp"
         android:layout_height="12dp"
         android:layout_marginEnd="16dp"
@@ -67,7 +68,7 @@
         app:srcCompat="@drawable/ic_status" />
 
     <ImageView
-        android:id="@+id/beacon_battery"
+        android:id="@+id/info_battery_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="16dp"

@@ -17,5 +17,7 @@
 
     <color name="status_ok">#60da3c</color>
     <color name="status_warning">#f6dd00</color>
+    <color name="status_fatal">#d20000</color>
+    <color name="status_pending">@color/primary</color>
 
 </resources>
