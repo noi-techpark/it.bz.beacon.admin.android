@@ -32,11 +32,17 @@ public class BeaconUpdate {
   @SerializedName("description")
   private String description = null;
 
-  @SerializedName("eddystone")
-  private Boolean eddystone = null;
+  @SerializedName("eddystoneEid")
+  private Boolean eddystoneEid = null;
+
+  @SerializedName("eddystoneEtlm")
+  private Boolean eddystoneEtlm = null;
 
   @SerializedName("eddystoneTlm")
   private Boolean eddystoneTlm = null;
+
+  @SerializedName("eddystoneUid")
+  private Boolean eddystoneUid = null;
 
   @SerializedName("eddystoneUrl")
   private Boolean eddystoneUrl = null;
@@ -121,6 +127,9 @@ public class BeaconUpdate {
   @SerializedName("namespace")
   private String namespace = null;
 
+  @SerializedName("telemetry")
+  private Boolean telemetry = null;
+
   @SerializedName("txPower")
   private Integer txPower = null;
 
@@ -148,22 +157,40 @@ public class BeaconUpdate {
     this.description = description;
   }
 
-  public BeaconUpdate eddystone(Boolean eddystone) {
-    this.eddystone = eddystone;
+  public BeaconUpdate eddystoneEid(Boolean eddystoneEid) {
+    this.eddystoneEid = eddystoneEid;
     return this;
   }
 
    /**
-   * Get eddystone
-   * @return eddystone
+   * Get eddystoneEid
+   * @return eddystoneEid
   **/
   @ApiModelProperty(value = "")
-  public Boolean isEddystone() {
-    return eddystone;
+  public Boolean isEddystoneEid() {
+    return eddystoneEid;
   }
 
-  public void setEddystone(Boolean eddystone) {
-    this.eddystone = eddystone;
+  public void setEddystoneEid(Boolean eddystoneEid) {
+    this.eddystoneEid = eddystoneEid;
+  }
+
+  public BeaconUpdate eddystoneEtlm(Boolean eddystoneEtlm) {
+    this.eddystoneEtlm = eddystoneEtlm;
+    return this;
+  }
+
+   /**
+   * Get eddystoneEtlm
+   * @return eddystoneEtlm
+  **/
+  @ApiModelProperty(value = "")
+  public Boolean isEddystoneEtlm() {
+    return eddystoneEtlm;
+  }
+
+  public void setEddystoneEtlm(Boolean eddystoneEtlm) {
+    this.eddystoneEtlm = eddystoneEtlm;
   }
 
   public BeaconUpdate eddystoneTlm(Boolean eddystoneTlm) {
@@ -182,6 +209,24 @@ public class BeaconUpdate {
 
   public void setEddystoneTlm(Boolean eddystoneTlm) {
     this.eddystoneTlm = eddystoneTlm;
+  }
+
+  public BeaconUpdate eddystoneUid(Boolean eddystoneUid) {
+    this.eddystoneUid = eddystoneUid;
+    return this;
+  }
+
+   /**
+   * Get eddystoneUid
+   * @return eddystoneUid
+  **/
+  @ApiModelProperty(value = "")
+  public Boolean isEddystoneUid() {
+    return eddystoneUid;
+  }
+
+  public void setEddystoneUid(Boolean eddystoneUid) {
+    this.eddystoneUid = eddystoneUid;
   }
 
   public BeaconUpdate eddystoneUrl(Boolean eddystoneUrl) {
@@ -406,6 +451,24 @@ public class BeaconUpdate {
     this.namespace = namespace;
   }
 
+  public BeaconUpdate telemetry(Boolean telemetry) {
+    this.telemetry = telemetry;
+    return this;
+  }
+
+   /**
+   * Get telemetry
+   * @return telemetry
+  **/
+  @ApiModelProperty(value = "")
+  public Boolean isTelemetry() {
+    return telemetry;
+  }
+
+  public void setTelemetry(Boolean telemetry) {
+    this.telemetry = telemetry;
+  }
+
   public BeaconUpdate txPower(Integer txPower) {
     this.txPower = txPower;
     return this;
@@ -473,8 +536,10 @@ public class BeaconUpdate {
     }
     BeaconUpdate beaconUpdate = (BeaconUpdate) o;
     return Objects.equals(this.description, beaconUpdate.description) &&
-        Objects.equals(this.eddystone, beaconUpdate.eddystone) &&
+        Objects.equals(this.eddystoneEid, beaconUpdate.eddystoneEid) &&
+        Objects.equals(this.eddystoneEtlm, beaconUpdate.eddystoneEtlm) &&
         Objects.equals(this.eddystoneTlm, beaconUpdate.eddystoneTlm) &&
+        Objects.equals(this.eddystoneUid, beaconUpdate.eddystoneUid) &&
         Objects.equals(this.eddystoneUrl, beaconUpdate.eddystoneUrl) &&
         Objects.equals(this.iBeacon, beaconUpdate.iBeacon) &&
         Objects.equals(this.instanceId, beaconUpdate.instanceId) &&
@@ -487,6 +552,7 @@ public class BeaconUpdate {
         Objects.equals(this.minor, beaconUpdate.minor) &&
         Objects.equals(this.name, beaconUpdate.name) &&
         Objects.equals(this.namespace, beaconUpdate.namespace) &&
+        Objects.equals(this.telemetry, beaconUpdate.telemetry) &&
         Objects.equals(this.txPower, beaconUpdate.txPower) &&
         Objects.equals(this.url, beaconUpdate.url) &&
         Objects.equals(this.uuid, beaconUpdate.uuid);
@@ -494,7 +560,7 @@ public class BeaconUpdate {
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, eddystone, eddystoneTlm, eddystoneUrl, iBeacon, instanceId, interval, lat, lng, locationDescription, locationType, major, minor, name, namespace, txPower, url, uuid);
+    return Objects.hash(description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, instanceId, interval, lat, lng, locationDescription, locationType, major, minor, name, namespace, telemetry, txPower, url, uuid);
   }
 
 
@@ -504,8 +570,10 @@ public class BeaconUpdate {
     sb.append("class BeaconUpdate {\n");
     
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    eddystone: ").append(toIndentedString(eddystone)).append("\n");
+    sb.append("    eddystoneEid: ").append(toIndentedString(eddystoneEid)).append("\n");
+    sb.append("    eddystoneEtlm: ").append(toIndentedString(eddystoneEtlm)).append("\n");
     sb.append("    eddystoneTlm: ").append(toIndentedString(eddystoneTlm)).append("\n");
+    sb.append("    eddystoneUid: ").append(toIndentedString(eddystoneUid)).append("\n");
     sb.append("    eddystoneUrl: ").append(toIndentedString(eddystoneUrl)).append("\n");
     sb.append("    iBeacon: ").append(toIndentedString(iBeacon)).append("\n");
     sb.append("    instanceId: ").append(toIndentedString(instanceId)).append("\n");
@@ -518,6 +586,7 @@ public class BeaconUpdate {
     sb.append("    minor: ").append(toIndentedString(minor)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
+    sb.append("    telemetry: ").append(toIndentedString(telemetry)).append("\n");
     sb.append("    txPower: ").append(toIndentedString(txPower)).append("\n");
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");

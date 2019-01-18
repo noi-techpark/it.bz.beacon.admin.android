@@ -89,11 +89,11 @@
         "parameters": [
           {
             "in": "body",
-            "name": "orderId",
-            "description": "orderId",
+            "name": "order",
+            "description": "order",
             "required": true,
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/Order"
             }
           }
         ],
@@ -888,10 +888,16 @@
         "description": {
           "type": "string"
         },
-        "eddystone": {
+        "eddystoneEid": {
+          "type": "boolean"
+        },
+        "eddystoneEtlm": {
           "type": "boolean"
         },
         "eddystoneTlm": {
+          "type": "boolean"
+        },
+        "eddystoneUid": {
           "type": "boolean"
         },
         "eddystoneUrl": {
@@ -963,6 +969,9 @@
             "BATTERY_LOW",
             "CONFIGURATION_PENDING"
           ]
+        },
+        "telemetry": {
+          "type": "boolean"
         },
         "temperature": {
           "type": "integer",
@@ -1040,10 +1049,16 @@
         "description": {
           "type": "string"
         },
-        "eddystone": {
+        "eddystoneEid": {
+          "type": "boolean"
+        },
+        "eddystoneEtlm": {
           "type": "boolean"
         },
         "eddystoneTlm": {
+          "type": "boolean"
+        },
+        "eddystoneUid": {
           "type": "boolean"
         },
         "eddystoneUrl": {
@@ -1103,6 +1118,9 @@
         "namespace": {
           "type": "string"
         },
+        "telemetry": {
+          "type": "boolean"
+        },
         "txPower": {
           "type": "integer",
           "format": "int32",
@@ -1131,7 +1149,9 @@
       "properties": {
         "beaconId": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "minimum": 0,
+          "exclusiveMinimum": false
         },
         "problem": {
           "type": "string"
@@ -1159,6 +1179,18 @@
         }
       },
       "title": "IssueSolution"
+    },
+    "Order": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "Order"
     },
     "User": {
       "type": "object",

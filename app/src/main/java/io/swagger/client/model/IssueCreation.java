@@ -47,6 +47,7 @@ public class IssueCreation {
 
    /**
    * Get beaconId
+   * minimum: 0
    * @return beaconId
   **/
   @ApiModelProperty(required = true, value = "")
