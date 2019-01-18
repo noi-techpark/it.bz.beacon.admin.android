@@ -53,6 +53,7 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
 
         adapter = new BeaconAdapter(getContext());
         recyclerBeacons.setAdapter(adapter);
+        recyclerBeacons.setHasFixedSize(true);
         recyclerBeacons.setItemAnimator(new DefaultItemAnimator());
         recyclerBeacons.setLayoutManager(new LinearLayoutManager(getContext()));
 

@@ -90,7 +90,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@string/login_username"
+                    tools:text="@string/login_username"
                     android:textColor="@android:color/white"
                     android:textColorHint="@android:color/white" />
 
@@ -122,7 +122,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@string/login_password"
+                    tools:text="@string/login_password"
                     android:textColor="#fff" />
 
             </android.support.design.widget.TextInputLayout>

@@ -1,18 +1,30 @@
 package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.appyvet.materialrangebar.RangeBar;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,17 +33,33 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
+import it.bz.beacon.adminapp.util.DateFormatter;
 
 public class DetailActivity extends BaseActivity implements OnMapReadyCallback, OnRetryLoadMapListener {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
+    public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
     private static final int LOCATION_PERMISSION_REQUEST = 1;
+
+    @BindView(R.id.progress)
+    protected ConstraintLayout progress;
+
+    @BindView(R.id.progressText)
+    protected TextView txtProgress;
+
+    @BindView(R.id.content_detail)
+    protected FrameLayout content;
 
     @BindView(R.id.config_tablayout)
     protected TabLayout tabLayoutConfig;
@@ -57,12 +85,73 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.description_content)
     protected View contentDescription;
 
-    @BindView(R.id.rangebar)
-    protected RangeBar rangeBar;
+    @BindView(R.id.details_last_seen)
+    protected TextView txtLastSeen;
+
+    @BindView(R.id.details_status)
+    protected ImageView imgStatus;
+
+    @BindView(R.id.info_battery)
+    protected TextView txtBattery;
+
+    @BindView(R.id.info_battery_icon)
+    protected ImageView imgBattery;
+
+    @BindView(R.id.info_status)
+    protected TextView txtStatus;
+
+    @BindView(R.id.info_status_icon)
+    protected ImageView imgInfoStatus;
+
+    @BindView(R.id.info_temperature)
+    protected TextView txtTemperature;
+
+    @BindView(R.id.info_rangebar)
+    protected RangeBar rbSignalStrength;
+
+    @BindView(R.id.info_interval)
+    protected TextInputEditText editInterval;
+
+    @BindView(R.id.ibeacon_uuid)
+    protected TextInputEditText editUuid;
+
+    @BindView(R.id.ibeacon_major)
+    protected TextInputEditText editMajor;
+
+    @BindView(R.id.ibeacon_minor)
+    protected TextInputEditText editMinor;
+
+    @BindView(R.id.eddystone_namespace)
+    protected TextInputEditText editNamespace;
+
+    @BindView(R.id.eddystone_instanceid)
+    protected TextInputEditText editInstanceId;
+
+    @BindView(R.id.eddystone_url)
+    protected TextInputEditText editUrl;
+
+    @BindView(R.id.gps_latitude)
+    protected TextInputEditText editLatitude;
+
+    @BindView(R.id.gps_longitude)
+    protected TextInputEditText editLongitude;
+
+    @BindView(R.id.toggle_outdoor)
+    protected Button btnOutdoor;
+
+    @BindView(R.id.toggle_indoor)
+    protected Button btnIndoor;
+
+    @BindView(R.id.fab)
+    protected FloatingActionButton fabAddIssue;
 
     private long beaconId;
+    private String beaconName;
+    private Beacon beacon;
     protected GoogleMap googleMap;
     protected boolean mapShowing = false;
+
+    private BeaconViewModel beaconViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +164,22 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        // TODO: Set beacon name as title
-        setTitle("Beacon584");
+        if (getIntent() != null) {
+            beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
+            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+        }
+        setTitle(beaconName);
 
+        configureTabListeners();
+
+        beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+
+        initMapFragment();
+
+        loadBeacon();
+    }
+
+    private void configureTabListeners() {
         tabLayoutConfig.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -111,9 +213,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 onLocationTabTapped(tab.getPosition());
             }
         });
-        rangeBar.setRangePinsByIndices(0, 3);
-
-        initMapFragment();
     }
 
     private void onConfigTabTapped(int position) {
@@ -154,6 +253,112 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 contentDescription.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    private void loadBeacon() {
+        showProgress(getString(R.string.loading));
+
+        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
+            @Override
+            public void onChanged(@Nullable Beacon changedBeacon) {
+                beacon = changedBeacon;
+                showContent(changedBeacon);
+            }
+        });
+    }
+
+    private void showContent(final Beacon beacon) {
+        if (beacon != null) {
+            txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen()))));
+
+            txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
+
+            if (beacon.getBatteryLevel() < 34) {
+                imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
+            }
+            else {
+                if (beacon.getBatteryLevel() < 66) {
+                    imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
+                }
+                else {
+                    imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_full));
+                }
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_OK)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_ok)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_ok)));
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
+            }
+            txtTemperature.setText(getString(R.string.degree, beacon.getTemperature()));
+
+            rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
+            editInterval.setText(String.valueOf(beacon.getInterval()));
+
+            editUuid.setText(beacon.getUuid());
+            editMajor.setText(String.valueOf(beacon.getMajor()));
+            editMinor.setText(String.valueOf(beacon.getMinor()));
+
+            if (beacon.isEddystone()) {
+                editNamespace.setText(beacon.getNamespace());
+                editInstanceId.setText(beacon.getInstanceId());
+                editUrl.setText(beacon.getUrl());
+            }
+
+            editLatitude.setText(String.format(Locale.getDefault(), "%.5f", beacon.getLat()));
+            editLongitude.setText(String.format(Locale.getDefault(), "%.5f", beacon.getLng()));
+
+            btnOutdoor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    beacon.setLocationType(Beacon.LOCATION_OUTDOOR);
+                    updateLocationButtons(Beacon.LOCATION_OUTDOOR);
+                }
+            });
+
+            btnIndoor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    beacon.setLocationType(Beacon.LOCATION_INDOOR);
+                    updateLocationButtons(Beacon.LOCATION_INDOOR);
+                }
+            });
+        }
+        fabAddIssue.show();
+        content.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+    }
+
+    private void updateLocationButtons(String location) {
+        if (location.equals(Beacon.LOCATION_OUTDOOR)) {
+            btnOutdoor.setBackground(ContextCompat.getDrawable(this, R.drawable.background_toggle_on));
+            btnOutdoor.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+            btnOutdoor.setTextColor(ContextCompat.getColor(this, R.color.secondaryText));
+            btnIndoor.setBackground(ContextCompat.getDrawable(this, R.drawable.background_toggle_off));
+            btnIndoor.setCompoundDrawables(null, null, null, null);
+            btnIndoor.setTextColor(ContextCompat.getColor(this, R.color.divider));
+        }
+        else {
+            btnOutdoor.setBackground(ContextCompat.getDrawable(this, R.drawable.background_toggle_off));
+            btnOutdoor.setCompoundDrawables(null, null, null, null);
+            btnOutdoor.setTextColor(ContextCompat.getColor(this, R.color.divider));
+            btnIndoor.setBackground(ContextCompat.getDrawable(this, R.drawable.background_toggle_on));
+            btnIndoor.setTextColor(ContextCompat.getColor(this, R.color.secondaryText));
+            btnIndoor.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+        }
+    }
+
+    private void showProgress(String text) {
+        fabAddIssue.hide();
+        txtProgress.setText(text);
+        content.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
     }
 
     private void initMapFragment() {
