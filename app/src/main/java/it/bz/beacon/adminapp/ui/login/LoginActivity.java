@@ -1,7 +1,6 @@
 package it.bz.beacon.adminapp.ui.login;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -12,10 +11,19 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.swagger.client.ApiCallback;
+import io.swagger.client.ApiException;
+import io.swagger.client.api.AuthControllerApi;
+import io.swagger.client.model.AuthenticationRequest;
+import io.swagger.client.model.AuthenticationToken;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
@@ -36,13 +44,15 @@ public class LoginActivity extends AppCompatActivity {
     protected View loginForm;
 
     private Storage storage;
-//    private AuthApi mAuthApi;
+    private AuthControllerApi authControllerApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         storage = AdminApplication.getStorage();
+        authControllerApi = AdminApplication.getAuthApi();
+
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
            openMain();
         }
@@ -72,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
         editUsername.setError(null);
         editPassword.setError(null);
 
-        // Store values at the time of the login attempt.
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
 
@@ -100,72 +109,46 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private class FakeLoginTask extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            storage.setUser(params[0], params[1]);
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showProgress(true);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            openMain();
-        }
-    }
-
     private void doLogin(final String username, final String password) {
         try {
-            // TODO: do real login here
-            FakeLoginTask task = new FakeLoginTask();
-            task.execute(username, password);
+            AuthenticationRequest request = new AuthenticationRequest();
+            request.setUsername(username);
+            request.setPassword(password);
 
-//            Login login = new Login();
-//            login.setUsername(username);
-//            login.setPassword(password);
-//            mAuthApi.routingV1AuthLoginPostAsync(login, new ApiCallback<FeUser>() {
-//                @Override
-//                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-//                    runOnUiThread(new Runnable() {
-//                        public void run() {
-//                            showProgress(false);
-//                            Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_login), Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void onSuccess(final FeUser result, int statusCode, Map<String, List<String>> responseHeaders) {
-//                    runOnUiThread(new Runnable() {
-//                        public void run() {
-//
-////                                mStorage.setUser(result, username, password, isAdmin, isTechnician);
-//                                openMain();
-//                                showProgress(false);
-//                        }
-//
-//                    });
-//                }
-//
-//                @Override
-//                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {}
-//
-//                @Override
-//                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {}
-//            });
+            authControllerApi.signinUsingPOSTAsync(request, new ApiCallback<AuthenticationToken>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            showProgress(false);
+                            Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_login), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onSuccess(AuthenticationToken result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    storage.setUser(username, result.getToken());
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            showProgress(false);
+                            openMain();
+                        }
+                    });
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
         } catch (Exception e) {
-            Log.d("Beacon", e.getMessage());
+            Log.e(AdminApplication.LOG_TAG, e.getMessage());
         }
     }
 
@@ -177,9 +160,6 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() > 4;
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
     private void showProgress(final boolean show) {
 
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);

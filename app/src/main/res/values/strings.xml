@@ -19,7 +19,34 @@
     <string name="filter">Filter</string>
     <string name="empty_list">No data found</string>
     <string name="about_title">Beacon South Tyrol</string>
-    <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies. Because the time for Internet of Things is now.</string>
+    <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies.
+        Because the time for Internet of Things is now.\n\n
+        1 - Project Management\n
+This work package includes all the activities that are needed to guarantee the correct implementation of all the foreseen activities.\n\n
+2 - Communication and community building\n
+This work package will include a lot of activities. The main goal is creation of a south tyrolean community of IoT companies, experts and talents that will stimulate new innovative ideas, projects, products and services.
+\n\n
+3 - State of the art analysis\n
+This work package shows the state of the art analysis of the IoT sector which will identify:\n
+The best technologies in the IoT sector and how can be integrated;
+A vision about future technologies that will come in the near future;
+An analysis of project and companies that will use or benefit from Beacon and IoT technologies in South Tyrol;
+A vision of possible future development of the project activities.\n\n
+4 - Beacon Network\n
+This work package includes:\n
+Installation of 3.500 beacons distributed over the whole South Tyrol;
+Development of an Open Source library that can be used by stakeholders which will interact with installed beacons;
+Development of an Open Source web tool to manage the beacon network;
+Development of an Open source app to manage the beacon network;
+Creation of a plan for the maintenance and the future development of the beacon network.\n\n
+5 - Wireless Sensor Network\n
+This work package includes:\n
+Installation of a LoRaWAN testing network at the NOI techpark;
+Creation of a local IoT Community of local, national and international research institutions, companies and experts;
+Development of an Open Source web tool to manage the network.\n\n
+6 - Pilots implementation\n
+This work package aims to develop Open Source pilot services and applications that anyone can use as a reference implementation.
+    </string>
     <string name="location_permission_title">Location permission needed</string>
     <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>

@@ -47,14 +47,6 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
     }
 
     public void setBeacons(List<BeaconMinimal> beacons) {
-//        beacons.sort(new Comparator<Beacon>() {
-//            @Override
-//            public int compare(Beacon Beacon1, Beacon Beacon2) {
-//                if (!TextUtils.isEmpty(Beacon1.getTitle()) && !TextUtils.isEmpty(Beacon2.getTitle()))
-//                    return Beacon1.getTitle().compareTo(Beacon2.getTitle());
-//                return 0;
-//            }
-//        });
         this.beacons.clear();
         this.beacons.addAll(beacons);
         notifyDataSetChanged();
