@@ -3,14 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_map"
-        android:orderInCategory="20"
-        android:title="@string/map"
-        android:icon="@drawable/ic_menu_map"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menu_filter"
-        android:orderInCategory="30"
+        android:orderInCategory="50"
         android:icon="@drawable/ic_menu_filter_outline"
         android:title="@string/filter"
         app:showAsAction="ifRoom" />

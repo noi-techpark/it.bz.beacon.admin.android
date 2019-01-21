@@ -128,7 +128,6 @@ public class MainActivity extends BaseActivity
             case R.id.menu_list:
                 isMapShowing = false;
                 switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
-                invalidateOptionsMenu();
                 break;
             case R.id.menu_filter:
                 isFilterActive = !isFilterActive;
@@ -143,30 +142,20 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-//        MenuItem listItem =  menu.findItem(R.id.menu_list);
-//        MenuItem mapItem =  menu.findItem(R.id.menu_map);
-        MenuItem filterItem =  menu.findItem(R.id.menu_filter);
+        MenuItem filterItem = menu.findItem(R.id.menu_filter);
 
-//        if (isMapShowing) {
-//            mapItem.setVisible(false);
-//            listItem.setVisible(true);
-//        }
-//        else{
-//            mapItem.setVisible(true);
-//            listItem.setVisible(false);
-//        }
         if (filterItem != null) {
             if (isFilterActive) {
+                // TODO: filter items
                 filterItem.setIcon(R.drawable.ic_menu_filter);
-            }
-            else {
+            } else {
+                // TODO: unfilter items
                 filterItem.setIcon(R.drawable.ic_menu_filter_outline);
             }
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
