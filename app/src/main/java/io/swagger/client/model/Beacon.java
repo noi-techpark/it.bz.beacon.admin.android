@@ -242,9 +242,6 @@ public class Beacon {
   @SerializedName("telemetry")
   private Boolean telemetry = null;
 
-  @SerializedName("temperature")
-  private Integer temperature = null;
-
   @SerializedName("txPower")
   private Integer txPower = null;
 
@@ -686,24 +683,6 @@ public class Beacon {
     this.telemetry = telemetry;
   }
 
-  public Beacon temperature(Integer temperature) {
-    this.temperature = temperature;
-    return this;
-  }
-
-   /**
-   * Get temperature
-   * @return temperature
-  **/
-  @ApiModelProperty(value = "")
-  public Integer getTemperature() {
-    return temperature;
-  }
-
-  public void setTemperature(Integer temperature) {
-    this.temperature = temperature;
-  }
-
   public Beacon txPower(Integer txPower) {
     this.txPower = txPower;
     return this;
@@ -792,7 +771,6 @@ public class Beacon {
         Objects.equals(this.namespace, beacon.namespace) &&
         Objects.equals(this.status, beacon.status) &&
         Objects.equals(this.telemetry, beacon.telemetry) &&
-        Objects.equals(this.temperature, beacon.temperature) &&
         Objects.equals(this.txPower, beacon.txPower) &&
         Objects.equals(this.url, beacon.url) &&
         Objects.equals(this.uuid, beacon.uuid);
@@ -800,7 +778,7 @@ public class Beacon {
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, status, telemetry, temperature, txPower, url, uuid);
+    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, status, telemetry, txPower, url, uuid);
   }
 
 
@@ -833,7 +811,6 @@ public class Beacon {
     sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    telemetry: ").append(toIndentedString(telemetry)).append("\n");
-    sb.append("    temperature: ").append(toIndentedString(temperature)).append("\n");
     sb.append("    txPower: ").append(toIndentedString(txPower)).append("\n");
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
