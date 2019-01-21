@@ -15,7 +15,7 @@
       "url": "API license URL"
     }
   },
-  "host": "api.beacon-dev.ga",
+  "host": "localhost:8080",
   "basePath": "/",
   "tags": [
     {
@@ -972,10 +972,6 @@
         },
         "telemetry": {
           "type": "boolean"
-        },
-        "temperature": {
-          "type": "integer",
-          "format": "int32"
         },
         "txPower": {
           "type": "integer",

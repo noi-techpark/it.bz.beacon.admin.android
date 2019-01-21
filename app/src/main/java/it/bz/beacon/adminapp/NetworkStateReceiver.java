@@ -7,6 +7,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
+import it.bz.beacon.adminapp.data.repository.BeaconRepository;
+
 public class NetworkStateReceiver extends BroadcastReceiver {
 
     @Override
@@ -20,7 +23,24 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
                 if (networkInfo != null && networkInfo.isConnectedOrConnecting() && AdminApplication.getStorage().getLoginUserToken() != null) {
-                    // TODO: Synchronize data
+
+                    BeaconRepository beaconRepository = new BeaconRepository(context);
+                    beaconRepository.refreshBeacons(new DataUpdateEvent() {
+                        @Override
+                        public void onSuccess() {
+                            Log.i(AdminApplication.LOG_TAG, "Beacons refreshed!");
+                        }
+
+                        @Override
+                        public void onError() {
+                            Log.e(AdminApplication.LOG_TAG, "Error refreshing beacons");
+                        }
+
+                        @Override
+                        public void onAuthenticationFailed() {
+                            Log.e(AdminApplication.LOG_TAG, "Authentication failed");
+                        }
+                    });
                 }
                 else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                     Log.e(AdminApplication.LOG_TAG, "No connection");

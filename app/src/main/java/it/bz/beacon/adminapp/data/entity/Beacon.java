@@ -29,16 +29,17 @@ public class Beacon {
     @NonNull
     @PrimaryKey
     private long id;
-    private String instanceId;
-    private String description;
     private int batteryLevel;
-    private boolean eddystone;
+    private String description;
+    private boolean eddystoneEid;
+    private boolean eddystoneEtlm;
     private boolean eddystoneTlm;
+    private boolean eddystoneUid;
     private boolean eddystoneUrl;
     private boolean iBeacon;
+    private String instanceId;
     private int interval;
     private long lastSeen;
-    private long lastUpdated;
     private float lat;
     private float lng;
     private String locationDescription;
@@ -50,7 +51,7 @@ public class Beacon {
     private String name;
     private String namespace;
     private String status;
-    private int temperature;
+    private String telemetry;
     private int txPower;
     private String url;
     private String uuid;
@@ -67,12 +68,12 @@ public class Beacon {
         this.id = id;
     }
 
-    public String getInstanceId() {
-        return instanceId;
+    public int getBatteryLevel() {
+        return batteryLevel;
     }
 
-    public void setInstanceId(String instanceId) {
-        this.instanceId = instanceId;
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
     }
 
     public String getDescription() {
@@ -83,20 +84,20 @@ public class Beacon {
         this.description = description;
     }
 
-    public int getBatteryLevel() {
-        return batteryLevel;
+    public boolean isEddystoneEid() {
+        return eddystoneEid;
     }
 
-    public void setBatteryLevel(int batteryLevel) {
-        this.batteryLevel = batteryLevel;
+    public void setEddystoneEid(boolean eddystoneEid) {
+        this.eddystoneEid = eddystoneEid;
     }
 
-    public boolean isEddystone() {
-        return eddystone;
+    public boolean isEddystoneEtlm() {
+        return eddystoneEtlm;
     }
 
-    public void setEddystone(boolean eddystone) {
-        this.eddystone = eddystone;
+    public void setEddystoneEtlm(boolean eddystoneEtlm) {
+        this.eddystoneEtlm = eddystoneEtlm;
     }
 
     public boolean isEddystoneTlm() {
@@ -107,6 +108,14 @@ public class Beacon {
         this.eddystoneTlm = eddystoneTlm;
     }
 
+    public boolean isEddystoneUid() {
+        return eddystoneUid;
+    }
+
+    public void setEddystoneUid(boolean eddystoneUid) {
+        this.eddystoneUid = eddystoneUid;
+    }
+
     public boolean isEddystoneUrl() {
         return eddystoneUrl;
     }
@@ -115,12 +124,20 @@ public class Beacon {
         this.eddystoneUrl = eddystoneUrl;
     }
 
-    public boolean isIBeacon() {
+    public boolean isiBeacon() {
         return iBeacon;
     }
 
-    public void setIBeacon(boolean iBeacon) {
+    public void setiBeacon(boolean iBeacon) {
         this.iBeacon = iBeacon;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
 
     public int getInterval() {
@@ -137,14 +154,6 @@ public class Beacon {
 
     public void setLastSeen(long lastSeen) {
         this.lastSeen = lastSeen;
-    }
-
-    public long getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
     }
 
     public float getLat() {
@@ -175,7 +184,7 @@ public class Beacon {
         return locationType;
     }
 
-    public void setLocationType(@FilterLocation String locationType) {
+    public void setLocationType(String locationType) {
         this.locationType = locationType;
     }
 
@@ -231,16 +240,16 @@ public class Beacon {
         return status;
     }
 
-    public void setStatus(@FilterStatus String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public int getTemperature() {
-        return temperature;
+    public String getTelemetry() {
+        return telemetry;
     }
 
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
+    public void setTelemetry(String telemetry) {
+        this.telemetry = telemetry;
     }
 
     public int getTxPower() {

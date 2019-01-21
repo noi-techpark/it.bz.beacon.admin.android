@@ -17,7 +17,7 @@ public class AdminApplication extends Application {
     private static AuthControllerApi authControllerApi;
     private static BeaconControllerApi beaconControllerApi;
     private static Storage storage;
-    public static final String LOG_TAG = "Beacon";
+    public static final String LOG_TAG = "BeaconAdmin";
 
     @Override
     public void onCreate() {
