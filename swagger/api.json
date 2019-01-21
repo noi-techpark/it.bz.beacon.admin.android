@@ -15,7 +15,7 @@
       "url": "API license URL"
     }
   },
-  "host": "localhost:8080",
+  "host": "api.beacon-dev.it",
   "basePath": "/",
   "tags": [
     {
@@ -70,6 +70,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -120,6 +125,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -163,6 +173,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "post": {
@@ -214,6 +229,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -262,6 +282,11 @@
             "description": "Forbidden"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -313,6 +338,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -353,6 +383,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "patch": {
@@ -403,6 +438,11 @@
             "description": "Forbidden"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -446,6 +486,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "post": {
@@ -491,6 +536,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -531,6 +581,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -586,6 +641,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -619,6 +679,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "post": {
@@ -664,6 +729,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -704,6 +774,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "delete": {
@@ -742,6 +817,11 @@
             "description": "Forbidden"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       },
       "patch": {
@@ -792,6 +872,46 @@
             "description": "Forbidden"
           }
         },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/v1/checkToken": {
+      "get": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Check whether a token is valid or not",
+        "operationId": "checkTokenUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseMessage"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "deprecated": false
       }
     },
@@ -841,6 +961,13 @@
         },
         "deprecated": false
       }
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   },
   "definitions": {

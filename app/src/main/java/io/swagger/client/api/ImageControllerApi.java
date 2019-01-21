@@ -105,7 +105,7 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "JWT" };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
@@ -238,7 +238,7 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "JWT" };
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
@@ -369,7 +369,7 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "JWT" };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 

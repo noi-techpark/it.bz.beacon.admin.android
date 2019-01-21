@@ -6,6 +6,9 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
+
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.AuthControllerApi;
@@ -28,13 +31,18 @@ public class AdminApplication extends Application {
         apiClient.setBasePath(getApplicationContext().getString(R.string.basePath));
         apiClient.setConnectTimeout(getApplicationContext().getResources().getInteger(R.integer.connection_timeout));
         apiClient.setReadTimeout(getApplicationContext().getResources().getInteger(R.integer.read_timeout));
-//        apiClient.setUsername(getString(R.string.basic_username));
-//        apiClient.setPassword(getString(R.string.basic_password));
-        io.swagger.client.Configuration.setDefaultApiClient(apiClient);
 
+//        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+//        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+//        apiClient.getHttpClient().networkInterceptors().add(interceptor);
+
+        io.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
-
+        if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
+            beaconControllerApi.getApiClient().setApiKeyPrefix("Bearer");
+            beaconControllerApi.getApiClient().setApiKey(storage.getLoginUserToken());
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkStateReceiver(), intentFilter);

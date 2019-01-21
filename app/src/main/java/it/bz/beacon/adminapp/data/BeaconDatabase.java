@@ -58,12 +58,12 @@ public abstract class BeaconDatabase extends RoomDatabase {
                     super.onOpen(db);
                 }
 
-                @Override
-                public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                    super.onCreate(db);
-                    // TODO: remove this in production
-                    new PopulateDbTask(INSTANCE).execute();
-                }
+//                @Override
+//                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+//                    super.onCreate(db);
+//                    // TODO: remove this in production
+//                    new PopulateDbTask(INSTANCE).execute();
+//                }
             };
 
     private static class PopulateDbTask extends AsyncTask<Void, Void, Void> {
@@ -98,7 +98,6 @@ public abstract class BeaconDatabase extends RoomDatabase {
                 beacon.setInterval(100 * (1 + random.nextInt(9)));
                 beacon.setMajor(100 + random.nextInt(50));
                 beacon.setMinor(random.nextInt(1000));
-                beacon.setTemperature(random.nextInt(30));
                 beacon.setLat(46.0f + (random.nextInt(10000) / 5000.0f));
                 beacon.setLng(11.0f + (random.nextInt(10000) / 5000.0f));
                 if (random.nextInt(2) == 1) {

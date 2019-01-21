@@ -103,9 +103,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.info_status_icon)
     protected ImageView imgInfoStatus;
 
-    @BindView(R.id.info_temperature)
-    protected TextView txtTemperature;
-
     @BindView(R.id.info_rangebar)
     protected RangeBar rbSignalStrength;
 
@@ -296,7 +293,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
             }
-            txtTemperature.setText(getString(R.string.degree, beacon.getTemperature()));
 
             rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
             editInterval.setText(String.valueOf(beacon.getInterval()));
@@ -305,7 +301,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             editMajor.setText(String.valueOf(beacon.getMajor()));
             editMinor.setText(String.valueOf(beacon.getMinor()));
 
-            if (beacon.isEddystone()) {
+            if (beacon.isEddystoneEid()) {
                 editNamespace.setText(beacon.getNamespace());
                 editInstanceId.setText(beacon.getInstanceId());
                 editUrl.setText(beacon.getUrl());

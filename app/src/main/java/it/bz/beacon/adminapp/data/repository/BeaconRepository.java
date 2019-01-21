@@ -50,7 +50,7 @@ public class BeaconRepository {
 
                 @Override
                 public void onSuccess(List<io.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (statusCode == 400) {
+                    if (statusCode == 403) {
                         if (dataUpdateEvent != null) {
                             dataUpdateEvent.onAuthenticationFailed();
                             return;
@@ -70,14 +70,16 @@ public class BeaconRepository {
                             beacon.setEddystoneTlm(remoteBeacon.isEddystoneTlm());
                             beacon.setEddystoneUid(remoteBeacon.isEddystoneUid());
                             beacon.setEddystoneUrl(remoteBeacon.isEddystoneUrl());
-                            beacon.setiBeacon(remoteBeacon.isIBeacon());
+                            beacon.setIBeacon(remoteBeacon.isIBeacon());
                             beacon.setInstanceId(remoteBeacon.getInstanceId());
                             beacon.setInterval(remoteBeacon.getInterval());
                             beacon.setLastSeen(remoteBeacon.getLastSeen());
                             beacon.setLat(remoteBeacon.getLat());
                             beacon.setLng(remoteBeacon.getLng());
                             beacon.setLocationDescription(remoteBeacon.getLocationDescription());
-                            beacon.setLocationType(remoteBeacon.getLocationType().getValue());
+                            if (remoteBeacon.getLocationType() != null) {
+                                beacon.setLocationType(remoteBeacon.getLocationType().getValue());
+                            }
                             beacon.setMajor(remoteBeacon.getMajor());
                             beacon.setMinor(remoteBeacon.getMinor());
                             beacon.setManufacturer(remoteBeacon.getManufacturer().getValue());

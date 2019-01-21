@@ -14,6 +14,12 @@ import it.bz.beacon.adminapp.R;
 public class MapFragment extends SupportMapFragment {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         View view = super.onCreateView(layoutInflater, viewGroup, bundle);
         return view;

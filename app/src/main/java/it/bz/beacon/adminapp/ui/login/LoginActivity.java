@@ -53,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
         storage = AdminApplication.getStorage();
         authControllerApi = AdminApplication.getAuthApi();
 
+        //TODO: remove this
+     //   openMain();
+
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
            openMain();
         }

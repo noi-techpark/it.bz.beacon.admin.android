@@ -124,11 +124,11 @@ public class Beacon {
         this.eddystoneUrl = eddystoneUrl;
     }
 
-    public boolean isiBeacon() {
+    public boolean isIBeacon() {
         return iBeacon;
     }
 
-    public void setiBeacon(boolean iBeacon) {
+    public void setIBeacon(boolean iBeacon) {
         this.iBeacon = iBeacon;
     }
 
@@ -184,7 +184,7 @@ public class Beacon {
         return locationType;
     }
 
-    public void setLocationType(String locationType) {
+    public void setLocationType(@FilterLocation String locationType) {
         this.locationType = locationType;
     }
 
@@ -240,7 +240,7 @@ public class Beacon {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(@FilterStatus String status) {
         this.status = status;
     }
 

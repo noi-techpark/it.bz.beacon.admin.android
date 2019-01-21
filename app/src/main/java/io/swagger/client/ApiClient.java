@@ -52,7 +52,7 @@ import io.swagger.client.auth.OAuth;
 
 public class ApiClient {
 
-    private String basePath = "https://localhost:8080";
+    private String basePath = "https://api.beacon-dev.it";
     private boolean debugging = false;
     private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String tempFolderPath = null;
@@ -89,6 +89,7 @@ public class ApiClient {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
+        authentications.put("JWT", new ApiKeyAuth("header", "Authorization"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -105,7 +106,7 @@ public class ApiClient {
     /**
      * Set base path
      *
-     * @param basePath Base path of the URL (e.g https://localhost:8080
+     * @param basePath Base path of the URL (e.g https://api.beacon-dev.it
      * @return An instance of OkHttpClient
      */
     public ApiClient setBasePath(String basePath) {

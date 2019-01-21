@@ -5,15 +5,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,8 +19,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
+import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -42,7 +42,6 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,22 +81,8 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
 
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.map, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.menu_search:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
+    protected void setAdapterFilter(String filter) {
+        adapter.getFilter().filter(filter);
     }
 
     private void showLoading() {
@@ -130,6 +115,24 @@ abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        loadData();
+        BeaconRepository beaconRepository = new BeaconRepository(getContext());
+        beaconRepository.refreshBeacons(new DataUpdateEvent() {
+            @Override
+            public void onSuccess() {
+                Log.i(AdminApplication.LOG_TAG, "Beacons refreshed!");
+            }
+
+            @Override
+            public void onError() {
+                Log.e(AdminApplication.LOG_TAG, "Error refreshing beacons");
+                swipeBeacons.setRefreshing(false);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                Log.e(AdminApplication.LOG_TAG, "Authentication failed");
+                swipeBeacons.setRefreshing(false);
+            }
+        });
     }
 }
