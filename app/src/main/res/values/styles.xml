@@ -27,4 +27,11 @@
         <item name="android:textColor">@color/secondaryText</item>
     </style>
 
+    <style name="SwitchTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorSwitchThumbNormal">@color/divider</item>
+        <item name="colorControlNormal">@color/divider</item>
+        <item name="colorControlHighlight">@color/divider</item>
+    </style>
+
 </resources>

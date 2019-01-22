@@ -33,6 +33,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:singleLine="true"
+            android:gravity="right|end"
+            android:layout_gravity="right|end"
             tools:text="60 %" />
 
         <ImageView
@@ -63,6 +65,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:singleLine="true"
+            android:gravity="right|end"
+            android:layout_gravity="right|end"
             tools:text="OK" />
 
         <ImageView
@@ -125,12 +129,35 @@
             android:enabled="false"
             android:hint="@string/details_config_signalinterval"
             android:imeOptions="actionNext"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:text="100" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/telemetryContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:hintTextAppearance="@style/TextAppearance.Hint">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/info_telemetry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:enabled="false"
+            android:hint="@string/details_info_telemetry"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="100"
             android:textCursorDrawable="@null"
-            tools:ignore="HardcodedText" />
+            tools:text="telemetry" />
 
     </android.support.design.widget.TextInputLayout>
 
