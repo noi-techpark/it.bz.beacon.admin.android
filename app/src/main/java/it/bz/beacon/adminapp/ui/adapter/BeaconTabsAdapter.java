@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.AllBeaconsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.NearbyBeaconsFragment;
 
@@ -24,7 +25,7 @@ public class BeaconTabsAdapter extends FragmentPagerAdapter {
     {
         switch (position){
             case 0 : return new AllBeaconsFragment();
-            case 1 : return new NearbyBeaconsFragment();
+            case 1 : return new AboutFragment();
         }
         return null;
     }

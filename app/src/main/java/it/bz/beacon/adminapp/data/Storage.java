@@ -8,6 +8,7 @@ public class Storage {
 
     private final static String LOGIN_USER_TOKEN = "LOGIN_USER_TOKEN";
     private final static String LOGIN_USER_NAME = "LOGIN_USER_NAME";
+    private final static String LAST_SYNCHRONIZATION_BEACONS = "LAST_SYNCHRONIZATION_BEACONS";
 
     private SharedPreferences sharedPreferences;
 
@@ -28,6 +29,14 @@ public class Storage {
                 .putString(LOGIN_USER_NAME, username)
                 .putString(LOGIN_USER_TOKEN, token)
                 .apply();
+    }
+
+    public void setLastSynchronizationBeacons(long lastSync) {
+        sharedPreferences.edit().putLong(LAST_SYNCHRONIZATION_BEACONS, lastSync).apply();
+    }
+
+    public long getLastSynchronizationBeacons() {
+        return sharedPreferences.getLong(LAST_SYNCHRONIZATION_BEACONS, 0L);
     }
 
     public void clearStorage() {

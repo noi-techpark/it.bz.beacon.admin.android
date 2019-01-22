@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 
@@ -22,7 +23,13 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             if (connectivityManager != null) {
                 final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-                if (networkInfo != null && networkInfo.isConnectedOrConnecting() && AdminApplication.getStorage().getLoginUserToken() != null) {
+                Storage storage = AdminApplication.getStorage();
+                int synchronizationInterval = context.getResources().getInteger(R.integer.synchronization_interval);
+
+                if (networkInfo != null
+                        && networkInfo.isConnectedOrConnecting()
+                        && (storage.getLoginUserToken() != null)
+                        && (storage.getLastSynchronizationBeacons() + synchronizationInterval * 60000L < System.currentTimeMillis())) {
 
                     BeaconRepository beaconRepository = new BeaconRepository(context);
                     beaconRepository.refreshBeacons(new DataUpdateEvent() {
