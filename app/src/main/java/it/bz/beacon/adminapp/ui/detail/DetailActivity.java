@@ -295,6 +295,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
 
             rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
+            rbSignalStrength.setEnabled(false);
             editInterval.setText(String.valueOf(beacon.getInterval()));
 
             editUuid.setText(beacon.getUuid());
