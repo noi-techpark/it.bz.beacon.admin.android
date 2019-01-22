@@ -11,7 +11,9 @@ import java.util.Map;
 import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
+import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
@@ -22,20 +24,33 @@ public class BeaconRepository {
 
     private BeaconDao beaconDao;
     private LiveData<List<BeaconMinimal>> beacons;
+    private Storage storage;
+    private int synchronizationInterval = 0;
 
     public BeaconRepository(Context context) {
         BeaconDatabase db = BeaconDatabase.getDatabase(context);
         beaconDao = db.beaconDao();
         beacons = beaconDao.getAll();
+        storage = AdminApplication.getStorage();
+        synchronizationInterval = context.getResources().getInteger(R.integer.synchronization_interval);
     }
 
     public LiveData<List<BeaconMinimal>> getAll() {
-        refreshBeacons(null);
+        if (shouldSynchronize()) {
+            refreshBeacons(null);
+        }
+        else {
+            Log.d(AdminApplication.LOG_TAG, "It's not time to synchronize");
+        }
         return beacons;
     }
 
     public LiveData<Beacon> getById(long id) {
         return beaconDao.getById(id);
+    }
+
+    private boolean shouldSynchronize() {
+        return (storage.getLastSynchronizationBeacons() + synchronizationInterval * 60000L < System.currentTimeMillis());
     }
 
     public void refreshBeacons(final DataUpdateEvent dataUpdateEvent) {
@@ -44,18 +59,17 @@ public class BeaconRepository {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
-                        dataUpdateEvent.onError();
+                        if (statusCode == 403) {
+                            dataUpdateEvent.onAuthenticationFailed();
+                        } else {
+                            dataUpdateEvent.onError();
+                        }
                     }
                 }
 
                 @Override
                 public void onSuccess(List<io.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (statusCode == 403) {
-                        if (dataUpdateEvent != null) {
-                            dataUpdateEvent.onAuthenticationFailed();
-                            return;
-                        }
-                    }
+
                     if (result != null) {
                         Beacon beacon;
                         io.swagger.client.model.Beacon remoteBeacon;
@@ -95,21 +109,25 @@ public class BeaconRepository {
                         if (dataUpdateEvent != null) {
                             dataUpdateEvent.onSuccess();
                         }
+                        storage.setLastSynchronizationBeacons(System.currentTimeMillis());
                     }
                 }
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-
+                    if (done) {
+                        Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
+                    }
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-                    Log.i(AdminApplication.LOG_TAG, "progress: " + bytesRead);
+                    if (done) {
+                        Log.i(AdminApplication.LOG_TAG, "Bytes read: " + bytesRead);
+                    }
                 }
             });
-        }
-        catch (ApiException e) {
+        } catch (ApiException e) {
             if (dataUpdateEvent != null) {
                 dataUpdateEvent.onError();
             }

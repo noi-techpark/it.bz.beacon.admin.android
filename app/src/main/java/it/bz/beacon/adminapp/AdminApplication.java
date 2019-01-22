@@ -32,9 +32,9 @@ public class AdminApplication extends Application {
         apiClient.setConnectTimeout(getApplicationContext().getResources().getInteger(R.integer.connection_timeout));
         apiClient.setReadTimeout(getApplicationContext().getResources().getInteger(R.integer.read_timeout));
 
-//        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-//        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-//        apiClient.getHttpClient().networkInterceptors().add(interceptor);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        apiClient.getHttpClient().networkInterceptors().add(interceptor);
 
         io.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
