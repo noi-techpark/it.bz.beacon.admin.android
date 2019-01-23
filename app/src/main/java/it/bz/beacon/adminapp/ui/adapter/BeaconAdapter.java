@@ -33,6 +33,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     public BeaconAdapter(Context context) {
         this.context = context;
+        setHasStableIds(true);
     }
 
     @Override
@@ -79,15 +80,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 }
 
                 if (constraint == null || constraint.length() == 0) {
-
                     results.count = originalValues.size();
                     results.values = originalValues;
-                } else {
+                }
+                else {
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
                         if (beaconMinimal.getName().toLowerCase().contains(constraint.toString())
-                                || beaconMinimal.getName().toLowerCase().contains(constraint.toString())
                                 || beaconMinimal.getManufacturerId().toLowerCase().contains(constraint.toString())) {
                             filteredBeacons.add(beaconMinimal);
                         }
