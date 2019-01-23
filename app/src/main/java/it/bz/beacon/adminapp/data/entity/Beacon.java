@@ -29,30 +29,30 @@ public class Beacon {
     @NonNull
     @PrimaryKey
     private long id;
-    private int batteryLevel;
+    private Integer batteryLevel;
     private String description;
-    private boolean eddystoneEid;
-    private boolean eddystoneEtlm;
-    private boolean eddystoneTlm;
-    private boolean eddystoneUid;
-    private boolean eddystoneUrl;
-    private boolean iBeacon;
+    private Boolean eddystoneEid;
+    private Boolean eddystoneEtlm;
+    private Boolean eddystoneTlm;
+    private Boolean eddystoneUid;
+    private Boolean eddystoneUrl;
+    private Boolean iBeacon;
     private String instanceId;
-    private int interval;
-    private long lastSeen;
-    private float lat;
-    private float lng;
+    private Integer interval;
+    private Long lastSeen;
+    private Float lat;
+    private Float lng;
     private String locationDescription;
     private String locationType;
-    private int major;
-    private int minor;
+    private Integer major;
+    private Integer minor;
     private String manufacturer;
     private String manufacturerId;
     private String name;
     private String namespace;
     private String status;
-    private String telemetry;
-    private int txPower;
+    private Boolean telemetry;
+    private Integer txPower;
     private String url;
     private String uuid;
 
@@ -68,11 +68,11 @@ public class Beacon {
         this.id = id;
     }
 
-    public int getBatteryLevel() {
+    public Integer getBatteryLevel() {
         return batteryLevel;
     }
 
-    public void setBatteryLevel(int batteryLevel) {
+    public void setBatteryLevel(Integer batteryLevel) {
         this.batteryLevel = batteryLevel;
     }
 
@@ -84,51 +84,51 @@ public class Beacon {
         this.description = description;
     }
 
-    public boolean isEddystoneEid() {
+    public Boolean isEddystoneEid() {
         return eddystoneEid;
     }
 
-    public void setEddystoneEid(boolean eddystoneEid) {
+    public void setEddystoneEid(Boolean eddystoneEid) {
         this.eddystoneEid = eddystoneEid;
     }
 
-    public boolean isEddystoneEtlm() {
+    public Boolean isEddystoneEtlm() {
         return eddystoneEtlm;
     }
 
-    public void setEddystoneEtlm(boolean eddystoneEtlm) {
+    public void setEddystoneEtlm(Boolean eddystoneEtlm) {
         this.eddystoneEtlm = eddystoneEtlm;
     }
 
-    public boolean isEddystoneTlm() {
+    public Boolean isEddystoneTlm() {
         return eddystoneTlm;
     }
 
-    public void setEddystoneTlm(boolean eddystoneTlm) {
+    public void setEddystoneTlm(Boolean eddystoneTlm) {
         this.eddystoneTlm = eddystoneTlm;
     }
 
-    public boolean isEddystoneUid() {
+    public Boolean isEddystoneUid() {
         return eddystoneUid;
     }
 
-    public void setEddystoneUid(boolean eddystoneUid) {
+    public void setEddystoneUid(Boolean eddystoneUid) {
         this.eddystoneUid = eddystoneUid;
     }
 
-    public boolean isEddystoneUrl() {
+    public Boolean isEddystoneUrl() {
         return eddystoneUrl;
     }
 
-    public void setEddystoneUrl(boolean eddystoneUrl) {
+    public void setEddystoneUrl(Boolean eddystoneUrl) {
         this.eddystoneUrl = eddystoneUrl;
     }
 
-    public boolean isIBeacon() {
+    public Boolean isIBeacon() {
         return iBeacon;
     }
 
-    public void setIBeacon(boolean iBeacon) {
+    public void setIBeacon(Boolean iBeacon) {
         this.iBeacon = iBeacon;
     }
 
@@ -140,35 +140,35 @@ public class Beacon {
         this.instanceId = instanceId;
     }
 
-    public int getInterval() {
+    public Integer getInterval() {
         return interval;
     }
 
-    public void setInterval(int interval) {
+    public void setInterval(Integer interval) {
         this.interval = interval;
     }
 
-    public long getLastSeen() {
+    public Long getLastSeen() {
         return lastSeen;
     }
 
-    public void setLastSeen(long lastSeen) {
+    public void setLastSeen(Long lastSeen) {
         this.lastSeen = lastSeen;
     }
 
-    public float getLat() {
+    public Float getLat() {
         return lat;
     }
 
-    public void setLat(float lat) {
+    public void setLat(Float lat) {
         this.lat = lat;
     }
 
-    public float getLng() {
+    public Float getLng() {
         return lng;
     }
 
-    public void setLng(float lng) {
+    public void setLng(Float lng) {
         this.lng = lng;
     }
 
@@ -188,19 +188,19 @@ public class Beacon {
         this.locationType = locationType;
     }
 
-    public int getMajor() {
+    public Integer getMajor() {
         return major;
     }
 
-    public void setMajor(int major) {
+    public void setMajor(Integer major) {
         this.major = major;
     }
 
-    public int getMinor() {
+    public Integer getMinor() {
         return minor;
     }
 
-    public void setMinor(int minor) {
+    public void setMinor(Integer minor) {
         this.minor = minor;
     }
 
@@ -244,19 +244,19 @@ public class Beacon {
         this.status = status;
     }
 
-    public String getTelemetry() {
+    public Boolean getTelemetry() {
         return telemetry;
     }
 
-    public void setTelemetry(String telemetry) {
+    public void setTelemetry(Boolean telemetry) {
         this.telemetry = telemetry;
     }
 
-    public int getTxPower() {
+    public Integer getTxPower() {
         return txPower;
     }
 
-    public void setTxPower(int txPower) {
+    public void setTxPower(Integer txPower) {
         this.txPower = txPower;
     }
 

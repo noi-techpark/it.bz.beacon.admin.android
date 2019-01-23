@@ -101,6 +101,7 @@ public class BeaconRepository {
                             beacon.setName(remoteBeacon.getName());
                             beacon.setNamespace(remoteBeacon.getNamespace());
                             beacon.setStatus(remoteBeacon.getStatus().getValue());
+                            beacon.setTelemetry(remoteBeacon.isTelemetry());
                             beacon.setTxPower(remoteBeacon.getTxPower());
                             beacon.setUrl(remoteBeacon.getUrl());
                             beacon.setUuid(remoteBeacon.getUuid().toString());
@@ -139,7 +140,7 @@ public class BeaconRepository {
         new InsertAsyncTask(beaconDao, event).execute(beacon);
     }
 
-    private static class InsertAsyncTask extends AsyncTask<Beacon, Void, Void> {
+    private static class InsertAsyncTask extends AsyncTask<Beacon, Void, Long> {
 
         private BeaconDao asyncTaskDao;
         private InsertEvent insertEvent;
@@ -150,12 +151,16 @@ public class BeaconRepository {
         }
 
         @Override
-        protected Void doInBackground(final Beacon... params) {
+        protected Long doInBackground(final Beacon... params) {
             long id = asyncTaskDao.insert(params[0]);
+            return id;
+        }
+
+        @Override
+        protected void onPostExecute(Long id) {
             if (insertEvent != null) {
-                insertEvent.successful(id);
+                insertEvent.onSuccess(id);
             }
-            return null;
         }
     }
 

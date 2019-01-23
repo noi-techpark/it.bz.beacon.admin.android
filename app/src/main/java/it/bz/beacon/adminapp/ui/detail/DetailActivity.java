@@ -12,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -22,10 +23,13 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appyvet.materialrangebar.RangeBar;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,6 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
@@ -68,23 +73,32 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.info_tablayout)
     protected TabLayout tabLayoutLocation;
 
-    @BindView(R.id.config_info_content)
-    protected View contentInfo;
+    @BindView(R.id.info_content)
+    protected LinearLayout contentInfo;
 
-    @BindView(R.id.config_ibeacon_content)
-    protected View contentIBeacon;
+    @BindView(R.id.nameContainer)
+    protected TextInputLayout containerName;
 
-    @BindView(R.id.config_eddystone_content)
-    protected View contentEddystone;
+    @BindView(R.id.info_name)
+    protected TextInputEditText editName;
+
+    @BindView(R.id.ibeacon_content)
+    protected ConstraintLayout contentIBeacon;
+
+    @BindView(R.id.eddystone_content)
+    protected LinearLayout contentEddystone;
 
     @BindView(R.id.map_container)
     protected View contentMap;
 
     @BindView(R.id.gps_content)
-    protected View contentGPS;
+    protected LinearLayout contentGPS;
 
     @BindView(R.id.description_content)
-    protected View contentDescription;
+    protected ConstraintLayout contentDescription;
+
+    @BindView(R.id.description)
+    protected TextInputEditText editDescription;
 
     @BindView(R.id.details_last_seen)
     protected TextView txtLastSeen;
@@ -111,7 +125,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     protected TextInputEditText editInterval;
 
     @BindView(R.id.info_telemetry)
-    protected TextInputEditText editTelemetry;
+    protected SwitchCompat switchTelemetry;
 
     @BindView(R.id.ibeacon_switch)
     protected SwitchCompat switchIBeacon;
@@ -169,6 +183,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private Beacon beacon;
     protected GoogleMap googleMap;
     protected boolean mapShowing = false;
+    protected boolean isEditing = false;
 
     private BeaconViewModel beaconViewModel;
 
@@ -178,24 +193,75 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
         }
-        setTitle(beaconName);
-
         configureTabListeners();
+        isEditing = false;
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
 
         initMapFragment();
 
         loadBeacon();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpToolbar();
+        setContentEnabled(isEditing);
+    }
+
+    private void setUpToolbar() {
+        if (isEditing) {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_cancel);
+            }
+            toolbar.setTitle(getString(R.string.details_edit));
+        } else {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+            }
+            toolbar.setTitle(beaconName);
+        }
+    }
+
+    private void showCloseWarning() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.close_warning)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        isEditing = false;
+                        loadBeacon();
+                        setContentEnabled(isEditing);
+                        invalidateOptionsMenu();
+                        setUpToolbar();
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    private void setContentEnabled(boolean enabled) {
+        setViewTreeEnabled(contentInfo, enabled);
+        setViewTreeEnabled(contentIBeacon, enabled);
+        setViewTreeEnabled(contentEddystone, enabled);
+        setViewTreeEnabled(contentGPS, enabled);
+        setViewTreeEnabled(contentDescription, enabled);
+
+        containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
     }
 
     private void configureTabListeners() {
@@ -274,6 +340,22 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         }
     }
 
+    private void setViewTreeEnabled(ViewGroup viewGroup, boolean enabled) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            if ((child instanceof SwitchCompat) ||
+                    (child instanceof RangeBar) ||
+                    (child instanceof TextInputEditText) ||
+                    (child instanceof Button))
+                child.setEnabled(enabled);
+            else {
+                if (child instanceof ViewGroup) {
+                    setViewTreeEnabled((ViewGroup) child, enabled);
+                }
+            }
+        }
+    }
+
     private void loadBeacon() {
         showProgress(getString(R.string.loading));
 
@@ -281,17 +363,52 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             @Override
             public void onChanged(@Nullable Beacon changedBeacon) {
                 beacon = changedBeacon;
-                showContent(changedBeacon);
+                showData();
             }
         });
     }
 
-    private void showContent(final Beacon beacon) {
+    private void saveData() {
         if (beacon != null) {
+            beacon.setName(editName.getText().toString());
+            beacon.setTxPower(rbSignalStrength.getRightIndex());
+            beacon.setInterval(Integer.valueOf(editInterval.getText().toString()));
+            beacon.setTelemetry(switchTelemetry.isChecked());
+            beacon.setIBeacon(switchIBeacon.isChecked());
+            beacon.setUuid(editUuid.getText().toString());
+            beacon.setMajor(Integer.valueOf(editMajor.getText().toString()));
+            beacon.setMinor(Integer.valueOf(editMinor.getText().toString()));
+            beacon.setEddystoneEid(switchEid.isChecked());
+            beacon.setEddystoneEtlm(switchEtlm.isChecked());
+            beacon.setEddystoneTlm(switchTlm.isChecked());
+            beacon.setEddystoneUid(switchUid.isChecked());
+            beacon.setEddystoneUrl(switchUrl.isChecked());
+            beacon.setNamespace(editNamespace.getText().toString());
+            beacon.setInstanceId(editInstanceId.getText().toString());
+            beacon.setUrl(editUrl.getText().toString());
+            beacon.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
+            beacon.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
+            // TODO: set LocationType
+
+            beacon.setDescription(editDescription.getText().toString());
+
+            beaconViewModel.insert(beacon, new InsertEvent() {
+                @Override
+                public void onSuccess(long id) {
+                    Toast.makeText(DetailActivity.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void showData() {
+        if (beacon != null) {
+            setTitle(beacon.getName());
             txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen() * 1000))));
 
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
 
+            editName.setText(beacon.getName());
             if (beacon.getBatteryLevel() < 34) {
                 imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
             } else {
@@ -305,7 +422,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_ok)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_ok)));
                 txtStatus.setText(getString(R.string.status_ok));
-
             }
             if (beacon.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
@@ -319,9 +435,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
 
             rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
-            rbSignalStrength.setEnabled(false);
             editInterval.setText(String.valueOf(beacon.getInterval()));
-            editTelemetry.setText(beacon.getTelemetry());
+            switchTelemetry.setChecked(beacon.getTelemetry());
 
             switchIBeacon.setChecked(beacon.isIBeacon());
             editUuid.setText(beacon.getUuid());
@@ -338,8 +453,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             editInstanceId.setText(beacon.getInstanceId());
             editUrl.setText(beacon.getUrl());
 
-            editLatitude.setText(String.format(Locale.getDefault(), "%.5f", beacon.getLat()));
-            editLongitude.setText(String.format(Locale.getDefault(), "%.5f", beacon.getLng()));
+            if ((googleMap != null) && (beacon.getLat() != null) && (beacon.getLng() != null)) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(beacon.getLat(), beacon.getLng()), getResources().getInteger(R.integer.default_map_zoom_level)));
+            }
+
+            editLatitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLat()));
+            editLongitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLng()));
 
             updateLocationButtons(beacon.getLocationType());
             btnOutdoor.setOnClickListener(new View.OnClickListener() {
@@ -357,6 +476,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     updateLocationButtons(Beacon.LOCATION_INDOOR);
                 }
             });
+            editDescription.setText(beacon.getDescription());
         }
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
@@ -367,8 +487,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (location == null) {
             deactivateToggleButton(btnIndoor);
             deactivateToggleButton(btnOutdoor);
-        }
-        else {
+        } else {
             if (location.equals(Beacon.LOCATION_OUTDOOR)) {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
@@ -449,7 +568,10 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), 18));
+        if ((beacon != null) && (beacon.getLat() != null) && (beacon.getLng() != null)) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(beacon.getLat(), beacon.getLng()), getResources().getInteger(R.integer.default_map_zoom_level)));
+        }
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), getResources().getInteger(R.integer.default_map_zoom_level)));
     }
 
     @Override
@@ -492,13 +614,43 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem editItem = menu.findItem(R.id.menu_edit);
+        MenuItem saveItem = menu.findItem(R.id.menu_save);
+
+        if (editItem != null) {
+            editItem.setVisible(!isEditing);
+        }
+        if (saveItem != null) {
+            saveItem.setVisible(isEditing);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
+            case android.R.id.home:
+                if (isEditing) {
+                    showCloseWarning();
+                } else {
+                    finish();
+                }
+                break;
             case R.id.menu_edit:
+                isEditing = true;
+                setContentEnabled(isEditing);
+                invalidateOptionsMenu();
+                setUpToolbar();
                 break;
             case R.id.menu_save:
+                saveData();
+                isEditing = false;
+                setContentEnabled(isEditing);
+                invalidateOptionsMenu();
+                setUpToolbar();
                 break;
             default:
                 break;

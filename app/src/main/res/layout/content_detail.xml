@@ -89,15 +89,12 @@
                 </android.support.design.widget.TabLayout>
 
                 <include
-                    android:id="@+id/config_info_content"
                     layout="@layout/tab_info" />
 
                 <include
-                    android:id="@+id/config_ibeacon_content"
                     layout="@layout/tab_ibeacon" />
 
                 <include
-                    android:id="@+id/config_eddystone_content"
                     layout="@layout/tab_eddystone" />
 
             </LinearLayout>
@@ -107,6 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/app_default_margin"
+                android:elevation="2dp"
                 android:background="@drawable/background_config_card"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -157,11 +155,9 @@
                     app:layout_constraintTop_toBottomOf="@id/info_tablayout" />
 
                 <include
-                    android:id="@+id/gps_content"
                     layout="@layout/tab_gps" />
 
                 <include
-                    android:id="@+id/description_content"
                     layout="@layout/tab_description" />
 
             </LinearLayout>

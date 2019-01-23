@@ -30,8 +30,7 @@
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/primary</item>
         <item name="colorSwitchThumbNormal">@color/divider</item>
-        <item name="colorControlNormal">@color/divider</item>
-        <item name="colorControlHighlight">@color/divider</item>
+        <item name="android:disabledAlpha">0.9</item>
     </style>
 
 </resources>
