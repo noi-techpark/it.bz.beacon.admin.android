@@ -89,6 +89,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_map">Map</string>
     <string name="details_gps">GPS</string>
     <string name="details_description">Description</string>
+    <string name="details_floor">Floor</string>
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>
     <string name="status_configuration_pending">Configuration pending</string>

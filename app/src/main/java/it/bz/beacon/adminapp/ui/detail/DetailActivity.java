@@ -110,8 +110,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
     @BindView(R.id.description_content)
     protected ConstraintLayout contentDescription;
 
+    @BindView(R.id.description_floor_container)
+    protected TextInputLayout floorContainer;
+
     @BindView(R.id.description)
     protected TextInputEditText editDescription;
+
+    @BindView(R.id.description_floor)
+    protected TextInputEditText editFloor;
 
     @BindView(R.id.details_last_seen)
     protected TextView txtLastSeen;
@@ -419,6 +425,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
             // TODO: set LocationType
 
             beacon.setDescription(editDescription.getText().toString());
+            beacon.setLocationDescription(editFloor.getText().toString());
 
             beaconViewModel.insert(beacon, new InsertEvent() {
                 @Override
@@ -506,6 +513,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
                 }
             });
             editDescription.setText(beacon.getDescription());
+            editFloor.setText(beacon.getLocationDescription());
             Log.d(AdminApplication.LOG_TAG, "# 8 #");
         }
         fabAddIssue.show();
@@ -521,9 +529,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
             if (location.equals(Beacon.LOCATION_OUTDOOR)) {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
-            } else {
+                floorContainer.setVisibility(View.GONE);
+            }
+            else {
                 activateToggleButton(btnIndoor);
                 deactivateToggleButton(btnOutdoor);
+                floorContainer.setVisibility(View.VISIBLE);
             }
         }
     }
