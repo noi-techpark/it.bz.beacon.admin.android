@@ -37,6 +37,7 @@ public class BeaconRepository {
 
     public LiveData<List<BeaconMinimal>> getAll() {
         if (shouldSynchronize()) {
+            Log.d(AdminApplication.LOG_TAG, "Start synchronization");
             refreshBeacons(null);
         }
         else {
