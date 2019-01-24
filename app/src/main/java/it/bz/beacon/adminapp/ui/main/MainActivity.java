@@ -35,7 +35,7 @@ import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
-import it.bz.beacon.adminapp.ui.main.beacon.IssuesFragment;
+import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.MapFragment;
 import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
@@ -212,7 +212,6 @@ public class MainActivity extends BaseActivity
             isMapShowing = true;
             MapFragment fragment = new MapFragment();
             switchFragment(getString(R.string.beacons), fragment);
-            fragment.getMapAsync(this);
             invalidateOptionsMenu();
         }
     }

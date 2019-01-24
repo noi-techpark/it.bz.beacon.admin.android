@@ -34,8 +34,8 @@ An analysis of project and companies that will use or benefit from Beacon and Io
 A vision of possible future development of the project activities.\n\n
 4 - Beacon Network\n
 This work package includes:\n
-Installation of 3.500 beacons distributed over the whole South Tyrol;
-Development of an Open Source library that can be used by stakeholders which will interact with installed beacons;
+Installation of 3.500 issues distributed over the whole South Tyrol;
+Development of an Open Source library that can be used by stakeholders which will interact with installed issues;
 Development of an Open Source web tool to manage the beacon network;
 Development of an Open source app to manage the beacon network;
 Creation of a plan for the maintenance and the future development of the beacon network.\n\n
@@ -48,7 +48,7 @@ Development of an Open Source web tool to manage the network.\n\n
 This work package aims to develop Open Source pilot services and applications that anyone can use as a reference implementation.
     </string>
     <string name="location_permission_title">Location permission needed</string>
-    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
+    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby issues.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
     <string name="reload_map">Reload map</string>
     <string name="login_username">Username</string>
@@ -56,6 +56,8 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_last_seen">Last seen: %s</string>
     <string name="percent">%d %%</string>
     <string name="degree">%d °C</string>
+    <string name="major_format">Major: %d</string>
+    <string name="minor_format">Minor: %d</string>
     <string name="lat">Latitude</string>
     <string name="lng">Longitude</string>
     <string name="details_edit">Edit</string>

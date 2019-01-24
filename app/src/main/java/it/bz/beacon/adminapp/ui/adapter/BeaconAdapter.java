@@ -130,8 +130,8 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         private void setBeacon(final BeaconMinimal beaconMinimal) {
 
             name.setText(beaconMinimal.getName());
-            major.setText("Major: " + beaconMinimal.getMajor());
-            minor.setText("Minor: " + beaconMinimal.getMinor());
+            major.setText(context.getString(R.string.major_format, beaconMinimal.getMajor()));
+            minor.setText(context.getString(R.string.minor_format, beaconMinimal.getMinor()));
             manufacturerId.setText(beaconMinimal.getManufacturerId());
 
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
