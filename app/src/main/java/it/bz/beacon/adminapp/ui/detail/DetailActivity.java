@@ -1,11 +1,13 @@
 package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -14,45 +16,53 @@ import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.materialrangebar.RangeBar;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
-import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
-import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
-public class DetailActivity extends BaseActivity implements OnMapReadyCallback, OnRetryLoadMapListener {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
@@ -88,8 +98,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.eddystone_content)
     protected LinearLayout contentEddystone;
 
-    @BindView(R.id.map_container)
-    protected View contentMap;
+    @BindView(R.id.map_view)
+    protected MapView mapView;
+
+    @BindView(R.id.map_layout)
+    protected RelativeLayout contentMap;
 
     @BindView(R.id.gps_content)
     protected LinearLayout contentGPS;
@@ -181,8 +194,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
-    protected GoogleMap googleMap;
-    protected boolean mapShowing = false;
+
+    protected GoogleMap map;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Marker marker;
+    private LatLng currentLocation = null;
+
     protected boolean isEditing = false;
 
     private BeaconViewModel beaconViewModel;
@@ -190,6 +207,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(AdminApplication.LOG_TAG, "# 3 #");
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -203,16 +222,24 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
 
-        initMapFragment();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        makeMapScrollable();
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
         loadBeacon();
+
+        Log.d(AdminApplication.LOG_TAG, "# 4 #");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mapView.onResume();
+        Log.d(AdminApplication.LOG_TAG, "# 5 #");
         setUpToolbar();
         setContentEnabled(isEditing);
+        Log.d(AdminApplication.LOG_TAG, "# 6 #");
     }
 
     private void setUpToolbar() {
@@ -344,9 +371,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
             if ((child instanceof SwitchCompat) ||
-                    (child instanceof RangeBar) ||
                     (child instanceof TextInputEditText) ||
-                    (child instanceof Button))
+                    (child instanceof Button) ||
+                    (child instanceof RangeBar))
                 child.setEnabled(enabled);
             else {
                 if (child instanceof ViewGroup) {
@@ -363,6 +390,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             @Override
             public void onChanged(@Nullable Beacon changedBeacon) {
                 beacon = changedBeacon;
+                Log.d(AdminApplication.LOG_TAG, "# 7 #");
                 showData();
             }
         });
@@ -453,8 +481,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             editInstanceId.setText(beacon.getInstanceId());
             editUrl.setText(beacon.getUrl());
 
-            if ((googleMap != null) && (beacon.getLat() != null) && (beacon.getLng() != null)) {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(beacon.getLat(), beacon.getLng()), getResources().getInteger(R.integer.default_map_zoom_level)));
+            if ((map != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
+                LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
+                setMarker(latlng);
             }
 
             editLatitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLat()));
@@ -477,6 +506,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
             });
             editDescription.setText(beacon.getDescription());
+            Log.d(AdminApplication.LOG_TAG, "# 8 #");
         }
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
@@ -517,89 +547,142 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         progress.setVisibility(View.VISIBLE);
     }
 
-    private void initMapFragment() {
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.getUiSettings().setZoomControlsEnabled(true);
+
+        if ((beacon != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
+            LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
+            setMarker(latlng);
+        }
+        else {
+            showMyLocation();
+        }
+
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                moveMarker(latLng);
+            }
+        });
+
+//        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+//            @Override
+//            public boolean onMyLocationButtonClick() {
+//                showMyLocation();
+//                return true;
+//            }
+//        });
+    }
+
+    private void setMarker(LatLng latLng) {
+        map.clear();
+        marker = map.addMarker(new MarkerOptions()
+                .position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_location)));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
+    }
+
+    private void moveMarker(LatLng latLng) {
+        map.clear();
+        marker = map.addMarker(new MarkerOptions()
+                .position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_location)));
+        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    private void showMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.location_permission_title)
-                        .setMessage(R.string.location_permission_message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(DetailActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         LOCATION_PERMISSION_REQUEST);
                             }
                         })
-                        .create()
-                        .show();
+                        .create();
+                dialog.show();
             } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
         } else {
-            showMapFragment();
+            map.getUiSettings().setMyLocationButtonEnabled(true);
+            map.setMyLocationEnabled(true);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if ((location != null) && (currentLocation == null)) {
+                                Log.d(AdminApplication.LOG_TAG, "new my location: " + location.toString());
+                                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                if ((beacon == null) || (beacon.getLat() == 0) || (beacon.getLng() == 0)) {
+                                    map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                                }
+                                currentLocation = latLng;
+                            }
+                        }
+                    });
         }
     }
 
-    private void showMapFragment() {
-        if (!mapShowing && getSupportFragmentManager() != null) {
-            mapShowing = true;
-            SupportMapFragment fragment = new SupportMapFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.map_container, fragment).commit();
-            fragment.getMapAsync(this);
-        }
+    // workaround to make a map inside a ScrollView scrollable and zoomable
+    @SuppressLint("ClickableViewAccessibility")
+    private void makeMapScrollable() {
+        final ScrollView mainScrollView = findViewById(R.id.scrollview);
+        ImageView transparentImageView = findViewById(R.id.transparent_image);
+
+        transparentImageView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        // Disable touch on transparent view
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(false);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
+        });
     }
 
-    private void showLocationDisabledFragment() {
-        if (getSupportFragmentManager() != null) {
-            mapShowing = false;
-            LocationDisabledFragment fragment = LocationDisabledFragment.newInstance(this);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.map_container, fragment).commit();
-        }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        if ((beacon != null) && (beacon.getLat() != null) && (beacon.getLng() != null)) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(beacon.getLat(), beacon.getLng()), getResources().getInteger(R.integer.default_map_zoom_level)));
-        }
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), getResources().getInteger(R.integer.default_map_zoom_level)));
+    private int getZoomLevel() {
+        return getResources().getInteger(R.integer.default_map_zoom_level);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        showMapFragment();
-                    } else {
-                        showLocationDisabledFragment();
-                    }
-                } else {
-                    showLocationDisabledFragment();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showMyLocation();
                 }
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
         }
-    }
-
-    @Override
-    public void onRetry() {
-        initMapFragment();
     }
 
     @Override
@@ -657,5 +740,41 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 }
