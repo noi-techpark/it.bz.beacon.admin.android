@@ -464,18 +464,18 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
 
             rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
             editInterval.setText(String.valueOf(beacon.getInterval()));
-            switchTelemetry.setChecked(beacon.getTelemetry());
+            switchTelemetry.setChecked(beacon.getTelemetry() != null && beacon.getTelemetry());
 
-            switchIBeacon.setChecked(beacon.isIBeacon());
+            switchIBeacon.setChecked(beacon.isIBeacon() != null && beacon.isIBeacon());
             editUuid.setText(beacon.getUuid());
             editMajor.setText(String.valueOf(beacon.getMajor()));
             editMinor.setText(String.valueOf(beacon.getMinor()));
 
-            switchEid.setChecked(beacon.isEddystoneEid());
-            switchEtlm.setChecked(beacon.isEddystoneEtlm());
-            switchTlm.setChecked(beacon.isEddystoneTlm());
-            switchUid.setChecked(beacon.isEddystoneUid());
-            switchUrl.setChecked(beacon.isEddystoneUrl());
+            switchEid.setChecked(beacon.isEddystoneEid() != null && beacon.isEddystoneEid());
+            switchEtlm.setChecked(beacon.isEddystoneEtlm() != null && beacon.isEddystoneEtlm());
+            switchTlm.setChecked(beacon.isEddystoneTlm() != null && beacon.isEddystoneTlm());
+            switchUid.setChecked(beacon.isEddystoneUid() != null && beacon.isEddystoneUid());
+            switchUrl.setChecked(beacon.isEddystoneUrl() != null && beacon.isEddystoneUrl());
 
             editNamespace.setText(beacon.getNamespace());
             editInstanceId.setText(beacon.getInstanceId());
@@ -555,17 +555,18 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         if ((beacon != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
             setMarker(latlng);
-        }
-        else {
+        } else {
             showMyLocation();
         }
 
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                moveMarker(latLng);
-            }
-        });
+        if (isEditing) {
+            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    moveMarker(latLng);
+                }
+            });
+        }
 
 //        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
 //            @Override
@@ -580,15 +581,17 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         map.clear();
         marker = map.addMarker(new MarkerOptions()
                 .position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_location)));
+                .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(beacon.getStatus()))));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
     }
+
+
 
     private void moveMarker(LatLng latLng) {
         map.clear();
         marker = map.addMarker(new MarkerOptions()
                 .position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_location)));
+                .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(beacon.getStatus()))));
         map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
@@ -690,11 +693,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         return R.layout.activity_detail;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.details, menu);
-        return true;
-    }
+    // TODO: enable this
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.details, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -724,6 +728,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
                 break;
             case R.id.menu_edit:
                 isEditing = true;
+                if (map != null) {
+                    map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(LatLng latLng) {
+                            moveMarker(latLng);
+                        }
+                    });
+                }
                 setContentEnabled(isEditing);
                 invalidateOptionsMenu();
                 setUpToolbar();
