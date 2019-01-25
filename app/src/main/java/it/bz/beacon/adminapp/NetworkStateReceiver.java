@@ -16,8 +16,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
-        Log.d(AdminApplication.LOG_TAG, "Network connectivity change");
-
         if (intent.getExtras() != null) {
             final ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {

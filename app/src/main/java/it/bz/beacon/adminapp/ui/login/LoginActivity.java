@@ -132,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(AuthenticationToken result, int statusCode, Map<String, List<String>> responseHeaders) {
                     storage.setUser(username, result.getToken());
+                    AdminApplication.setBearerToken(result.getToken());
                     runOnUiThread(new Runnable() {
                         public void run() {
                             showProgress(false);

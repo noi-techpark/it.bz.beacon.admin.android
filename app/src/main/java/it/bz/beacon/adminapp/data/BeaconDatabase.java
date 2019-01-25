@@ -58,12 +58,12 @@ public abstract class BeaconDatabase extends RoomDatabase {
                     super.onOpen(db);
                 }
 
-//                @Override
-                public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                    super.onCreate(db);
-                    // TODO: remove this in production
-                    new PopulateDbTask(INSTANCE).execute();
-                }
+////                @Override
+//                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+//                    super.onCreate(db);
+//                    // TODO: remove this in production
+//                    new PopulateDbTask(INSTANCE).execute();
+//                }
             };
 
     private static class PopulateDbTask extends AsyncTask<Void, Void, Void> {

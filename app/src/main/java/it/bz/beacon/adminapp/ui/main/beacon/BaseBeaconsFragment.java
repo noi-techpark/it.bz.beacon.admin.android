@@ -2,10 +2,14 @@ package it.bz.beacon.adminapp.ui.main.beacon;
 
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.squareup.otto.Subscribe;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -23,11 +26,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
-import it.bz.beacon.adminapp.event.PubSub;
-import it.bz.beacon.adminapp.event.StatusFilterEvent;
+import it.bz.beacon.adminapp.eventbus.LogoutEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -43,7 +48,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private BeaconAdapter adapter;
 
-    protected String statusFilter = "All";
+    protected String statusFilter = Beacon.STATUS_ALL;
     protected String searchFilter = "";
 
     @Override
@@ -89,11 +94,13 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
     protected void setSearchFilter(String filter) {
+        Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
         searchFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }
 
     protected void setStatusFilter(String filter) {
+        Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
         statusFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }
@@ -145,7 +152,28 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
             public void onAuthenticationFailed() {
                 Log.e(AdminApplication.LOG_TAG, "Authentication failed");
                 swipeBeacons.setRefreshing(false);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showAuthenticationFailureDialog();
+                    }
+                });
             }
         });
+    }
+
+    private void showAuthenticationFailureDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                .setTitle(getString(R.string.status_error))
+                .setMessage(getString(R.string.error_authorization))
+                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        PubSub.getInstance().post(new LogoutEvent());
+                    }
+                })
+                .create();
+        dialog.show();
     }
 }

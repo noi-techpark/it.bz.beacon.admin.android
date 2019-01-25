@@ -13,8 +13,8 @@ import it.bz.beacon.adminapp.ui.main.beacon.NearbyBeaconsFragment;
 
 public class BeaconTabsAdapter extends FragmentPagerAdapter {
 
-    public static int TAB_COUNT = 2;
-    Context context;
+    private static int TAB_COUNT = 2;
+    private Context context;
 
     public BeaconTabsAdapter(FragmentManager fm, Context context) {
         super(fm);

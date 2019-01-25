@@ -105,7 +105,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/app_default_margin"
-                android:elevation="2dp"
                 android:background="@drawable/background_config_card"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"

@@ -15,8 +15,8 @@ import java.util.List;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
-import it.bz.beacon.adminapp.event.PubSub;
-import it.bz.beacon.adminapp.event.StatusFilterEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 
 public class AllBeaconsFragment extends BaseBeaconsFragment {
 
@@ -34,6 +34,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     @Override
     public void onResume() {
         super.onResume();
+//        setSearchFilter("");
         PubSub.getInstance().register(this);
     }
 

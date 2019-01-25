@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -39,10 +41,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
-import it.bz.beacon.adminapp.event.PubSub;
-import it.bz.beacon.adminapp.event.StatusFilterEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -64,7 +67,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private BeaconViewModel beaconViewModel;
     private List<BeaconMinimal> mapBeacons = new ArrayList<>();
-    protected String statusFilter = "All";
+    protected String statusFilter = Beacon.STATUS_ALL;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,11 +106,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                     for (BeaconMinimal beaconMinimal : beacons) {
                         if ((beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) &&
-                                ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals("All")))) {
+                                ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL)))) {
                             mapBeacons.add(beaconMinimal);
                         }
                     }
-
                     if (map != null) {
                         setUpClusterer();
                     }
@@ -134,7 +136,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
                         .setMessage(getString(R.string.location_permission_message))
                         .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -172,6 +174,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private void setUpClusterer() {
         if (isAdded() && (getContext() != null)) {
             clusterManager = new ClusterManager<>(getContext(), map);
+            clusterManager.setAlgorithm(new GridBasedAlgorithm<BeaconClusterItem>());
             clusterManager.setRenderer(new BeaconClusterRenderer(getContext(), map, clusterManager, getClusterColor()));
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
             clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {

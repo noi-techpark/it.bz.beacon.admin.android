@@ -20,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -214,7 +215,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(AdminApplication.LOG_TAG, "# 3 #");
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -234,18 +234,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         mapView.getMapAsync(this);
 
         loadBeacon();
-
-        Log.d(AdminApplication.LOG_TAG, "# 4 #");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mapView.onResume();
-        Log.d(AdminApplication.LOG_TAG, "# 5 #");
         setUpToolbar();
         setContentEnabled(isEditing);
-        Log.d(AdminApplication.LOG_TAG, "# 6 #");
     }
 
     private void setUpToolbar() {
@@ -265,7 +261,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void showCloseWarning() {
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                 .setMessage(R.string.close_warning)
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
@@ -396,7 +392,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
             @Override
             public void onChanged(@Nullable Beacon changedBeacon) {
                 beacon = changedBeacon;
-                Log.d(AdminApplication.LOG_TAG, "# 7 #");
                 showData();
             }
         });
@@ -422,8 +417,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
             beacon.setUrl(editUrl.getText().toString());
             beacon.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
             beacon.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
-            // TODO: set LocationType
-
             beacon.setDescription(editDescription.getText().toString());
             beacon.setLocationDescription(editFloor.getText().toString());
 
@@ -514,7 +507,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
             });
             editDescription.setText(beacon.getDescription());
             editFloor.setText(beacon.getLocationDescription());
-            Log.d(AdminApplication.LOG_TAG, "# 8 #");
         }
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
@@ -530,8 +522,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
                 floorContainer.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 activateToggleButton(btnIndoor);
                 deactivateToggleButton(btnOutdoor);
                 floorContainer.setVisibility(View.VISIBLE);
@@ -608,7 +599,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
                         .setMessage(getString(R.string.location_permission_message))
                         .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -633,7 +624,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
                         @Override
                         public void onSuccess(Location location) {
                             if ((location != null) && (currentLocation == null)) {
-                                Log.d(AdminApplication.LOG_TAG, "new my location: " + location.toString());
                                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                                 if ((beacon == null) || (beacon.getLat() == 0) || (beacon.getLng() == 0)) {
                                     map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -702,7 +692,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         return R.layout.activity_detail;
     }
 
-    // TODO: enable this
+    // TODO: enable this in sprint 2
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.details, menu);

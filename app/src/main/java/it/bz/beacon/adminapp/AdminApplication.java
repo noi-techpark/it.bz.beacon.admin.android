@@ -40,12 +40,16 @@ public class AdminApplication extends Application {
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
-            beaconControllerApi.getApiClient().setApiKeyPrefix("Bearer");
-            beaconControllerApi.getApiClient().setApiKey(storage.getLoginUserToken());
+            setBearerToken(storage.getLoginUserToken());
         }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkStateReceiver(), intentFilter);
+    }
+
+    public static void setBearerToken(String bearerToken) {
+        beaconControllerApi.getApiClient().setApiKeyPrefix("Bearer");
+        beaconControllerApi.getApiClient().setApiKey(bearerToken);
     }
 
     public static boolean isOnline(Context context) {

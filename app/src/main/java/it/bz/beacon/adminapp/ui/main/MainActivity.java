@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
+import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,13 +30,13 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.event.PubSub;
-import it.bz.beacon.adminapp.event.StatusFilterEvent;
+import it.bz.beacon.adminapp.eventbus.LogoutEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
-import it.bz.beacon.adminapp.ui.main.beacon.BaseBeaconsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.MapFragment;
@@ -53,7 +53,6 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.navigation_view)
     protected NavigationView navigationView;
 
-    protected GoogleMap googleMap;
     protected boolean isMapShowing = false;
     protected boolean isFilterActive = false;
     protected int filterIndex = 0;
@@ -67,20 +66,21 @@ public class MainActivity extends BaseActivity
         ButterKnife.bind(this);
         storage = AdminApplication.getStorage();
         setSupportActionBar(toolbar);
-
-        switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
         setupNavigationDrawer();
+
         filterItems = new String[] {getString(R.string.status_all),
                 getString(R.string.status_ok),
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
                 getString(R.string.status_error)};
-        filterValues = new String[] {getString(R.string.status_all),
+        filterValues = new String[] {Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
-                getString(R.string.status_error)};
+                Beacon.STATUS_ERROR};
         navigationView.getMenu().getItem(0).setChecked(true);
+
+        switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
     }
 
     @Override
@@ -112,6 +112,7 @@ public class MainActivity extends BaseActivity
     private void logout() {
         storage.clearStorage();
         deleteDatabase(BeaconDatabase.DB_NAME);
+        AdminApplication.setBearerToken("");
         openLogin();
     }
 
@@ -156,8 +157,7 @@ public class MainActivity extends BaseActivity
     private void showFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
         builder.setTitle(getString(R.string.filter_dialog_title));
-        builder.setSingleChoiceItems(filterItems, filterIndex, new DialogInterface
-                .OnClickListener() {
+        builder.setSingleChoiceItems(filterItems, filterIndex, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 filterIndex = item;
                 isFilterActive = (item != 0);
@@ -217,7 +217,7 @@ public class MainActivity extends BaseActivity
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(R.string.location_permission_title)
                         .setMessage(R.string.location_permission_message)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -294,7 +294,30 @@ public class MainActivity extends BaseActivity
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.containerView, fragment, title)
+                    .runOnCommit(new Runnable() {
+                        @Override
+                        public void run() {
+                            PubSub.getInstance().post(new StatusFilterEvent(filterValues[filterIndex]));
+                        }
+                    })
                     .commit();
         }
+    }
+
+    @Subscribe
+    public void onLogoutRequested(LogoutEvent event) {
+        logout();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        PubSub.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PubSub.getInstance().unregister(this);
     }
 }
