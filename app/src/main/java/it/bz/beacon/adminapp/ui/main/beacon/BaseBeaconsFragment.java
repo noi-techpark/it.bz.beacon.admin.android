@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.otto.Subscribe;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,6 +26,8 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
+import it.bz.beacon.adminapp.event.PubSub;
+import it.bz.beacon.adminapp.event.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -38,6 +42,9 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     protected TextView txtEmpty;
 
     private BeaconAdapter adapter;
+
+    protected String statusFilter = "All";
+    protected String searchFilter = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,8 +88,14 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
-    protected void setAdapterFilter(String filter) {
-        adapter.getFilter().filter(filter);
+    protected void setSearchFilter(String filter) {
+        searchFilter = filter.replace('#', ' ');
+        adapter.getFilter().filter(statusFilter + "#" + searchFilter);
+    }
+
+    protected void setStatusFilter(String filter) {
+        statusFilter = filter.replace('#', ' ');
+        adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }
 
     private void showLoading() {

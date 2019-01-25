@@ -90,9 +90,12 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_gps">GPS</string>
     <string name="details_description">Description</string>
     <string name="details_floor">Floor</string>
+    <string name="filter_dialog_title">Filter Beacons</string>
+    <string name="status_all">All</string>
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>
     <string name="status_configuration_pending">Configuration pending</string>
+    <string name="status_error">Error</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>
     <string name="error_invalid_password">Password is to short</string>

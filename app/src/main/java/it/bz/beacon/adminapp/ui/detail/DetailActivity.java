@@ -596,8 +596,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
     }
 
-
-
     private void moveMarker(LatLng latLng) {
         map.clear();
         marker = map.addMarker(new MarkerOptions()

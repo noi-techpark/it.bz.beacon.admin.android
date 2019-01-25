@@ -17,10 +17,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/nav_header_desc"
-            android:paddingStart="36dp"
-            android:paddingTop="40dp"
-            android:paddingEnd="36dp"
-            android:paddingBottom="36dp"
+            android:paddingStart="48dp"
+            android:paddingTop="48dp"
+            android:paddingEnd="48dp"
+            android:paddingBottom="48dp"
             app:layout_constraintBottom_toTopOf="@id/navigation_username"
             app:srcCompat="@drawable/logo_inverse" />
 

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     @Override
     public int getItemCount() {
-        return beacons.size();
+        return beacons != null ? beacons.size() : 0;
     }
 
     @Override
@@ -74,6 +75,21 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
+                String[] filters;
+                String searchFilter = "";
+                String statusFilter = "All";
+
+                Log.d(AdminApplication.LOG_TAG, "constraint: " + constraint);
+                if (!TextUtils.isEmpty(constraint)) {
+                    if (constraint.toString().indexOf('#') > 0)
+                        statusFilter = constraint.toString().substring(0, constraint.toString().indexOf('#'));
+
+                    if (constraint.toString().indexOf('#') < constraint.toString().length() - 1)
+                        searchFilter = constraint.toString().substring(constraint.toString().indexOf('#') + 1);
+                }
+                Log.d(AdminApplication.LOG_TAG, "searchFilter: " + searchFilter);
+                Log.d(AdminApplication.LOG_TAG, "statusFilter: " + statusFilter);
+
                 FilterResults results = new FilterResults();
                 List<BeaconMinimal> filteredBeacons = new ArrayList<>();
 
@@ -81,18 +97,32 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     originalValues = new ArrayList<>(beacons);
                 }
 
-                if (constraint == null || constraint.length() == 0) {
-                    results.count = originalValues.size();
-                    results.values = originalValues;
+                if (searchFilter.length() == 0) {
+                    if (statusFilter.equals("All")) {
+                        results.count = originalValues.size();
+                        results.values = originalValues;
+                    }
+                    else {
+                        for (int i = 0; i < originalValues.size(); i++) {
+                            BeaconMinimal beaconMinimal = originalValues.get(i);
+                            if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
+                                filteredBeacons.add(beaconMinimal);
+                            }
+                        }
+                        results.count = filteredBeacons.size();
+                        results.values = filteredBeacons;
+                    }
+
                 }
                 else {
-                    constraint = constraint.toString().toLowerCase();
+                    searchFilter = searchFilter.toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
-                        if (beaconMinimal.getName().toLowerCase().contains(constraint.toString())
-                                || beaconMinimal.getManufacturerId().toLowerCase().contains(constraint.toString())) {
-                            filteredBeacons.add(beaconMinimal);
-                        }
+                        if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals("All"))) &&
+                            (beaconMinimal.getName().toLowerCase().contains(searchFilter.toString())
+                                    || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter.toString()))) {
+                                filteredBeacons.add(beaconMinimal);
+                            }
                     }
                     results.count = filteredBeacons.size();
                     results.values = filteredBeacons;

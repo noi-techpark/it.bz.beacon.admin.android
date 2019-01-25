@@ -8,11 +8,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.squareup.otto.Subscribe;
+
 import java.util.List;
 
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.event.PubSub;
+import it.bz.beacon.adminapp.event.StatusFilterEvent;
 
 public class AllBeaconsFragment extends BaseBeaconsFragment {
 
@@ -28,6 +32,18 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        PubSub.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PubSub.getInstance().unregister(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -37,6 +53,11 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     @Override
     protected void getBeacons(Observer<List<BeaconMinimal>> observer) {
         beaconViewModel.getAll().observe(this, observer);
+    }
+
+    @Subscribe
+    public void onStatusFilterChanged(StatusFilterEvent event) {
+        setStatusFilter(event.getStatus());
     }
 
     @Override
@@ -53,7 +74,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                setAdapterFilter(s);
+                setSearchFilter(s);
                 return false;
             }
         });
