@@ -1,4 +1,4 @@
-package it.bz.beacon.adminapp.event;
+package it.bz.beacon.adminapp.eventbus;
 
 public class StatusFilterEvent {
     private String status;

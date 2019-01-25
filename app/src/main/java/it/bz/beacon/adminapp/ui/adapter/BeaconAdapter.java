@@ -77,9 +77,8 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             protected FilterResults performFiltering(CharSequence constraint) {
                 String[] filters;
                 String searchFilter = "";
-                String statusFilter = "All";
+                String statusFilter = Beacon.STATUS_ALL;
 
-                Log.d(AdminApplication.LOG_TAG, "constraint: " + constraint);
                 if (!TextUtils.isEmpty(constraint)) {
                     if (constraint.toString().indexOf('#') > 0)
                         statusFilter = constraint.toString().substring(0, constraint.toString().indexOf('#'));
@@ -87,8 +86,6 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     if (constraint.toString().indexOf('#') < constraint.toString().length() - 1)
                         searchFilter = constraint.toString().substring(constraint.toString().indexOf('#') + 1);
                 }
-                Log.d(AdminApplication.LOG_TAG, "searchFilter: " + searchFilter);
-                Log.d(AdminApplication.LOG_TAG, "statusFilter: " + statusFilter);
 
                 FilterResults results = new FilterResults();
                 List<BeaconMinimal> filteredBeacons = new ArrayList<>();
@@ -98,7 +95,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 }
 
                 if (searchFilter.length() == 0) {
-                    if (statusFilter.equals("All")) {
+                    if (statusFilter.equals(Beacon.STATUS_ALL)) {
                         results.count = originalValues.size();
                         results.values = originalValues;
                     }
@@ -118,7 +115,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     searchFilter = searchFilter.toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
-                        if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals("All"))) &&
+                        if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL))) &&
                             (beaconMinimal.getName().toLowerCase().contains(searchFilter.toString())
                                     || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter.toString()))) {
                                 filteredBeacons.add(beaconMinimal);
@@ -185,15 +182,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
                 }
             }
+            battery.setAlpha(0.6f);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(AdminApplication.LOG_TAG, "# 1 #");
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
                     context.startActivity(intent);
-                    Log.d(AdminApplication.LOG_TAG, "# 2 #");
                 }
             });
         }

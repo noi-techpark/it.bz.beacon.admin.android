@@ -6,8 +6,9 @@
     <!--<color name="primaryDark">#25a8d9</color>-->
     <color name="accent">#f6dd00</color>
 
-    <color name="primaryText">#222222</color>
-    <color name="secondaryText">#666666</color>
+    <color name="primaryText">#db000000</color>
+    <color name="secondaryText">#80000000</color>
+    <color name="tertiaryText">#26000000</color>
     <color name="navigationItemSelected">#3382d8f2</color>
 
     <color name="icons">#212121</color>

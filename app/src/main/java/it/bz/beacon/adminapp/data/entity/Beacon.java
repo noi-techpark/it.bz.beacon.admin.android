@@ -18,10 +18,11 @@ public class Beacon {
     public @interface FilterStatus {
     }
 
+    public static final String STATUS_ALL = "ALL";
     public static final String STATUS_OK = "OK";
     public static final String STATUS_BATTERY_LOW = "BATTERY_LOW";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
-    ;
+    public static final String STATUS_ERROR = "ERROR";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({LOCATION_OUTDOOR, LOCATION_INDOOR})

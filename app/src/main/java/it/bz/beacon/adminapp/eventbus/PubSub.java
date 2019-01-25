@@ -1,4 +1,4 @@
-package it.bz.beacon.adminapp.event;
+package it.bz.beacon.adminapp.eventbus;
 
 import android.os.Handler;
 import android.os.Looper;

@@ -28,7 +28,7 @@ public class Storage {
         sharedPreferences.edit()
                 .putString(LOGIN_USER_NAME, username)
                 .putString(LOGIN_USER_TOKEN, token)
-                .apply();
+                .commit();
     }
 
     public void setLastSynchronizationBeacons(long lastSync) {
