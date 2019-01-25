@@ -102,7 +102,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     mapBeacons.clear();
 
                     for (BeaconMinimal beaconMinimal : beacons) {
-                        if ((beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) &&
+                        if ((beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) &&
                                 ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals("All")))) {
                             mapBeacons.add(beaconMinimal);
                         }
