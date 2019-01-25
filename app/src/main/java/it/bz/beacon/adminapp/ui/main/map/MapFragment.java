@@ -30,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.event.PubSub;
+import it.bz.beacon.adminapp.event.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -61,6 +64,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private BeaconViewModel beaconViewModel;
     private List<BeaconMinimal> mapBeacons = new ArrayList<>();
+    protected String statusFilter = "All";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +102,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     mapBeacons.clear();
 
                     for (BeaconMinimal beaconMinimal : beacons) {
-                        if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
+                        if ((beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) &&
+                                ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals("All")))) {
                             mapBeacons.add(beaconMinimal);
                         }
                     }
@@ -109,6 +114,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 }
             }
         });
+    }
+
+    @Subscribe
+    public void onStatusFilterChanged(StatusFilterEvent event) {
+        statusFilter = event.getStatus();
+        loadData();
     }
 
     @Override
@@ -244,12 +255,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        PubSub.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mapView.onPause();
+        PubSub.getInstance().unregister(this);
     }
 
     @Override

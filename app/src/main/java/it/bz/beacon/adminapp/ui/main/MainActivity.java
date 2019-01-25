@@ -14,16 +14,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,17 +29,21 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
+import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.event.PubSub;
+import it.bz.beacon.adminapp.event.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
-import it.bz.beacon.adminapp.ui.login.LoginActivity;
-import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
+import it.bz.beacon.adminapp.ui.login.LoginActivity;
+import it.bz.beacon.adminapp.ui.main.beacon.BaseBeaconsFragment;
+import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.map.MapFragment;
 import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, OnRetryLoadMapListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
 
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
@@ -54,7 +56,10 @@ public class MainActivity extends BaseActivity
     protected GoogleMap googleMap;
     protected boolean isMapShowing = false;
     protected boolean isFilterActive = false;
+    protected int filterIndex = 0;
     private Storage storage;
+    private String[] filterItems;
+    private String[] filterValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,17 @@ public class MainActivity extends BaseActivity
 
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
         setupNavigationDrawer();
+        filterItems = new String[] {getString(R.string.status_all),
+                getString(R.string.status_ok),
+                getString(R.string.status_configuration_pending),
+                getString(R.string.status_battery_low),
+                getString(R.string.status_error)};
+        filterValues = new String[] {getString(R.string.status_all),
+                Beacon.STATUS_OK,
+                Beacon.STATUS_CONFIGURATION_PENDING,
+                Beacon.STATUS_BATTERY_LOW,
+                getString(R.string.status_error)};
         navigationView.getMenu().getItem(0).setChecked(true);
-
     }
 
     @Override
@@ -130,8 +144,7 @@ public class MainActivity extends BaseActivity
                 switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
                 break;
             case R.id.menu_filter:
-                isFilterActive = !isFilterActive;
-                invalidateOptionsMenu();
+                showFilterDialog();
                 break;
             default:
                 break;
@@ -140,16 +153,36 @@ public class MainActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void showFilterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+        builder.setTitle(getString(R.string.filter_dialog_title));
+        builder.setSingleChoiceItems(filterItems, filterIndex, new DialogInterface
+                .OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                filterIndex = item;
+                isFilterActive = (item != 0);
+            }
+        });
+        builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                PubSub.getInstance().post(new StatusFilterEvent(filterValues[filterIndex]));
+                invalidateOptionsMenu();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem filterItem = menu.findItem(R.id.menu_filter);
 
         if (filterItem != null) {
             if (isFilterActive) {
-                // TODO: filter items
                 filterItem.setIcon(R.drawable.ic_menu_filter);
             } else {
-                // TODO: unfilter items
                 filterItem.setIcon(R.drawable.ic_menu_filter_outline);
             }
         }
@@ -225,13 +258,6 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.474431, 11.3239), 18));
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST:
@@ -267,7 +293,7 @@ public class MainActivity extends BaseActivity
         if (getSupportFragmentManager() != null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.containerView, fragment)
+                    .replace(R.id.containerView, fragment, title)
                     .commit();
         }
     }
