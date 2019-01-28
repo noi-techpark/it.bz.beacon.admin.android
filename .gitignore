@@ -35,4 +35,8 @@ fastlane/test_output
 # exclude configuration files
 /keystore.keystore
 keystore.jks
-google_maps_api.xml
+app/src/debug/res/values/beacon_suedtirol_api.xml
+app/src/debug/res/values/google_maps_api.xml
+app/src/release/res/values/beacon_suedtirol_api.xml
+app/src/release/res/values/google_maps_api.xml
+app/google-services.json

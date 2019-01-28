@@ -1,0 +1,3 @@
+<resources>
+    <string translatable="false" name="basePath">https://api.beacon-dev.it</string>
+</resources>
