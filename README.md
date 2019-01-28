@@ -9,7 +9,6 @@
 ## Configure the project
 * Copy config/google_maps_api.xml to app/src/debug/res/values/google_maps_api.xml and fill required values
 * Copy config/google_maps_api.xml to app/src/release/res/values/google_maps_api.xml and fill required values
-* Copy config/facebook_api.xml to app/src/debug/res/values/facebook_api.xml and fill required values
-* Copy config/facebook_api.xml to app/src/release/res/values/facebook_api.xml and fill required values
-* Add the google-services.json file that you receive from Firebase to app/google-services.json
+* Copy config/beacon_suedtirol_api.xml to app/src/debug/res/values/beacon_suedtirol_api.xml and fill required values
+* Copy config/beacon_suedtirol_api.xml to app/src/release/res/values/beacon_suedtirol_api.xml and fill required values
 * Add keystore.keystore
