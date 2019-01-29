@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:id="@+id/content_detail"
+    app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+    tools:context=".ui.detail.DetailActivity"
+    tools:showIn="@layout/activity_detail">
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/containerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/backgroundActivity"
+            android:padding="@dimen/app_default_margin"
+            tools:context=".ui.detail.DetailActivity">
+
+            <TextView
+                android:id="@+id/details_last_seen"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Last seen: 19.12.2018" />
+
+            <ImageView
+                android:id="@+id/details_status"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:contentDescription="@string/nav_header_desc"
+                android:tint="@color/status_ok"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_status" />
+
+            <LinearLayout
+                android:id="@+id/details_config_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_last_seen">
+
+                <TextView
+                    android:id="@+id/details_config"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/details_section_config"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/config_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/primaryLight"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/primaryLight"
+                    app:tabTextColor="@color/secondaryText">
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_info" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_ibeacon" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_eddystone" />
+
+                </android.support.design.widget.TabLayout>
+
+                <include
+                    layout="@layout/tab_info" />
+
+                <include
+                    layout="@layout/tab_ibeacon" />
+
+                <include
+                    layout="@layout/tab_eddystone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details_location_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_config_layout">
+
+                <TextView
+                    android:id="@+id/details_"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/details_section_location"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/info_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/primaryLight"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/primaryLight"
+                    app:tabTextColor="@color/secondaryText">
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_map" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_gps" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_description" />
+
+                </android.support.design.widget.TabLayout>
+
+                <RelativeLayout
+                    android:id="@+id/map_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/info_tablayout" >
+
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/map_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <ImageView
+                        android:id="@+id/transparent_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
+
+                <include
+                    layout="@layout/tab_gps" />
+
+                <include
+                    layout="@layout/tab_description" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details_images_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_location_layout">
+
+                <TextView
+                    android:id="@+id/details_config_title"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/details_section_images"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/corners"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_top_rounded" />
+</FrameLayout>

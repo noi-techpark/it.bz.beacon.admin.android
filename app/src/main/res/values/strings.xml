@@ -1,0 +1,109 @@
+<resources>
+    <string name="app_name">Beacon Administration</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="beacons">Beacons</string>
+    <string name="network_problems">Network Problems</string>
+    <string name="disturbances">Disturbances</string>
+    <string name="issues">Issues</string>
+    <string name="about">About</string>
+    <string name="all">All</string>
+    <string name="nearby">Nearby</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="map">Map</string>
+    <string name="list">List</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="empty_list">No data found</string>
+    <string name="about_title">Beacon South Tyrol</string>
+    <string name="about_text">Networking the Land. Creating Ideas. We are building the first beacon network in South Tyrol and a community of experts and companies.
+        Because the time for Internet of Things is now.\n\n
+        1 - Project Management\n
+This work package includes all the activities that are needed to guarantee the correct implementation of all the foreseen activities.\n\n
+2 - Communication and community building\n
+This work package will include a lot of activities. The main goal is creation of a south tyrolean community of IoT companies, experts and talents that will stimulate new innovative ideas, projects, products and services.
+\n\n
+3 - State of the art analysis\n
+This work package shows the state of the art analysis of the IoT sector which will identify:\n
+The best technologies in the IoT sector and how can be integrated;
+A vision about future technologies that will come in the near future;
+An analysis of project and companies that will use or benefit from Beacon and IoT technologies in South Tyrol;
+A vision of possible future development of the project activities.\n\n
+4 - Beacon Network\n
+This work package includes:\n
+Installation of 3.500 issues distributed over the whole South Tyrol;
+Development of an Open Source library that can be used by stakeholders which will interact with installed issues;
+Development of an Open Source web tool to manage the beacon network;
+Development of an Open source app to manage the beacon network;
+Creation of a plan for the maintenance and the future development of the beacon network.\n\n
+5 - Wireless Sensor Network\n
+This work package includes:\n
+Installation of a LoRaWAN testing network at the NOI techpark;
+Creation of a local IoT Community of local, national and international research institutions, companies and experts;
+Development of an Open Source web tool to manage the network.\n\n
+6 - Pilots implementation\n
+This work package aims to develop Open Source pilot services and applications that anyone can use as a reference implementation.
+    </string>
+    <string name="location_permission_title">Location permission needed</string>
+    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
+    <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
+    <string name="reload_map">Reload map</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="details_last_seen">Last seen: %s</string>
+    <string name="percent">%d %%</string>
+    <string name="degree">%d °C</string>
+    <string name="major_format">Major: %d</string>
+    <string name="minor_format">Minor: %d</string>
+    <string name="lat">Latitude</string>
+    <string name="lng">Longitude</string>
+    <string name="details_edit">Edit</string>
+    <string name="details_save">Save</string>
+    <string name="details_delete">Delete</string>
+    <string name="details_section_config">Beacon Config</string>
+    <string name="details_section_location">Location</string>
+    <string name="details_section_images">Images</string>
+    <string name="details_config">Config</string>
+    <string name="details_config_major">Major</string>
+    <string name="details_config_minor">Minor</string>
+    <string name="details_config_signalstrength">Signal strength</string>
+    <string name="details_config_signalinterval">Signal interval (ms)</string>
+    <string name="details_config_namespace">Namespace</string>
+    <string name="details_config_instanceid">InstanceId</string>
+    <string name="details_config_url">URL</string>
+    <string name="details_info_name">Name</string>
+    <string name="details_info_battery">Battery</string>
+    <string name="details_info_devicestatus">Device status</string>
+    <string name="details_info_telemetry">Telemetry</string>
+    <string name="details_info">Info</string>
+    <string name="details_ibeacon">iBeacon</string>
+    <string name="details_eddystone">Eddystone</string>
+    <string name="details_eddystone_eid">Eddystone Eid</string>
+    <string name="details_eddystone_etlm">Eddystone Etlm</string>
+    <string name="details_eddystone_tlm">Eddystone Tlm</string>
+    <string name="details_eddystone_uid">Eddystone Uid</string>
+    <string name="details_eddystone_url">Eddystone Url</string>
+    <string name="details_map">Map</string>
+    <string name="details_gps">GPS</string>
+    <string name="details_description">Description</string>
+    <string name="details_floor">Floor</string>
+    <string name="filter_dialog_title">Filter Beacons</string>
+    <string name="status_all">All</string>
+    <string name="status_ok">OK</string>
+    <string name="status_battery_low">Battery low</string>
+    <string name="status_configuration_pending">Configuration pending</string>
+    <string name="status_error">Error</string>
+    <string name="outdoor">outdoor</string>
+    <string name="indoor">indoor</string>
+    <string name="error_invalid_password">Password is to short</string>
+    <string name="error_incorrect_login">Wrong username or password</string>
+    <string name="error_field_required">Required field</string>
+    <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
+    <string name="loading">Loading…</string>
+    <string name="saving">Saving…</string>
+    <string name="close_warning">Do you want to close without saving?</string>
+
+</resources>
