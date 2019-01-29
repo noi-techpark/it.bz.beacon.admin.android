@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:background="@color/primary">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:padding="16dp"
+        android:layout_height="@dimen/nav_header_height" >
+
+        <ImageView
+            android:id="@+id/navigation_header_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/nav_header_desc"
+            android:paddingStart="48dp"
+            android:paddingTop="48dp"
+            android:paddingEnd="48dp"
+            android:paddingBottom="48dp"
+            app:layout_constraintBottom_toTopOf="@id/navigation_username"
+            app:srcCompat="@drawable/logo_inverse" />
+
+        <TextView
+            android:id="@+id/navigation_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            tools:text="username"
+            android:textColor="@color/primaryLight"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/navigation_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:text="@string/logout"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:minHeight="0dp"
+            android:gravity="end"
+            android:textColor="@android:color/white"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

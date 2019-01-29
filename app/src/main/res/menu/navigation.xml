@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/group"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navigation_beacons"
+            android:icon="@drawable/ic_beacon"
+            android:title="@string/beacons" />
+        <item
+            android:id="@+id/navigation_issues"
+            android:icon="@drawable/ic_issue"
+            android:title="@string/issues" />
+        <item
+            android:id="@+id/navigation_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/about" />
+    </group>
+</menu>

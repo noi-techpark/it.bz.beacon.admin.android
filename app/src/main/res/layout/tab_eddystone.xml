@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/eddystone_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundBox"
+    android:orientation="vertical"
+    android:padding="@dimen/app_default_margin"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/eddystone_switch_uid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:text="@string/details_eddystone_uid"
+        android:theme="@style/SwitchTheme" />
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintTextAppearance="@style/TextAppearance.Hint">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/eddystone_namespace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/details_config_namespace"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:text="f04958fa3095482ae394" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        app:hintTextAppearance="@style/TextAppearance.Hint">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/eddystone_instanceid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/details_config_instanceid"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:text="431ac35d9v78a" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/eddystone_switch_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:text="@string/details_eddystone_url"
+        android:theme="@style/SwitchTheme" />
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        app:hintTextAppearance="@style/TextAppearance.Hint">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/eddystone_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/details_config_url"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:text="https://kntk.io/eddystone" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/eddystone_switch_eid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:text="@string/details_eddystone_eid"
+        android:theme="@style/SwitchTheme" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/eddystone_switch_etlm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:text="@string/details_eddystone_etlm"
+        android:theme="@style/SwitchTheme" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/eddystone_switch_tlm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/details_eddystone_tlm"
+        android:theme="@style/SwitchTheme" />
+
+</LinearLayout>
