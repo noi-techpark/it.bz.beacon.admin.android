@@ -16,7 +16,7 @@ pipeline {
                 }
             }
         }
-        stage('Install/Update Dependencies') {
+        stage('Dependencies') {
             steps {
                 ansiColor('xterm') {
                     sh 'bundle install --path=vendor/bundle'
