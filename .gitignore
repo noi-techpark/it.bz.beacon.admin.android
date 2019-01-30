@@ -20,6 +20,10 @@ Thumbs.db
 .externalNativeBuild
 /swagger/build
 
+# Bundler
+/.bundle
+/vendor
+
 # fastlane specific
 fastlane/report.xml
 
