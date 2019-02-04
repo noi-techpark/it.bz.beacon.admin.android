@@ -10,6 +10,7 @@ import java.util.List;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 
 public class BeaconViewModel extends AndroidViewModel {
@@ -34,6 +35,14 @@ public class BeaconViewModel extends AndroidViewModel {
 
     public LiveData<Beacon> getById(long id) {
         return repository.getById(id);
+    }
+
+    public void getByMajorMinor(int major, int minor, LoadEvent loadEvent) {
+        repository.getByMajorMinor(major, minor, loadEvent);
+    }
+
+    public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
+        repository.getByInstanceId(instanceId, loadEvent);
     }
 
     public void insert(Beacon beacon, InsertEvent event) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 
 public class BeaconRepository {
 
@@ -44,6 +46,14 @@ public class BeaconRepository {
 
     public LiveData<Beacon> getById(long id) {
         return beaconDao.getById(id);
+    }
+
+    public void getByMajorMinor(int major, int minor, LoadEvent loadEvent) {
+        new LoadByMajorMinorTask(beaconDao, loadEvent).execute(major, minor);
+    }
+
+    public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
+        new LoadByInstanceIdTask(beaconDao, loadEvent).execute(instanceId);
     }
 
     private boolean shouldSynchronize() {
@@ -157,6 +167,52 @@ public class BeaconRepository {
         protected void onPostExecute(Long id) {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
+            }
+        }
+    }
+
+    private static class LoadByMajorMinorTask extends AsyncTask<Integer, Void, BeaconMinimal> {
+
+        private BeaconDao asyncTaskDao;
+        private LoadEvent loadEvent;
+
+        LoadByMajorMinorTask(BeaconDao dao, LoadEvent event) {
+            asyncTaskDao = dao;
+            loadEvent = event;
+        }
+
+        @Override
+        protected BeaconMinimal doInBackground(Integer... ids) {
+            return asyncTaskDao.getByMajorMinor(ids[0], ids[1]);
+        }
+
+        @Override
+        protected void onPostExecute(BeaconMinimal beaconMinimal) {
+            if ((loadEvent != null) && (beaconMinimal != null)) {
+                loadEvent.onSuccess(beaconMinimal);
+            }
+        }
+    }
+
+    private static class LoadByInstanceIdTask extends AsyncTask<String, Void, BeaconMinimal> {
+
+        private BeaconDao asyncTaskDao;
+        private LoadEvent loadEvent;
+
+        LoadByInstanceIdTask(BeaconDao dao, LoadEvent event) {
+            asyncTaskDao = dao;
+            loadEvent = event;
+        }
+
+        @Override
+        protected BeaconMinimal doInBackground(String... ids) {
+            return asyncTaskDao.getByInstanceId(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(BeaconMinimal beaconMinimal) {
+            if ((loadEvent != null) && (beaconMinimal != null)) {
+                loadEvent.onSuccess(beaconMinimal);
             }
         }
     }

@@ -48,7 +48,7 @@ Development of an Open Source web tool to manage the network.\n\n
 This work package aims to develop Open Source pilot services and applications that anyone can use as a reference implementation.
     </string>
     <string name="location_permission_title">Location permission needed</string>
-    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
+    <string name="location_permission_message">The permission to use location services is needed to indicate your current position on the map, and to show nearby beacons.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
     <string name="reload_map">Reload map</string>
     <string name="login_username">Username</string>

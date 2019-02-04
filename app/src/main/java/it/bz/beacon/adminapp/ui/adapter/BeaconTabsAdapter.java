@@ -26,7 +26,7 @@ public class BeaconTabsAdapter extends FragmentPagerAdapter {
     {
         switch (position){
             case 0 : return new AllBeaconsFragment();
-            case 1 : return new IssuesFragment();
+            case 1 : return NearbyBeaconsFragment.newInstance();
         }
         return null;
     }
