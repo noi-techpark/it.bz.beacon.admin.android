@@ -17,7 +17,7 @@ import com.google.maps.android.ui.IconGenerator;
 
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.util.BitmapConverter;
+import it.bz.beacon.adminapp.util.BitmapTools;
 
 public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterItem> {
 
@@ -36,7 +36,7 @@ public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterI
     @Override
     protected void onBeforeClusterItemRendered(BeaconClusterItem item, MarkerOptions markerOptions) {
         final Drawable drawable = ContextCompat.getDrawable(context, Beacon.getMarkerId(item.getBeaconMinimal().getStatus()));
-        Bitmap bitmap = BitmapConverter.drawableToBitmap(drawable);
+        Bitmap bitmap = BitmapTools.drawableToBitmap(drawable);
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
         markerOptions.icon(markerDescriptor);
     }

@@ -2,11 +2,15 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +25,9 @@ import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -49,21 +56,36 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.squareup.picasso.Picasso;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.listeners.IPickResult;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.swagger.client.ApiCallback;
+import io.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
+import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
+import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
-public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
@@ -198,6 +220,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
     @BindView(R.id.fab)
     protected FloatingActionButton fabAddIssue;
 
+    @BindView(R.id.details_images)
+    protected RecyclerView images;
+
+    @BindView(R.id.details_images_add)
+    protected Button btnAddImage;
+
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
@@ -209,7 +237,10 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
 
     protected boolean isEditing = false;
 
+    private GalleryAdapter galleryAdapter;
+
     private BeaconViewModel beaconViewModel;
+    private BeaconImageViewModel beaconImageViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,11 +258,19 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         isEditing = false;
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         makeMapScrollable();
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        images.setHasFixedSize(true);
+        images.setItemAnimator(new DefaultItemAnimator());
+        images.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        galleryAdapter = new GalleryAdapter(this);
+        images.setAdapter(galleryAdapter);
 
         loadBeacon();
     }
@@ -242,6 +281,22 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         mapView.onResume();
         setUpToolbar();
         setContentEnabled(isEditing);
+
+        beaconImageViewModel.getAllByBeaconId(beaconId).observe(this, new Observer<List<BeaconImage>>() {
+            @Override
+            public void onChanged(@Nullable List<BeaconImage> beaconImages) {
+                if (beaconImages != null) {
+                    refreshImages(beaconImages);
+                    galleryAdapter.setBeaconImages(beaconImages);
+                }
+            }
+        });
+    }
+
+    private void refreshImages(List<BeaconImage> beaconImages) {
+        for (BeaconImage beaconImage : beaconImages) {
+            BitmapTools.downloadImage(this, beaconImage);
+        }
     }
 
     private void setUpToolbar() {
@@ -291,6 +346,13 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         setViewTreeEnabled(contentDescription, enabled);
 
         containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (isEditing) {
+            fabAddIssue.hide();
+        }
+        else {
+            fabAddIssue.show();
+        }
     }
 
     private void configureTabListeners() {
@@ -455,6 +517,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
                 txtStatus.setText(getString(R.string.status_battery_low));
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_ERROR)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
+                txtStatus.setText(getString(R.string.status_error));
             }
             if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
@@ -692,12 +759,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         return R.layout.activity_detail;
     }
 
-    // TODO: enable this in sprint 2
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.details, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.details, menu);
+        return true;
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -753,6 +819,15 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.details_images_add)
+    public void addImage(View view) {
+        PickImageDialog.build(new PickSetup()
+        .setTitle(getString(R.string.choose_source))
+        .setCancelText(getString(android.R.string.cancel))
+        .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
+                .show(this);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -787,5 +862,66 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onPickResult(final PickResult pickResult) {
+        if (pickResult.getError() == null) {
+            String tempFilename = System.currentTimeMillis() + ".png";
+            Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 2000);
+            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, "temp", tempFilename);
+
+            final File file = new File(tempUri);
+
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage(getString(R.string.uploading));
+            dialog.setIndeterminate(false);
+            dialog.setCancelable(false);
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            dialog.show();
+
+            try {
+                AdminApplication.getImageApi().createUsingPOST1Async(beaconId, file, new ApiCallback<io.swagger.client.model.BeaconImage>() {
+                    @Override
+                    public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(io.swagger.client.model.BeaconImage result, int statusCode, Map<String, List<String>> responseHeaders) {
+                        dialog.dismiss();
+                        ContextWrapper contextWrapper = new ContextWrapper(DetailActivity.this);
+                        File directory = contextWrapper.getDir("images", Context.MODE_PRIVATE);
+                        File newFile = new File(directory, result.getId() + ".png");
+                        file.renameTo(newFile);
+                        BeaconImage beaconImage = new BeaconImage();
+                        beaconImage.setUrl(result.getUrl());
+                        beaconImage.setBeaconId(beaconId);
+                        beaconImage.setId(result.getId());
+                        beaconImageViewModel.insert(beaconImage);
+                    }
+
+                    @Override
+                    public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+                        if (!done) {
+                            dialog.setProgress((int) (bytesWritten * 100 / contentLength));
+                        }
+                        else {
+                            dialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+                    }
+                });
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            Toast.makeText(this, pickResult.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

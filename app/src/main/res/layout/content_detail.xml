@@ -43,6 +43,7 @@
 
             <LinearLayout
                 android:id="@+id/details_config_layout"
+                tools:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/app_default_margin"
@@ -185,7 +186,7 @@
                 app:layout_constraintTop_toBottomOf="@id/details_location_layout">
 
                 <TextView
-                    android:id="@+id/details_config_title"
+                    android:id="@+id/details_images_title"
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -193,6 +194,24 @@
                     android:text="@string/details_section_images"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/details_images"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/details_images_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/add_image"
+                    android:textAllCaps="true"
+                    android:textColor="@color/primary"
+                    android:layout_gravity="end"
+                    android:gravity="end" />
+
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>

@@ -19,13 +19,17 @@ import com.kontakt.sdk.android.ble.manager.ProximityManager;
 import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
 import com.kontakt.sdk.android.ble.manager.listeners.EddystoneListener;
 import com.kontakt.sdk.android.ble.manager.listeners.IBeaconListener;
+import com.kontakt.sdk.android.ble.manager.listeners.SecureProfileListener;
 import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleEddystoneListener;
 import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleIBeaconListener;
+import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleSecureProfileListener;
 import com.kontakt.sdk.android.common.KontaktSDK;
 import com.kontakt.sdk.android.common.profile.IBeaconDevice;
 import com.kontakt.sdk.android.common.profile.IBeaconRegion;
 import com.kontakt.sdk.android.common.profile.IEddystoneDevice;
 import com.kontakt.sdk.android.common.profile.IEddystoneNamespace;
+import com.kontakt.sdk.android.common.profile.ISecureProfile;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,8 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 
 public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
@@ -60,6 +66,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         proximityManager = ProximityManagerFactory.create(getContext());
         proximityManager.setIBeaconListener(createIBeaconListener());
         proximityManager.setEddystoneListener(createEddystoneListener());
+        proximityManager.setSecureProfileListener(createSecureProfileListener());
         super.onCreate(savedInstanceState);
     }
 
@@ -110,6 +117,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         nearbyBeacons.observe(this, observer);
     }
 
+    @Subscribe
+    public void onStatusFilterChanged(StatusFilterEvent event) {
+        setStatusFilter(event.getStatus());
+    }
+
     private void startScanning() {
         proximityManager.connect(new OnServiceReadyListener() {
             @Override
@@ -133,6 +145,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
             @Override
             public void onIBeaconDiscovered(IBeaconDevice ibeacon, IBeaconRegion region) {
                 Log.i(AdminApplication.LOG_TAG, "IBeacon discovered: " + ibeacon.toString());
+                Log.i(AdminApplication.LOG_TAG, "region discovered: " + region.toString());
 
                 beaconViewModel.getByMajorMinor(ibeacon.getMajor(), ibeacon.getMinor(), new LoadEvent() {
                     @Override
@@ -226,15 +239,36 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         };
     }
 
+    private SecureProfileListener createSecureProfileListener() {
+        return new SimpleSecureProfileListener() {
+            @Override
+            public void onProfileDiscovered(ISecureProfile profile) {
+                super.onProfileDiscovered(profile);
+            }
+
+            @Override
+            public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                super.onProfilesUpdated(profiles);
+            }
+
+            @Override
+            public void onProfileLost(ISecureProfile profile) {
+                super.onProfileLost(profile);
+            }
+        };
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         startScanningIfLocationPermissionGranted();
+        PubSub.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         proximityManager.stopScanning();
+        PubSub.getInstance().unregister(this);
         super.onPause();
     }
 

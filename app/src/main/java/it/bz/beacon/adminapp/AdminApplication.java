@@ -13,12 +13,14 @@ import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.AuthControllerApi;
 import io.swagger.client.api.BeaconControllerApi;
+import io.swagger.client.api.ImageControllerApi;
 import it.bz.beacon.adminapp.data.Storage;
 
 public class AdminApplication extends Application {
 
     private static AuthControllerApi authControllerApi;
     private static BeaconControllerApi beaconControllerApi;
+    private static ImageControllerApi imageControllerApi;
     private static Storage storage;
     public static final String LOG_TAG = "BeaconAdmin";
 
@@ -39,6 +41,7 @@ public class AdminApplication extends Application {
         io.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
+        imageControllerApi = new ImageControllerApi();
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
             setBearerToken(storage.getLoginUserToken());
         }
@@ -83,5 +86,9 @@ public class AdminApplication extends Application {
 
     public static BeaconControllerApi getBeaconApi() {
         return beaconControllerApi;
+    }
+
+    public static ImageControllerApi getImageApi() {
+        return imageControllerApi;
     }
 }

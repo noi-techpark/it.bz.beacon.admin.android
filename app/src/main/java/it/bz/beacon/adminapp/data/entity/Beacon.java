@@ -14,7 +14,7 @@ import it.bz.beacon.adminapp.R;
 public class Beacon {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_CONFIGURATION_PENDING})
+    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_CONFIGURATION_PENDING, STATUS_ERROR})
     public @interface FilterStatus {
     }
 

@@ -8,8 +8,7 @@
     android:background="@color/backgroundBox"
     android:orientation="vertical"
     android:padding="@dimen/app_default_margin"
-    android:visibility="gone"
-    tools:visibility="visible">
+    android:visibility="gone" >
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/eddystone_switch_uid"

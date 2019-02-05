@@ -34,7 +34,6 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     @Override
     public void onResume() {
         super.onResume();
-//        setSearchFilter("");
         PubSub.getInstance().register(this);
     }
 
