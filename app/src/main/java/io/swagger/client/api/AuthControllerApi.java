@@ -29,7 +29,8 @@ import java.io.IOException;
 
 import io.swagger.client.model.AuthenticationRequest;
 import io.swagger.client.model.AuthenticationToken;
-import io.swagger.client.model.BaseMessage;
+import io.swagger.client.model.AuthenticationTokenCheck;
+import io.swagger.client.model.AuthenticationTokenCheckRequest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -57,14 +58,15 @@ public class AuthControllerApi {
     }
 
     /**
-     * Build call for checkTokenUsingGET
+     * Build call for checkTokenUsingPOST
+     * @param request request (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call checkTokenUsingGETCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = null;
+    public com.squareup.okhttp.Call checkTokenUsingPOSTCall(AuthenticationTokenCheckRequest request, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = request;
 
         // create path and map variables
         String localVarPath = "/v1/checkToken";
@@ -83,7 +85,7 @@ public class AuthControllerApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -100,15 +102,20 @@ public class AuthControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] { "JWT" };
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
+        String[] localVarAuthNames = new String[] {  };
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call checkTokenUsingGETValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call checkTokenUsingPOSTValidateBeforeCall(AuthenticationTokenCheckRequest request, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        
+        // verify the required parameter 'request' is set
+        if (request == null) {
+            throw new ApiException("Missing the required parameter 'request' when calling checkTokenUsingPOST(Async)");
+        }
         
 
-        com.squareup.okhttp.Call call = checkTokenUsingGETCall(progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = checkTokenUsingPOSTCall(request, progressListener, progressRequestListener);
         return call;
 
     }
@@ -116,34 +123,37 @@ public class AuthControllerApi {
     /**
      * Check whether a token is valid or not
      * 
-     * @return BaseMessage
+     * @param request request (required)
+     * @return AuthenticationTokenCheck
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public BaseMessage checkTokenUsingGET() throws ApiException {
-        ApiResponse<BaseMessage> resp = checkTokenUsingGETWithHttpInfo();
+    public AuthenticationTokenCheck checkTokenUsingPOST(AuthenticationTokenCheckRequest request) throws ApiException {
+        ApiResponse<AuthenticationTokenCheck> resp = checkTokenUsingPOSTWithHttpInfo(request);
         return resp.getData();
     }
 
     /**
      * Check whether a token is valid or not
      * 
-     * @return ApiResponse&lt;BaseMessage&gt;
+     * @param request request (required)
+     * @return ApiResponse&lt;AuthenticationTokenCheck&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<BaseMessage> checkTokenUsingGETWithHttpInfo() throws ApiException {
-        com.squareup.okhttp.Call call = checkTokenUsingGETValidateBeforeCall(null, null);
-        Type localVarReturnType = new TypeToken<BaseMessage>(){}.getType();
+    public ApiResponse<AuthenticationTokenCheck> checkTokenUsingPOSTWithHttpInfo(AuthenticationTokenCheckRequest request) throws ApiException {
+        com.squareup.okhttp.Call call = checkTokenUsingPOSTValidateBeforeCall(request, null, null);
+        Type localVarReturnType = new TypeToken<AuthenticationTokenCheck>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
      * Check whether a token is valid or not (asynchronously)
      * 
+     * @param request request (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call checkTokenUsingGETAsync(final ApiCallback<BaseMessage> callback) throws ApiException {
+    public com.squareup.okhttp.Call checkTokenUsingPOSTAsync(AuthenticationTokenCheckRequest request, final ApiCallback<AuthenticationTokenCheck> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -164,8 +174,8 @@ public class AuthControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = checkTokenUsingGETValidateBeforeCall(progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<BaseMessage>(){}.getType();
+        com.squareup.okhttp.Call call = checkTokenUsingPOSTValidateBeforeCall(request, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<AuthenticationTokenCheck>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }

@@ -49,7 +49,7 @@ public class UserUpdate {
    * Get email
    * @return email
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public String getEmail() {
     return email;
   }
@@ -67,7 +67,7 @@ public class UserUpdate {
    * Get name
    * @return name
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public String getName() {
     return name;
   }
@@ -103,7 +103,7 @@ public class UserUpdate {
    * Get surname
    * @return surname
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public String getSurname() {
     return surname;
   }

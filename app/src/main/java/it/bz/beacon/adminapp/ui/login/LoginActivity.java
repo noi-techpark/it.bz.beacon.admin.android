@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void attemptLogin() {
 
+        AdminApplication.hideKeyboard(this);
         editUsername.setError(null);
         editPassword.setError(null);
 

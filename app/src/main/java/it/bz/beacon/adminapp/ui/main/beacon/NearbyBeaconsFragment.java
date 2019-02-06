@@ -193,15 +193,20 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     private EddystoneListener createEddystoneListener() {
         return new SimpleEddystoneListener() {
             @Override
-            public void onEddystoneDiscovered(IEddystoneDevice eddystone, IEddystoneNamespace namespace) {
+            public void onEddystoneDiscovered(final IEddystoneDevice eddystone, IEddystoneNamespace namespace) {
                 Log.i(AdminApplication.LOG_TAG, "Eddystone discovered: " + eddystone.toString());
 
                 beaconViewModel.getByInstanceId(eddystone.getInstanceId(), new LoadEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
+                        Double temperature = null;
+                        if (eddystone.getTelemetry() != null) {
+                            temperature = eddystone.getTelemetry().getTemperature();
+                        }
+                        beaconMinimal.setTemperature(temperature);
                         List<BeaconMinimal> newList;
                         if (nearbyBeacons.getValue() == null) {
-                            newList = new ArrayList<BeaconMinimal>();
+                            newList = new ArrayList<>();
                         }
                         else {
                             newList = nearbyBeacons.getValue();
@@ -210,6 +215,16 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         if (!isBeaconInList(newList, beaconMinimal)) {
                             newList.add(beaconMinimal);
                             nearbyBeacons.setValue(newList);
+                        }
+                        else {
+                            if (temperature != null) {
+                                for (BeaconMinimal beacon : newList) {
+                                    if (beaconMinimal.getId() == beacon.getId()) {
+                                        beacon.setTemperature(temperature);
+                                    }
+                                }
+                                nearbyBeacons.setValue(newList);
+                            }
                         }
                     }
                 });

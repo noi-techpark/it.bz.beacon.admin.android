@@ -138,7 +138,7 @@
         "tags": [
           "image-controller"
         ],
-        "summary": "View a list of available beacons",
+        "summary": "View a list of available images for a beacon",
         "operationId": "getListUsingGET_1",
         "produces": [
           "application/json"
@@ -184,7 +184,7 @@
         "tags": [
           "image-controller"
         ],
-        "summary": "Create an image",
+        "summary": "Create an image for a beacon",
         "operationId": "createUsingPOST_1",
         "consumes": [
           "multipart/form-data"
@@ -238,6 +238,57 @@
       }
     },
     "/v1/admin/beacons/{beaconId}/images/{id}": {
+      "get": {
+        "tags": [
+          "image-controller"
+        ],
+        "summary": "Get an image for a beacon",
+        "operationId": "serveFileUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "beaconId",
+            "in": "path",
+            "description": "beaconId",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      },
       "delete": {
         "tags": [
           "image-controller"
@@ -296,7 +347,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues for the specified beacon ID",
-        "operationId": "getListUsingGET_2",
+        "operationId": "getListUsingGET_3",
         "produces": [
           "application/json"
         ],
@@ -452,7 +503,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues",
-        "operationId": "getListUsingGET_3",
+        "operationId": "getListUsingGET_2",
         "produces": [
           "application/json"
         ],
@@ -881,21 +932,38 @@
       }
     },
     "/v1/checkToken": {
-      "get": {
+      "post": {
         "tags": [
           "auth-controller"
         ],
         "summary": "Check whether a token is valid or not",
-        "operationId": "checkTokenUsingGET",
+        "operationId": "checkTokenUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "request",
+            "description": "request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthenticationTokenCheckRequest"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/BaseMessage"
+              "$ref": "#/definitions/AuthenticationTokenCheck"
             }
+          },
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -907,11 +975,6 @@
             "description": "Not Found"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "deprecated": false
       }
     },
@@ -995,6 +1058,30 @@
         }
       },
       "title": "AuthenticationToken"
+    },
+    "AuthenticationTokenCheck": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      },
+      "title": "AuthenticationTokenCheck"
+    },
+    "AuthenticationTokenCheckRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "title": "AuthenticationTokenCheckRequest"
     },
     "BaseMessage": {
       "type": "object",
@@ -1117,12 +1204,12 @@
     "BeaconImage": {
       "type": "object",
       "properties": {
+        "fileName": {
+          "type": "string"
+        },
         "id": {
           "type": "integer",
           "format": "int64"
-        },
-        "url": {
-          "type": "string"
         }
       },
       "title": "BeaconImage"
@@ -1168,6 +1255,29 @@
     },
     "BeaconUpdate": {
       "type": "object",
+      "required": [
+        "description",
+        "eddystoneEid",
+        "eddystoneEtlm",
+        "eddystoneTlm",
+        "eddystoneUid",
+        "eddystoneUrl",
+        "iBeacon",
+        "instanceId",
+        "interval",
+        "lat",
+        "lng",
+        "locationDescription",
+        "locationType",
+        "major",
+        "minor",
+        "name",
+        "namespace",
+        "telemetry",
+        "txPower",
+        "url",
+        "uuid"
+      ],
       "properties": {
         "description": {
           "type": "string"
@@ -1203,11 +1313,19 @@
         },
         "lat": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "minimum": -90,
+          "maximum": 90,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
         },
         "lng": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "minimum": -180,
+          "maximum": 180,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
         },
         "locationDescription": {
           "type": "string"
@@ -1262,6 +1380,64 @@
       },
       "title": "BeaconUpdate"
     },
+    "File": {
+      "type": "object",
+      "properties": {
+        "absolute": {
+          "type": "boolean"
+        },
+        "absoluteFile": {
+          "$ref": "#/definitions/File"
+        },
+        "absolutePath": {
+          "type": "string"
+        },
+        "canonicalFile": {
+          "$ref": "#/definitions/File"
+        },
+        "canonicalPath": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "boolean"
+        },
+        "file": {
+          "type": "boolean"
+        },
+        "freeSpace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent": {
+          "type": "string"
+        },
+        "parentFile": {
+          "$ref": "#/definitions/File"
+        },
+        "path": {
+          "type": "string"
+        },
+        "totalSpace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "usableSpace": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "File"
+    },
+    "InputStream": {
+      "type": "object",
+      "title": "InputStream"
+    },
     "IssueCreation": {
       "type": "object",
       "required": [
@@ -1273,7 +1449,7 @@
         "beaconId": {
           "type": "integer",
           "format": "int64",
-          "minimum": 0,
+          "minimum": 1,
           "exclusiveMinimum": false
         },
         "problem": {
@@ -1314,6 +1490,135 @@
         }
       },
       "title": "Order"
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "#/definitions/File"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "inputStream": {
+          "$ref": "#/definitions/InputStream"
+        },
+        "open": {
+          "type": "boolean"
+        },
+        "readable": {
+          "type": "boolean"
+        },
+        "uri": {
+          "$ref": "#/definitions/URI"
+        },
+        "url": {
+          "$ref": "#/definitions/URL"
+        }
+      },
+      "title": "Resource"
+    },
+    "URI": {
+      "type": "object",
+      "properties": {
+        "absolute": {
+          "type": "boolean"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "fragment": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "opaque": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "query": {
+          "type": "string"
+        },
+        "rawAuthority": {
+          "type": "string"
+        },
+        "rawFragment": {
+          "type": "string"
+        },
+        "rawPath": {
+          "type": "string"
+        },
+        "rawQuery": {
+          "type": "string"
+        },
+        "rawSchemeSpecificPart": {
+          "type": "string"
+        },
+        "rawUserInfo": {
+          "type": "string"
+        },
+        "scheme": {
+          "type": "string"
+        },
+        "schemeSpecificPart": {
+          "type": "string"
+        },
+        "userInfo": {
+          "type": "string"
+        }
+      },
+      "title": "URI"
+    },
+    "URL": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string"
+        },
+        "content": {
+          "type": "object"
+        },
+        "defaultPort": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "file": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "userInfo": {
+          "type": "string"
+        }
+      },
+      "title": "URL"
     },
     "User": {
       "type": "object",
@@ -1367,6 +1672,11 @@
     },
     "UserUpdate": {
       "type": "object",
+      "required": [
+        "email",
+        "name",
+        "surname"
+      ],
       "properties": {
         "email": {
           "type": "string"

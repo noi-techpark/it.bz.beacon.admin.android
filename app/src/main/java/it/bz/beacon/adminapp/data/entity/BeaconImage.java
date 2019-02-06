@@ -11,7 +11,7 @@ public class BeaconImage {
     @PrimaryKey
     private long id;
     private long beaconId;
-    private String url;
+    private String fileName;
 
     public BeaconImage() {
     }
@@ -33,12 +33,11 @@ public class BeaconImage {
         this.beaconId = beaconId;
     }
 
-    public String getUrl() {
-        return url;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
-
 }

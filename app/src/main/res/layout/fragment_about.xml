@@ -13,35 +13,36 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/app_default_margin" >
+            android:orientation="vertical"
+            android:padding="@dimen/app_default_margin">
 
             <TextView
                 android:id="@+id/about_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:text="@string/about_title"
                 android:textAllCaps="true"
                 android:textColor="@color/primaryText"
-                android:text="@string/about_title"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/about_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/app_default_margin"
-                android:textSize="14sp"
+                android:text="@string/about_text"
                 android:textColor="@color/secondaryText"
-                app:layout_constraintTop_toBottomOf="@id/about_title"
+                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:text="@string/about_text" />
+                app:layout_constraintTop_toBottomOf="@id/about_title" />
 
             <TextView
                 android:id="@+id/about_empty"
@@ -59,17 +60,49 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:layout_marginBottom="@dimen/app_default_margin"
+                android:background="@color/divider" />
+
             <ImageView
-                android:id="@+id/about_img"
+                android:id="@+id/about_logo_efre_fesr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:adjustViewBounds="true"
-                app:layout_constraintTop_toBottomOf="@id/about_text"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/about_text"
                 app:srcCompat="@drawable/logo_efre_fesr" />
 
-        </android.support.constraint.ConstraintLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:layout_marginBottom="@dimen/app_default_margin"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/about_logo_noi"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/noi" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4" />
+
+            </LinearLayout>
+        </LinearLayout>
 
     </ScrollView>
 

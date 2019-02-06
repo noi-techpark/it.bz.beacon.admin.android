@@ -24,50 +24,29 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconImage
+ * AuthenticationTokenCheckRequest
  */
 
-public class BeaconImage {
-  @SerializedName("fileName")
-  private String fileName = null;
+public class AuthenticationTokenCheckRequest {
+  @SerializedName("token")
+  private String token = null;
 
-  @SerializedName("id")
-  private Long id = null;
-
-  public BeaconImage fileName(String fileName) {
-    this.fileName = fileName;
+  public AuthenticationTokenCheckRequest token(String token) {
+    this.token = token;
     return this;
   }
 
    /**
-   * Get fileName
-   * @return fileName
+   * Get token
+   * @return token
   **/
-  @ApiModelProperty(value = "")
-  public String getFileName() {
-    return fileName;
+  @ApiModelProperty(required = true, value = "")
+  public String getToken() {
+    return token;
   }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
-
-  public BeaconImage id(Long id) {
-    this.id = id;
-    return this;
-  }
-
-   /**
-   * Get id
-   * @return id
-  **/
-  @ApiModelProperty(value = "")
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+  public void setToken(String token) {
+    this.token = token;
   }
 
 
@@ -79,24 +58,22 @@ public class BeaconImage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconImage beaconImage = (BeaconImage) o;
-    return Objects.equals(this.fileName, beaconImage.fileName) &&
-        Objects.equals(this.id, beaconImage.id);
+    AuthenticationTokenCheckRequest authenticationTokenCheckRequest = (AuthenticationTokenCheckRequest) o;
+    return Objects.equals(this.token, authenticationTokenCheckRequest.token);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fileName, id);
+    return Objects.hash(token);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconImage {\n");
+    sb.append("class AuthenticationTokenCheckRequest {\n");
     
-    sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

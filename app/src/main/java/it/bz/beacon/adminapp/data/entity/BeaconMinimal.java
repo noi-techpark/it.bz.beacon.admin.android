@@ -11,6 +11,7 @@ public class BeaconMinimal {
     private String manufacturerId;
     private String name;
     private String status;
+    private Double temperature;
 
     public BeaconMinimal() {
     }
@@ -85,5 +86,13 @@ public class BeaconMinimal {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
     }
 }

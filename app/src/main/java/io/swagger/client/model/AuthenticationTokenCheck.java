@@ -24,50 +24,50 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconImage
+ * AuthenticationTokenCheck
  */
 
-public class BeaconImage {
-  @SerializedName("fileName")
-  private String fileName = null;
+public class AuthenticationTokenCheck {
+  @SerializedName("token")
+  private String token = null;
 
-  @SerializedName("id")
-  private Long id = null;
+  @SerializedName("valid")
+  private Boolean valid = null;
 
-  public BeaconImage fileName(String fileName) {
-    this.fileName = fileName;
+  public AuthenticationTokenCheck token(String token) {
+    this.token = token;
     return this;
   }
 
    /**
-   * Get fileName
-   * @return fileName
+   * Get token
+   * @return token
   **/
   @ApiModelProperty(value = "")
-  public String getFileName() {
-    return fileName;
+  public String getToken() {
+    return token;
   }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
+  public void setToken(String token) {
+    this.token = token;
   }
 
-  public BeaconImage id(Long id) {
-    this.id = id;
+  public AuthenticationTokenCheck valid(Boolean valid) {
+    this.valid = valid;
     return this;
   }
 
    /**
-   * Get id
-   * @return id
+   * Get valid
+   * @return valid
   **/
   @ApiModelProperty(value = "")
-  public Long getId() {
-    return id;
+  public Boolean isValid() {
+    return valid;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setValid(Boolean valid) {
+    this.valid = valid;
   }
 
 
@@ -79,24 +79,24 @@ public class BeaconImage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconImage beaconImage = (BeaconImage) o;
-    return Objects.equals(this.fileName, beaconImage.fileName) &&
-        Objects.equals(this.id, beaconImage.id);
+    AuthenticationTokenCheck authenticationTokenCheck = (AuthenticationTokenCheck) o;
+    return Objects.equals(this.token, authenticationTokenCheck.token) &&
+        Objects.equals(this.valid, authenticationTokenCheck.valid);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fileName, id);
+    return Objects.hash(token, valid);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconImage {\n");
+    sb.append("class AuthenticationTokenCheck {\n");
     
-    sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    token: ").append(toIndentedString(token)).append("\n");
+    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("}");
     return sb.toString();
   }

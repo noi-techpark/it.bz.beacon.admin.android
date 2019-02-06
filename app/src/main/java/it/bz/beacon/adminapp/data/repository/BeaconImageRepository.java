@@ -58,7 +58,7 @@ public class BeaconImageRepository {
                             beaconImage = new BeaconImage();
                             beaconImage.setId(remoteBeaconImage.getId());
                             beaconImage.setBeaconId(beaconId);
-                            beaconImage.setUrl(remoteBeaconImage.getUrl());
+                            beaconImage.setFileName(remoteBeaconImage.getFileName());
                             beaconImageDao.insert(beaconImage);
                         }
                         if (dataUpdateEvent != null) {

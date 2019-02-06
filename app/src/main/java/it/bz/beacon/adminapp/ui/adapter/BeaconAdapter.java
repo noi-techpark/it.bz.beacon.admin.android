@@ -167,6 +167,9 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
             }
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_ERROR)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
+            }
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
             }
@@ -189,6 +192,9 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
+                    if (beaconMinimal.getTemperature() != null) {
+                        intent.putExtra(DetailActivity.EXTRA_TEMPERATURE, beaconMinimal.getTemperature());
+                    }
                     context.startActivity(intent);
                 }
             });

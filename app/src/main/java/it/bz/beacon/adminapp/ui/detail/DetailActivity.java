@@ -29,6 +29,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -73,6 +76,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
+import io.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -85,10 +89,11 @@ import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
-public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
+    public static final String EXTRA_TEMPERATURE = "EXTRA_TEMPERATURE";
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
     @BindView(R.id.progress)
@@ -150,6 +155,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     @BindView(R.id.info_battery)
     protected TextView txtBattery;
+
+    @BindView(R.id.info_temperature)
+    protected TextView txtTemperature;
 
     @BindView(R.id.info_battery_icon)
     protected ImageView imgBattery;
@@ -229,6 +237,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
+    private Double temperature;
 
     protected GoogleMap map;
     private FusedLocationProviderClient fusedLocationClient;
@@ -253,6 +262,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+            if (getIntent().hasExtra(EXTRA_TEMPERATURE)) {
+                temperature = getIntent().getDoubleExtra(EXTRA_TEMPERATURE, 0);
+            }
         }
         configureTabListeners();
         isEditing = false;
@@ -269,7 +281,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         images.setItemAnimator(new DefaultItemAnimator());
         images.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        galleryAdapter = new GalleryAdapter(this);
+        galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
 
         loadBeacon();
@@ -349,6 +361,32 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
         if (isEditing) {
             fabAddIssue.hide();
+            rbSignalStrength.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+                @Override
+                public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                    showBatteryWarning();
+                }
+            });
+            editInterval.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    showBatteryWarning();
+                }
+            });
+            switchTelemetry.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    showBatteryWarning();
+                }
+            });
         }
         else {
             fabAddIssue.show();
@@ -497,6 +535,10 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen() * 1000))));
 
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
+
+            if (temperature != null) {
+                txtTemperature.setText(getString(R.string.degree, temperature));
+            }
 
             editName.setText(beacon.getName());
             if (beacon.getBatteryLevel() < 34) {
@@ -867,8 +909,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     public void onPickResult(final PickResult pickResult) {
         if (pickResult.getError() == null) {
-            String tempFilename = System.currentTimeMillis() + ".png";
-            Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 2000);
+            String tempFilename = System.currentTimeMillis() + ".jpg";
+            Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 1024);
             String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, "temp", tempFilename);
 
             final File file = new File(tempUri);
@@ -892,10 +934,10 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         dialog.dismiss();
                         ContextWrapper contextWrapper = new ContextWrapper(DetailActivity.this);
                         File directory = contextWrapper.getDir("images", Context.MODE_PRIVATE);
-                        File newFile = new File(directory, result.getId() + ".png");
+                        File newFile = new File(directory, result.getFileName());
                         file.renameTo(newFile);
                         BeaconImage beaconImage = new BeaconImage();
-                        beaconImage.setUrl(result.getUrl());
+                        beaconImage.setFileName(result.getFileName());
                         beaconImage.setBeaconId(beaconId);
                         beaconImage.setId(result.getId());
                         beaconImageViewModel.insert(beaconImage);
@@ -923,5 +965,54 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         else {
             Toast.makeText(this, pickResult.getError().getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void showBatteryWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+        builder.setTitle(getString(R.string.warning));
+        builder.setMessage(getString(R.string.battery_warning));
+        builder.setPositiveButton(getString(android.R.string.ok), null);
+        builder.show();
+    }
+
+    @Override
+    public void onDelete(final BeaconImage beaconImage) {
+
+        try {
+            AdminApplication.getImageApi().deleteUsingDELETEAsync(beaconId, beaconImage.getId(), new ApiCallback<BaseMessage>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+
+                }
+
+                @Override
+                public void onSuccess(BaseMessage result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            beaconImageViewModel.deleteBeaconImage(beaconImage);
+                            BitmapTools.deleteFromInternalStorage(DetailActivity.this, "images", beaconImage.getFileName());
+                        }
+                    }).start();
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onDeleteRequested() {
+        return isEditing;
     }
 }

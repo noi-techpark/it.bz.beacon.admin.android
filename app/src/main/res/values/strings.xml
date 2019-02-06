@@ -78,6 +78,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_info_battery">Battery</string>
     <string name="details_info_devicestatus">Device status</string>
     <string name="details_info_telemetry">Telemetry</string>
+    <string name="details_info_temperature">Temperature</string>
     <string name="details_info">Info</string>
     <string name="details_ibeacon">iBeacon</string>
     <string name="details_eddystone">Eddystone</string>
@@ -108,5 +109,9 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="loading">Loading…</string>
     <string name="saving">Saving…</string>
     <string name="close_warning">Do you want to close without saving?</string>
+    <string name="delete_warning">Do you really want to remove this image?</string>
+    <string name="warning">Warning</string>
+    <string name="battery_warning">Modifying these parameters can negatively affect the duration of the battery!</string>
+    <string name="dont_show_again">Don\'t show again</string>
 
 </resources>
