@@ -113,7 +113,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="close_warning">Do you want to close without saving?</string>
     <string name="delete_warning">Do you really want to remove this image?</string>
     <string name="warning">Warning</string>
-    <string name="battery_warning">Modifying these parameters can negatively affect the duration of the battery!</string>
+    <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
     <string name="dont_show_again">Don\'t show again</string>
 
 </resources>

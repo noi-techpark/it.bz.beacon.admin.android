@@ -25,6 +25,7 @@ import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -38,6 +39,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -79,6 +81,7 @@ import io.swagger.client.ApiException;
 import io.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
@@ -89,7 +92,7 @@ import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
-public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
@@ -373,30 +376,26 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     showBatteryWarning();
                 }
             });
-            editInterval.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    showBatteryWarning();
-                }
-            });
+            editInterval.addTextChangedListener(this);
             switchTelemetry.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     showBatteryWarning();
                 }
             });
+            switchUid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    showBatteryWarning();
+                }
+            });
             btnCurrentPosition.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             fabAddIssue.show();
+            rbSignalStrength.setOnRangeBarChangeListener(null);
+            editInterval.removeTextChangedListener(this);
+            switchTelemetry.setOnCheckedChangeListener(null);
+            switchUid.setOnCheckedChangeListener(null);
             btnCurrentPosition.setVisibility(View.GONE);
             if (map != null) {
                 map.setOnMapClickListener(null);
@@ -868,9 +867,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @OnClick(R.id.details_images_add)
     public void addImage(View view) {
         PickImageDialog.build(new PickSetup()
-        .setTitle(getString(R.string.choose_source))
-        .setCancelText(getString(android.R.string.cancel))
-        .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
+                .setTitle(getString(R.string.choose_source))
+                .setCancelText(getString(android.R.string.cancel))
+                .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
                 .show(this);
     }
 
@@ -879,8 +878,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (currentLocation != null) {
             setLatLngEditFields(currentLocation.latitude, currentLocation.longitude);
             setMarker(currentLocation);
-        }
-        else {
+        } else {
             showDialog(getString(R.string.position_not_available));
         }
     }
@@ -967,8 +965,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
                         if (!done) {
                             dialog.setProgress((int) (bytesWritten * 100 / contentLength));
-                        }
-                        else {
+                        } else {
                             dialog.dismiss();
                         }
                     }
@@ -981,18 +978,30 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             Toast.makeText(this, pickResult.getError().getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void showBatteryWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
-        builder.setTitle(getString(R.string.warning));
-        builder.setMessage(getString(R.string.battery_warning));
-        builder.setPositiveButton(getString(android.R.string.ok), null);
-        builder.show();
+        if (!AdminApplication.getStorage().getDontShowWarningAgain()) {
+            View checkBoxView = View.inflate(this, R.layout.checkbox, null);
+            AppCompatCheckBox checkBox = checkBoxView.findViewById(R.id.checkbox);
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    AdminApplication.getStorage().setDontShowWarningAgain(isChecked);
+                }
+            });
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+            builder.setTitle(getString(R.string.warning));
+            builder.setMessage(getString(R.string.battery_warning));
+            builder.setView(checkBoxView);
+            builder.setPositiveButton(getString(android.R.string.ok), null);
+            builder.show();
+        }
     }
 
     private void showDialog(String message) {
@@ -1047,5 +1056,20 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     public void onMapClick(LatLng latLng) {
         moveMarker(latLng);
         setLatLngEditFields(latLng.latitude, latLng.longitude);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        showBatteryWarning();
     }
 }
