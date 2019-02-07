@@ -97,24 +97,21 @@ public class BitmapTools {
         try {
             fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 95, fos);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
                 if (fos != null) {
                     fos.close();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return file.getAbsolutePath();
     }
 
-    public static String deleteFromInternalStorage(Context context, String directoryName, String fileName) {
+    public static void deleteFromInternalStorage(Context context, String directoryName, String fileName) {
         ContextWrapper contextWrapper = new ContextWrapper(context);
         File directory = contextWrapper.getDir(directoryName, Context.MODE_PRIVATE);
         File file = new File(directory, fileName);
@@ -123,11 +120,9 @@ public class BitmapTools {
             if (file.exists()) {
                 file.delete();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return file.getAbsolutePath();
     }
 
     public static void downloadImage(Context context, BeaconImage beaconImage) {
@@ -145,51 +140,32 @@ public class BitmapTools {
 
         @Override
         protected Void doInBackground(Context... context) {
-                ContextWrapper contextWrapper = new ContextWrapper(context[0]);
-                File directory = contextWrapper.getDir("images", Context.MODE_PRIVATE);
-                File file = new File(directory, beaconImage.getFileName());
+            ContextWrapper contextWrapper = new ContextWrapper(context[0]);
+            File directory = contextWrapper.getDir(context[0].getString(R.string.image_folder), Context.MODE_PRIVATE);
+            File file = new File(directory, beaconImage.getFileName());
 
+            if (!file.exists()) {
                 try {
-                    String sUrl = context[0].getString(R.string.basePath).concat("/v1/admin/beacons/").concat(String.valueOf(beaconImage.getBeaconId())).concat("/images/").concat(String.valueOf(beaconImage.getId()));
-//                    URL url = new URL(sUrl);
-//                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-//                    connection.setRequestMethod("GET");
-//                    connection.addRequestProperty("Authorization", "Bearer " + AdminApplication.getStorage().getLoginUserToken());
-//                    connection.addRequestProperty("Accept", "*/*");
-//                    connection.setDoOutput(true);
-//
-//                    byte[] buffer = new byte[1024];
-//
-//
-//                    InputStream inputStream = connection.getInputStream();
-//
-//                    int bufferLength = 0;
-//
-//                    while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
-//                        fileOutput.write(buffer, 0, bufferLength);
-//                    }
-//                    fileOutput.close();
+                    String url = context[0].getString(R.string.basePath)
+                            .concat("/v1/admin/beacons/")
+                            .concat(String.valueOf(beaconImage.getBeaconId()))
+                            .concat("/")
+                            .concat(context[0].getString(R.string.image_folder))
+                            .concat("/")
+                            .concat(String.valueOf(beaconImage.getId()));
+
                     OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder().url(sUrl)
+                    Request request = new Request.Builder().url(url)
                             .addHeader("Authorization", "Bearer " + AdminApplication.getStorage().getLoginUserToken())
-                            .addHeader("Content-Type", "application/json")
                             .build();
                     Response response = client.newCall(request).execute();
 
                     InputStream inputStream = response.body().byteStream();
                     FileOutputStream fileOutput = new FileOutputStream(file);
 
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//                    String result, line = reader.readLine();
-//                    result = line;
-//                    while((line = reader.readLine()) != null) {
-////                        result += line;
-//                        fileOutput.write(buffer, 0, bufferLength);
-//                    }
                     int bufferLength = 0;
-                    byte[] buffer = new byte[1024];
-//
-                    while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
+                    byte[] buffer = new byte[2048];
+                    while ((bufferLength = inputStream.read(buffer)) > 0) {
                         fileOutput.write(buffer, 0, bufferLength);
                     }
                     fileOutput.close();
@@ -197,6 +173,7 @@ public class BitmapTools {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
 
             return null;
         }

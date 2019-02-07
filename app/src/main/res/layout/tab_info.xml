@@ -93,8 +93,7 @@
             android:ellipsize="marquee"
             android:gravity="end"
             android:singleLine="true"
-            android:textAllCaps="true"
-            tools:text="OK" />
+            tools:text="21 °C" />
 
         <View
             android:layout_width="match_parent"

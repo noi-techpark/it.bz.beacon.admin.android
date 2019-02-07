@@ -64,4 +64,14 @@
             tools:text="11.35494" />
 
     </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/gps_current_position"
+        android:background="@null"
+        android:layout_marginTop="@dimen/app_default_margin"
+        android:textColor="@color/primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/current_position" />
 </LinearLayout>

@@ -193,7 +193,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
                     if (beaconMinimal.getTemperature() != null) {
-                        intent.putExtra(DetailActivity.EXTRA_TEMPERATURE, beaconMinimal.getTemperature());
+                        intent.putExtra(DetailActivity.EXTRA_TEMPERATURE, beaconMinimal.getTemperature().doubleValue());
                     }
                     context.startActivity(intent);
                 }

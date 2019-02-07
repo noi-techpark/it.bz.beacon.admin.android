@@ -89,7 +89,7 @@ import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
-public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
@@ -213,6 +213,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.eddystone_switch_url)
     protected SwitchCompat switchUrl;
 
+    @BindView(R.id.details_location_subtitle)
+    protected TextView txtLocation;
+
     @BindView(R.id.gps_latitude)
     protected TextInputEditText editLatitude;
 
@@ -233,6 +236,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     @BindView(R.id.details_images_add)
     protected Button btnAddImage;
+
+    @BindView(R.id.gps_current_position)
+    protected Button btnCurrentPosition;
 
     private long beaconId;
     private String beaconName;
@@ -263,7 +269,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
             if (getIntent().hasExtra(EXTRA_TEMPERATURE)) {
-                temperature = getIntent().getDoubleExtra(EXTRA_TEMPERATURE, 0);
+                temperature = getIntent().getDoubleExtra(EXTRA_TEMPERATURE, 0d);
             }
         }
         configureTabListeners();
@@ -387,9 +393,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     showBatteryWarning();
                 }
             });
+            btnCurrentPosition.setVisibility(View.VISIBLE);
         }
         else {
             fabAddIssue.show();
+            btnCurrentPosition.setVisibility(View.GONE);
+            if (map != null) {
+                map.setOnMapClickListener(null);
+            }
         }
     }
 
@@ -537,7 +548,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
 
             if (temperature != null) {
-                txtTemperature.setText(getString(R.string.degree, temperature));
+                txtTemperature.setText(getString(R.string.degree, temperature.doubleValue()));
             }
 
             editName.setText(beacon.getName());
@@ -595,8 +606,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 setMarker(latlng);
             }
 
-            editLatitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLat()));
-            editLongitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLng()));
+            setLatLngEditFields(beacon.getLat(), beacon.getLng());
 
             updateLocationButtons(beacon.getLocationType());
             btnOutdoor.setOnClickListener(new View.OnClickListener() {
@@ -626,15 +636,19 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (location == null) {
             deactivateToggleButton(btnIndoor);
             deactivateToggleButton(btnOutdoor);
+            txtLocation.setVisibility(View.GONE);
         } else {
+            txtLocation.setVisibility(View.VISIBLE);
             if (location.equals(Beacon.LOCATION_OUTDOOR)) {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
                 floorContainer.setVisibility(View.GONE);
+                txtLocation.setText(getString(R.string.outdoor));
             } else {
                 activateToggleButton(btnIndoor);
                 deactivateToggleButton(btnOutdoor);
                 floorContainer.setVisibility(View.VISIBLE);
+                txtLocation.setText(getString(R.string.indoor));
             }
         }
     }
@@ -671,12 +685,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         }
 
         if (isEditing) {
-            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    moveMarker(latLng);
-                }
-            });
+            map.setOnMapClickListener(this);
         }
 
 //        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
@@ -735,7 +744,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                             if ((location != null) && (currentLocation == null)) {
                                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                                 if ((beacon == null) || (beacon.getLat() == 0) || (beacon.getLng() == 0)) {
-                                    map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
                                 }
                                 currentLocation = latLng;
                             }
@@ -836,12 +845,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             case R.id.menu_edit:
                 isEditing = true;
                 if (map != null) {
-                    map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                        @Override
-                        public void onMapClick(LatLng latLng) {
-                            moveMarker(latLng);
-                        }
-                    });
+                    map.setOnMapClickListener(this);
                 }
                 setContentEnabled(isEditing);
                 invalidateOptionsMenu();
@@ -868,6 +872,22 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         .setCancelText(getString(android.R.string.cancel))
         .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
                 .show(this);
+    }
+
+    @OnClick(R.id.gps_current_position)
+    public void useCurrentPosition(View view) {
+        if (currentLocation != null) {
+            setLatLngEditFields(currentLocation.latitude, currentLocation.longitude);
+            setMarker(currentLocation);
+        }
+        else {
+            showDialog(getString(R.string.position_not_available));
+        }
+    }
+
+    private void setLatLngEditFields(double latitude, double longitude) {
+        editLatitude.setText(String.format(Locale.getDefault(), "%.6f", latitude));
+        editLongitude.setText(String.format(Locale.getDefault(), "%.6f", longitude));
     }
 
     @Override
@@ -911,7 +931,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (pickResult.getError() == null) {
             String tempFilename = System.currentTimeMillis() + ".jpg";
             Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 1024);
-            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, "temp", tempFilename);
+            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, getString(R.string.temp_folder), tempFilename);
 
             final File file = new File(tempUri);
 
@@ -933,7 +953,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     public void onSuccess(io.swagger.client.model.BeaconImage result, int statusCode, Map<String, List<String>> responseHeaders) {
                         dialog.dismiss();
                         ContextWrapper contextWrapper = new ContextWrapper(DetailActivity.this);
-                        File directory = contextWrapper.getDir("images", Context.MODE_PRIVATE);
+                        File directory = contextWrapper.getDir(getString(R.string.image_folder), Context.MODE_PRIVATE);
                         File newFile = new File(directory, result.getFileName());
                         file.renameTo(newFile);
                         BeaconImage beaconImage = new BeaconImage();
@@ -975,6 +995,13 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         builder.show();
     }
 
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+        builder.setMessage(message);
+        builder.setPositiveButton(getString(android.R.string.ok), null);
+        builder.show();
+    }
+
     @Override
     public void onDelete(final BeaconImage beaconImage) {
 
@@ -991,7 +1018,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         @Override
                         public void run() {
                             beaconImageViewModel.deleteBeaconImage(beaconImage);
-                            BitmapTools.deleteFromInternalStorage(DetailActivity.this, "images", beaconImage.getFileName());
+                            BitmapTools.deleteFromInternalStorage(DetailActivity.this, getString(R.string.image_folder), beaconImage.getFileName());
                         }
                     }).start();
                 }
@@ -1014,5 +1041,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     public boolean onDeleteRequested() {
         return isEditing;
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        moveMarker(latLng);
+        setLatLngEditFields(latLng.latitude, latLng.longitude);
     }
 }

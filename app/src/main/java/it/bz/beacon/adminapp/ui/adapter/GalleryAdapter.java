@@ -80,7 +80,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
 
         private void setImage(final BeaconImage beaconImage) {
             ContextWrapper contextWrapper = new ContextWrapper(context);
-            File directory = contextWrapper.getDir("images", Context.MODE_PRIVATE);
+            File directory = contextWrapper.getDir(context.getString(R.string.image_folder), Context.MODE_PRIVATE);
             File file = new File(directory, beaconImage.getFileName());
 
             if (file.exists()) {
