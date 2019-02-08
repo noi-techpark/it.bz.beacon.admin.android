@@ -26,7 +26,7 @@ public class BeaconRepository {
     private BeaconDao beaconDao;
     private LiveData<List<BeaconMinimal>> beacons;
     private Storage storage;
-    private int synchronizationInterval = 0;
+    private int synchronizationInterval;
 
     public BeaconRepository(Context context) {
         BeaconDatabase db = BeaconDatabase.getDatabase(context);
@@ -158,8 +158,7 @@ public class BeaconRepository {
 
         @Override
         protected Long doInBackground(final Beacon... params) {
-            long id = asyncTaskDao.insert(params[0]);
-            return id;
+            return asyncTaskDao.insert(params[0]);
         }
 
         @Override

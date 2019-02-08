@@ -1,5 +1,7 @@
 package it.bz.beacon.adminapp.data.entity;
 
+import android.arch.persistence.room.Ignore;
+
 public class BeaconMinimal {
 
     private long id;
@@ -11,7 +13,10 @@ public class BeaconMinimal {
     private String manufacturerId;
     private String name;
     private String status;
+    @Ignore
     private Double temperature;
+    @Ignore
+    private Double distance;
 
     public BeaconMinimal() {
     }
@@ -94,5 +99,13 @@ public class BeaconMinimal {
 
     public void setTemperature(Double temperature) {
         this.temperature = temperature;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
     }
 }

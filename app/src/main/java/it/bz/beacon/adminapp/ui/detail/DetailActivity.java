@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -39,7 +40,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -61,7 +61,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.squareup.picasso.Picasso;
+import com.kontakt.sdk.android.ble.connection.ErrorCause;
+import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
+import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
+import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
+import com.kontakt.sdk.android.ble.connection.WriteListener;
+import com.kontakt.sdk.android.cloud.KontaktCloud;
+import com.kontakt.sdk.android.cloud.KontaktCloudFactory;
+import com.kontakt.sdk.android.cloud.response.CloudCallback;
+import com.kontakt.sdk.android.cloud.response.CloudError;
+import com.kontakt.sdk.android.cloud.response.CloudHeaders;
+import com.kontakt.sdk.android.cloud.response.paginated.Configs;
+import com.kontakt.sdk.android.common.KontaktSDK;
+import com.kontakt.sdk.android.common.model.Config;
+import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
@@ -72,6 +85,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,9 +93,9 @@ import butterknife.OnClick;
 import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
 import io.swagger.client.model.BaseMessage;
+import io.swagger.client.model.BeaconUpdate;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
@@ -89,6 +103,7 @@ import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
+import it.bz.beacon.adminapp.ui.main.MainActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -260,6 +275,10 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private BeaconViewModel beaconViewModel;
     private BeaconImageViewModel beaconImageViewModel;
 
+    private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
+    private KontaktCloud kontaktCloud;
+    private KontaktDeviceConnection kontaktDeviceConnection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -294,6 +313,92 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         images.setAdapter(galleryAdapter);
 
         loadBeacon();
+        initializeKontakt();
+    }
+
+    private void initializeKontakt() {
+        KontaktSDK.initialize(getString(R.string.apiKey));
+        kontaktCloud = KontaktCloudFactory.create();
+    }
+
+    private void sendToCloud(Config secureConfig, WriteListener.WriteResponse writeResponse) {
+        secureConfig.applySecureResponse(writeResponse.getExtra(), writeResponse.getUnixTimestamp());
+        kontaktCloud.devices()
+                .applySecureConfigs(secureConfig)
+                .execute(new CloudCallback<Configs>() {
+                    @Override
+                    public void onSuccess(Configs response, CloudHeaders headers) {
+                        if (response != null && response.getContent() != null && response.getContent().size() > 0) {
+
+                        }
+                        Log.d(AdminApplication.LOG_TAG, "successfully applied config");
+                    }
+
+                    @Override
+                    public void onError(CloudError error) {
+                        Log.d(AdminApplication.LOG_TAG, "config api error");
+                    }
+                });
+    }
+
+    private void sendToBeacon(final ISecureProfile profile) {
+        kontaktCloud.configs().secure().withIds(profile.getUniqueId()).execute(new CloudCallback<Configs>() {
+            @Override
+            public void onSuccess(Configs response, CloudHeaders headers) {
+                if (response != null && response.getContent() != null && response.getContent().size() > 0) {
+                    final Config config = response.getContent().get(0);
+                    Log.d(AdminApplication.LOG_TAG, "Config for beacon received: " + profile.getUniqueId());
+
+                    kontaktDeviceConnection = KontaktDeviceConnectionFactory.create(DetailActivity.this, profile, new KontaktDeviceConnection.ConnectionListener() {
+                        @Override
+                        public void onConnectionOpened() {
+                            Log.d(AdminApplication.LOG_TAG, "Connection opened");
+                        }
+
+                        @Override
+                        public void onConnected() {
+                            kontaktDeviceConnection.applySecureConfig(config.getSecureRequest(), new WriteListener() {
+                                @Override
+                                public void onWriteSuccess(WriteListener.WriteResponse response) {
+                                    sendToCloud(config, response);
+                                    disconnect();
+                                    Log.d(AdminApplication.LOG_TAG, "Written");
+                                }
+
+                                @Override
+                                public void onWriteFailure(ErrorCause cause) {
+                                    Log.d(AdminApplication.LOG_TAG, "Write failure");
+                                    disconnect();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onErrorOccured(int errorCode) {
+                            Log.d(AdminApplication.LOG_TAG, "Connection failure");
+                        }
+
+                        @Override
+                        public void onDisconnected() {
+                            Log.d(AdminApplication.LOG_TAG, "Disconnect");
+                        }
+                    });
+                    kontaktDeviceConnection.connect();
+                }
+            }
+
+            @Override
+            public void onError(CloudError error) {
+
+            }
+        });
+    }
+
+    private void disconnect() {
+        if (kontaktDeviceConnection != null) {
+            kontaktDeviceConnection.close();
+            kontaktDeviceConnection = null;
+        }
     }
 
     @Override
@@ -507,38 +612,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         });
     }
 
-    private void saveData() {
-        if (beacon != null) {
-            beacon.setName(editName.getText().toString());
-            beacon.setTxPower(rbSignalStrength.getRightIndex());
-            beacon.setInterval(Integer.valueOf(editInterval.getText().toString()));
-            beacon.setTelemetry(switchTelemetry.isChecked());
-            beacon.setIBeacon(switchIBeacon.isChecked());
-            beacon.setUuid(editUuid.getText().toString());
-            beacon.setMajor(Integer.valueOf(editMajor.getText().toString()));
-            beacon.setMinor(Integer.valueOf(editMinor.getText().toString()));
-            beacon.setEddystoneEid(switchEid.isChecked());
-            beacon.setEddystoneEtlm(switchEtlm.isChecked());
-            beacon.setEddystoneTlm(switchTlm.isChecked());
-            beacon.setEddystoneUid(switchUid.isChecked());
-            beacon.setEddystoneUrl(switchUrl.isChecked());
-            beacon.setNamespace(editNamespace.getText().toString());
-            beacon.setInstanceId(editInstanceId.getText().toString());
-            beacon.setUrl(editUrl.getText().toString());
-            beacon.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
-            beacon.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
-            beacon.setDescription(editDescription.getText().toString());
-            beacon.setLocationDescription(editFloor.getText().toString());
-
-            beaconViewModel.insert(beacon, new InsertEvent() {
-                @Override
-                public void onSuccess(long id) {
-                    Toast.makeText(DetailActivity.this, "Saved successfully", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
     private void showData() {
         if (beacon != null) {
             setTitle(beacon.getName());
@@ -581,7 +654,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 txtStatus.setText(getString(R.string.status_configuration_pending));
             }
 
-            rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower());
+            rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower() - 1);
             editInterval.setText(String.valueOf(beacon.getInterval()));
             switchTelemetry.setChecked(beacon.getTelemetry() != null && beacon.getTelemetry());
 
@@ -686,14 +759,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (isEditing) {
             map.setOnMapClickListener(this);
         }
-
-//        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-//            @Override
-//            public boolean onMyLocationButtonClick() {
-//                showMyLocation();
-//                return true;
-//            }
-//        });
     }
 
     private void setMarker(LatLng latLng) {
@@ -851,17 +916,112 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 setUpToolbar();
                 break;
             case R.id.menu_save:
-                saveData();
-                isEditing = false;
-                setContentEnabled(isEditing);
-                invalidateOptionsMenu();
-                setUpToolbar();
+                save();
                 break;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void save() {
+        BeaconUpdate beaconUpdate = new BeaconUpdate();
+        beaconUpdate.setName(editName.getText().toString());
+        beaconUpdate.setTxPower(rbSignalStrength.getRightIndex());
+        beaconUpdate.setInterval(Integer.valueOf(editInterval.getText().toString()));
+        beaconUpdate.setTelemetry(switchTelemetry.isChecked());
+        beaconUpdate.setIBeacon(switchIBeacon.isChecked());
+        beaconUpdate.setUuid(UUID.fromString(editUuid.getText().toString()));
+        beaconUpdate.setMajor(Integer.valueOf(editMajor.getText().toString()));
+        beaconUpdate.setMinor(Integer.valueOf(editMinor.getText().toString()));
+        beaconUpdate.setEddystoneEid(switchEid.isChecked());
+        beaconUpdate.setEddystoneEtlm(switchEtlm.isChecked());
+        beaconUpdate.setEddystoneTlm(switchTlm.isChecked());
+        beaconUpdate.setEddystoneUid(switchUid.isChecked());
+        beaconUpdate.setEddystoneUrl(switchUrl.isChecked());
+        beaconUpdate.setNamespace(editNamespace.getText().toString());
+        beaconUpdate.setInstanceId(editInstanceId.getText().toString());
+        beaconUpdate.setUrl(editUrl.getText().toString());
+        beaconUpdate.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
+        beaconUpdate.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
+        beaconUpdate.setDescription(editDescription.getText().toString());
+        beaconUpdate.setLocationDescription(editFloor.getText().toString());
+        beaconUpdate.setTelemetry(switchTelemetry.isChecked());
+        if (beacon.getLocationType().equals(Beacon.LOCATION_INDOOR)) {
+            beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.INDOOR);
+        }
+        else {
+            beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.OUTDOOR);
+        }
+
+        SaveTask saveTask = new SaveTask();
+        saveTask.execute(beaconUpdate);
+    }
+
+    private class SaveTask extends AsyncTask<BeaconUpdate, Void, io.swagger.client.model.Beacon> {
+
+        @Override
+        protected io.swagger.client.model.Beacon doInBackground(BeaconUpdate... beaconUpdates) {
+            try {
+                return AdminApplication.getBeaconApi().updateUsingPATCH(beaconUpdates[0], beaconId);
+
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(io.swagger.client.model.Beacon result) {
+            if (result != null) {
+                Beacon updatedBeacon = new Beacon();
+                updatedBeacon.setId(result.getId());
+                updatedBeacon.setBatteryLevel(result.getBatteryLevel());
+                updatedBeacon.setDescription(result.getDescription());
+                updatedBeacon.setEddystoneEid(result.isEddystoneEid());
+                updatedBeacon.setEddystoneEtlm(result.isEddystoneEtlm());
+                updatedBeacon.setEddystoneTlm(result.isEddystoneTlm());
+                updatedBeacon.setEddystoneUid(result.isEddystoneUid());
+                updatedBeacon.setEddystoneUrl(result.isEddystoneUrl());
+                updatedBeacon.setIBeacon(result.isIBeacon());
+                updatedBeacon.setInstanceId(result.getInstanceId());
+                updatedBeacon.setInterval(result.getInterval());
+                updatedBeacon.setLastSeen(result.getLastSeen());
+                updatedBeacon.setLat(result.getLat());
+                updatedBeacon.setLng(result.getLng());
+                updatedBeacon.setLocationDescription(result.getLocationDescription());
+                if (result.getLocationType() != null) {
+                    updatedBeacon.setLocationType(result.getLocationType().getValue());
+                }
+                updatedBeacon.setMajor(result.getMajor());
+                updatedBeacon.setMinor(result.getMinor());
+                updatedBeacon.setManufacturer(result.getManufacturer().getValue());
+                updatedBeacon.setManufacturerId(result.getManufacturerId());
+                updatedBeacon.setName(result.getName());
+                updatedBeacon.setNamespace(result.getNamespace());
+                updatedBeacon.setStatus(result.getStatus().getValue());
+                updatedBeacon.setTelemetry(result.isTelemetry());
+                updatedBeacon.setTxPower(result.getTxPower());
+                updatedBeacon.setUrl(result.getUrl());
+                updatedBeacon.setUuid(result.getUuid().toString());
+
+                beaconViewModel.insert(updatedBeacon, new InsertEvent() {
+                    @Override
+                    public void onSuccess(long id) {
+                        Toast.makeText(DetailActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                isEditing = false;
+                setContentEnabled(isEditing);
+                invalidateOptionsMenu();
+                setUpToolbar();
+            }
+            else {
+                showDialog(getString(R.string.no_internet));
+            }
+        }
     }
 
     @OnClick(R.id.details_images_add)

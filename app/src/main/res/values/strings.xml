@@ -62,6 +62,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="lng">Longitude</string>
     <string name="details_edit">Edit</string>
     <string name="details_save">Save</string>
+    <string name="saved">Saved successfully</string>
     <string name="details_delete">Delete</string>
     <string name="details_section_config">Beacon Config</string>
     <string name="details_section_location">Location</string>
@@ -115,5 +116,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="warning">Warning</string>
     <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
     <string name="dont_show_again">Don\'t show again</string>
+    <string name="no_internet">No internet connection detected. To apply changes, an internet connection is needed!</string>
+    <string name="general_error">An error occurred. Please try again!</string>
 
 </resources>

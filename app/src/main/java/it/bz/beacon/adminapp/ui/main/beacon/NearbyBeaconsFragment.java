@@ -32,7 +32,10 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
@@ -87,13 +90,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             startScanning();
         }
     }
@@ -140,26 +141,66 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         return false;
     }
 
+    private void updateBeaconInList(List<BeaconMinimal> list, BeaconMinimal freshBeacon, Double temperature, Double distance) {
+        for (BeaconMinimal beacon : list) {
+            if (freshBeacon.getId() == beacon.getId()) {
+                beacon.setManufacturerId(freshBeacon.getManufacturerId());
+                beacon.setName(freshBeacon.getName());
+                beacon.setMajor(freshBeacon.getMajor());
+                beacon.setMinor(freshBeacon.getMinor());
+                beacon.setBatteryLevel(freshBeacon.getBatteryLevel());
+                beacon.setStatus(freshBeacon.getStatus());
+                beacon.setLat(freshBeacon.getLat());
+                beacon.setLng(freshBeacon.getLng());
+                beacon.setTemperature(temperature);
+                beacon.setDistance(distance);
+            }
+        }
+    }
+
+    private List<BeaconMinimal> addBeaconToList(List<BeaconMinimal> list, BeaconMinimal newBeacon) {
+        list.add(newBeacon);
+        Collections.sort(list, new Comparator<BeaconMinimal>() {
+            public int compare(BeaconMinimal obj1, BeaconMinimal obj2) {
+                if ((obj1 != null) && (obj2 != null) && (obj1.getDistance() != null) && (obj2.getDistance() != null))
+                    return (int) (obj1.getDistance() - obj2.getDistance());
+                else
+                    return 0;
+            }
+        });
+        return list;
+    }
+
+    private List<BeaconMinimal> removeBeaconFromList(List<BeaconMinimal> list, BeaconMinimal beacon) {
+        if ((list != null) && (list.size() > 0)) {
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getId() == beacon.getId()) {
+                    list.remove(i);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
     private IBeaconListener createIBeaconListener() {
         return new SimpleIBeaconListener() {
             @Override
-            public void onIBeaconDiscovered(IBeaconDevice ibeacon, IBeaconRegion region) {
-                Log.i(AdminApplication.LOG_TAG, "IBeacon discovered: " + ibeacon.toString());
-                Log.i(AdminApplication.LOG_TAG, "region discovered: " + region.toString());
-
+            public void onIBeaconDiscovered(final IBeaconDevice ibeacon, IBeaconRegion region) {
                 beaconViewModel.getByMajorMinor(ibeacon.getMajor(), ibeacon.getMinor(), new LoadEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
                         List<BeaconMinimal> newList;
                         if (nearbyBeacons.getValue() == null) {
                             newList = new ArrayList<BeaconMinimal>();
-                        }
-                        else {
+                        } else {
                             newList = nearbyBeacons.getValue();
                         }
+                        beaconMinimal.setDistance(ibeacon.getDistance());
+                        beaconMinimal.setName(beaconMinimal.getName() + String.format(Locale.getDefault(), " - %.1f m", beaconMinimal.getDistance()));
 
                         if (!isBeaconInList(newList, beaconMinimal)) {
-                            newList.add(beaconMinimal);
+                            newList = addBeaconToList(newList, beaconMinimal);
                             nearbyBeacons.setValue(newList);
                         }
                     }
@@ -168,22 +209,13 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
             @Override
             public void onIBeaconLost(IBeaconDevice ibeacon, IBeaconRegion region) {
-                Log.e(AdminApplication.LOG_TAG, "IBeacon lost: " + ibeacon.toString());
 
                 beaconViewModel.getByMajorMinor(ibeacon.getMajor(), ibeacon.getMinor(), new LoadEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
                         List<BeaconMinimal> newList = nearbyBeacons.getValue();
-
-                        if ((newList != null) && (newList.size() > 0)) {
-                            for (int i = 0; i < newList.size(); i++) {
-                                if (newList.get(i).getId() == beaconMinimal.getId()) {
-                                    newList.remove(i);
-                                    nearbyBeacons.setValue(newList);
-                                    break;
-                                }
-                            }
-                        }
+                        newList = removeBeaconFromList(newList, beaconMinimal);
+                        nearbyBeacons.setValue(newList);
                     }
                 });
             }
@@ -194,35 +226,29 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         return new SimpleEddystoneListener() {
             @Override
             public void onEddystoneDiscovered(final IEddystoneDevice eddystone, IEddystoneNamespace namespace) {
-                Log.i(AdminApplication.LOG_TAG, "Eddystone discovered: " + eddystone.toString());
-
                 beaconViewModel.getByInstanceId(eddystone.getInstanceId(), new LoadEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
                         Double temperature = null;
                         if (eddystone.getTelemetry() != null) {
                             temperature = eddystone.getTelemetry().getTemperature();
+                            Log.i(AdminApplication.LOG_TAG, String.format(Locale.getDefault(), "temperature: %.1f", temperature));
                         }
                         beaconMinimal.setTemperature(temperature);
                         List<BeaconMinimal> newList;
                         if (nearbyBeacons.getValue() == null) {
                             newList = new ArrayList<>();
-                        }
-                        else {
+                        } else {
                             newList = nearbyBeacons.getValue();
                         }
 
                         if (!isBeaconInList(newList, beaconMinimal)) {
                             newList.add(beaconMinimal);
                             nearbyBeacons.setValue(newList);
-                        }
-                        else {
+                        } else {
                             if (temperature != null) {
-                                for (BeaconMinimal beacon : newList) {
-                                    if (beaconMinimal.getId() == beacon.getId()) {
-                                        beacon.setTemperature(temperature);
-                                    }
-                                }
+                                Log.i(AdminApplication.LOG_TAG, String.format(Locale.getDefault(), "temperature: %.1f", temperature));
+                                updateBeaconInList(newList, beaconMinimal);
                                 nearbyBeacons.setValue(newList);
                             }
                         }
@@ -232,8 +258,6 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
             @Override
             public void onEddystoneLost(IEddystoneDevice eddystone, IEddystoneNamespace namespace) {
-                Log.e(AdminApplication.LOG_TAG, "Eddystone lost: " + eddystone.toString());
-
                 beaconViewModel.getByInstanceId(eddystone.getInstanceId(), new LoadEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
@@ -257,7 +281,46 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     private SecureProfileListener createSecureProfileListener() {
         return new SimpleSecureProfileListener() {
             @Override
-            public void onProfileDiscovered(ISecureProfile profile) {
+            public void onProfileDiscovered(final ISecureProfile profile) {
+                Log.d(AdminApplication.LOG_TAG, profile.toString());
+                if (profile.getTelemetry() != null) {
+                    Log.d(AdminApplication.LOG_TAG, profile.getTelemetry().toString());
+                }
+
+                beaconViewModel.getByInstanceId(profile.getInstanceId(), new LoadEvent() {
+                    @Override
+                    public void onSuccess(BeaconMinimal beaconMinimal) {
+                        Double temperature = null;
+                        if (profile.getTelemetry() != null) {
+                            temperature = (double) profile.getTelemetry().getTemperature();
+                            Log.i(AdminApplication.LOG_TAG, String.format(Locale.getDefault(), "temperature: %.1f", temperature));
+                        }
+                        beaconMinimal.setTemperature(temperature);
+                        List<BeaconMinimal> newList;
+                        if (nearbyBeacons.getValue() == null) {
+                            newList = new ArrayList<>();
+                        } else {
+                            newList = nearbyBeacons.getValue();
+                        }
+
+                        if (!isBeaconInList(newList, beaconMinimal)) {
+                            newList.add(beaconMinimal);
+                            nearbyBeacons.setValue(newList);
+                        } else {
+                            if (temperature != null) {
+                                Log.i(AdminApplication.LOG_TAG, String.format(Locale.getDefault(), "temperature: %.1f", temperature));
+                                for (BeaconMinimal beacon : newList) {
+                                    if (beaconMinimal.getId() == beacon.getId()) {
+                                        beacon.setManufacturerId(String.format(Locale.getDefault(), "T: %.1f", temperature));
+                                        beacon.setTemperature(temperature);
+                                    }
+                                }
+                                nearbyBeacons.setValue(newList);
+                            }
+                        }
+                    }
+                });
+
                 super.onProfileDiscovered(profile);
             }
 
@@ -292,5 +355,10 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         proximityManager.disconnect();
         proximityManager = null;
         super.onDetach();
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeBeacons.setRefreshing(false);
     }
 }
