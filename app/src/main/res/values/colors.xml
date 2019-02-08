@@ -8,7 +8,7 @@
 
     <color name="primaryText">#db000000</color>
     <color name="secondaryText">#80000000</color>
-    <color name="tertiaryText">#26000000</color>
+    <color name="tertiaryText">#4d000000</color>
     <color name="navigationItemSelected">#3382d8f2</color>
 
     <color name="icons">#212121</color>

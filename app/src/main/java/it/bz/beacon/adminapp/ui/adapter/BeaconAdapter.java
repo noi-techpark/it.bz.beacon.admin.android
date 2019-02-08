@@ -149,6 +149,9 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
         @BindView(R.id.beacon_manufacturer_id)
         TextView manufacturerId;
 
+        @BindView(R.id.beacon_rssi)
+        TextView rssi;
+
         private BeaconViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -160,6 +163,10 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             major.setText(context.getString(R.string.major_format, beaconMinimal.getMajor()));
             minor.setText(context.getString(R.string.minor_format, beaconMinimal.getMinor()));
             manufacturerId.setText(beaconMinimal.getManufacturerId());
+
+            if (beaconMinimal.getTemperature() != null) {
+                manufacturerId.setText(context.getString(R.string.degree, beaconMinimal.getTemperature().doubleValue()));
+            }
 
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
@@ -184,6 +191,14 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 else {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
                 }
+            }
+
+            if (beaconMinimal.getRssi() != null) {
+                rssi.setVisibility(View.VISIBLE);
+                rssi.setText(context.getString(R.string.rssi, beaconMinimal.getRssi()));
+            }
+            else {
+                rssi.setVisibility(View.GONE);
             }
             battery.setAlpha(0.6f);
             itemView.setOnClickListener(new View.OnClickListener() {

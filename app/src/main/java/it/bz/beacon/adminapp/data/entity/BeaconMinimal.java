@@ -16,7 +16,7 @@ public class BeaconMinimal {
     @Ignore
     private Double temperature;
     @Ignore
-    private Double distance;
+    private Integer rssi;
 
     public BeaconMinimal() {
     }
@@ -101,11 +101,11 @@ public class BeaconMinimal {
         this.temperature = temperature;
     }
 
-    public Double getDistance() {
-        return distance;
+    public Integer getRssi() {
+        return rssi;
     }
 
-    public void setDistance(Double distance) {
-        this.distance = distance;
+    public void setRssi(Integer rssi) {
+        this.rssi = rssi;
     }
 }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+//import com.stfalcon.imageviewer.StfalconImageViewer;
+//import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
+import it.bz.beacon.adminapp.ui.detail.DetailActivity;
+import it.bz.beacon.adminapp.ui.detail.ImageFullscreenActivity;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageViewHolder> {
 
@@ -81,7 +86,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
         private void setImage(final BeaconImage beaconImage) {
             ContextWrapper contextWrapper = new ContextWrapper(context);
             File directory = contextWrapper.getDir(context.getString(R.string.image_folder), Context.MODE_PRIVATE);
-            File file = new File(directory, beaconImage.getFileName());
+            final File file = new File(directory, beaconImage.getFileName());
 
             if (file.exists()) {
                 Picasso.with(context)
@@ -111,6 +116,24 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                         }
                     }
                     return false;
+                }
+            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    new StfalconImageViewer.Builder<>(context, images, new ImageLoader<File>() {
+//
+//                        @Override
+//                        public void loadImage(ImageView imageView, File image) {
+//                            Picasso.with(context)
+//                                    .load(image)
+//                                    .placeholder(R.drawable.placeholder)
+//                                    .into(imageView);
+//                        }
+//                    }).show();
+                    Intent intent = new Intent(context, ImageFullscreenActivity.class);
+                    intent.putExtra(ImageFullscreenActivity.EXTRA_IMAGE_FILENAME, beaconImage.getFileName());
+                    context.startActivity(intent);
                 }
             });
         }

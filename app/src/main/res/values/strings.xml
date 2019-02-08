@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string tools:override="true" name="app_name">Beacon Administration</string>
+    <string name="app_name" tools:override="true">Beacon Administration</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -55,6 +55,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="login_password">Password</string>
     <string name="details_last_seen">Last seen: %s</string>
     <string name="percent">%d %%</string>
+    <string name="rssi">Signal strength: %d dB</string>
     <string name="degree">%.1f °C</string>
     <string name="major_format">Major: %d</string>
     <string name="minor_format">Minor: %d</string>
@@ -109,7 +110,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_incorrect_login">Wrong username or password</string>
     <string name="error_field_required">Required field</string>
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
-    <string tools:override="true" name="loading">Loading…</string>
+    <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving…</string>
     <string name="close_warning">Do you want to close without saving?</string>
     <string name="delete_warning">Do you really want to remove this image?</string>
