@@ -14,8 +14,6 @@ public class BeaconMinimal {
     private String name;
     private String status;
     @Ignore
-    private Double temperature;
-    @Ignore
     private Integer rssi;
 
     public BeaconMinimal() {
@@ -91,14 +89,6 @@ public class BeaconMinimal {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Double getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Double temperature) {
-        this.temperature = temperature;
     }
 
     public Integer getRssi() {

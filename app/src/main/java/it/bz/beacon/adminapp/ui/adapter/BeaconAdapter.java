@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
@@ -164,10 +162,6 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             minor.setText(context.getString(R.string.minor_format, beaconMinimal.getMinor()));
             manufacturerId.setText(beaconMinimal.getManufacturerId());
 
-            if (beaconMinimal.getTemperature() != null) {
-                manufacturerId.setText(context.getString(R.string.degree, beaconMinimal.getTemperature().doubleValue()));
-            }
-
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
             }
@@ -207,9 +201,6 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
-                    if (beaconMinimal.getTemperature() != null) {
-                        intent.putExtra(DetailActivity.EXTRA_TEMPERATURE, beaconMinimal.getTemperature().doubleValue());
-                    }
                     context.startActivity(intent);
                 }
             });

@@ -13,6 +13,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -24,7 +25,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -64,8 +64,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
+import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.WriteListener;
+import com.kontakt.sdk.android.ble.manager.ProximityManager;
+import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
+import com.kontakt.sdk.android.ble.manager.listeners.SecureProfileListener;
+import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleSecureProfileListener;
 import com.kontakt.sdk.android.cloud.KontaktCloud;
 import com.kontakt.sdk.android.cloud.KontaktCloudFactory;
 import com.kontakt.sdk.android.cloud.response.CloudCallback;
@@ -103,7 +108,6 @@ import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
-import it.bz.beacon.adminapp.ui.main.MainActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -111,7 +115,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
-    public static final String EXTRA_TEMPERATURE = "EXTRA_TEMPERATURE";
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
     @BindView(R.id.progress)
@@ -258,10 +261,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.gps_current_position)
     protected Button btnCurrentPosition;
 
+    @BindView(R.id.show_pending_config)
+    protected Button btnShowPendingConfig;
+
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
-    private Double temperature;
 
     protected GoogleMap map;
     private FusedLocationProviderClient fusedLocationClient;
@@ -275,9 +280,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private BeaconViewModel beaconViewModel;
     private BeaconImageViewModel beaconImageViewModel;
 
+    private ProximityManager proximityManager;
     private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
     private KontaktCloud kontaktCloud;
     private KontaktDeviceConnection kontaktDeviceConnection;
+    private ISecureProfile secureProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,9 +297,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
-            if (getIntent().hasExtra(EXTRA_TEMPERATURE)) {
-                temperature = getIntent().getDoubleExtra(EXTRA_TEMPERATURE, 0d);
-            }
         }
         configureTabListeners();
         isEditing = false;
@@ -319,6 +323,60 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private void initializeKontakt() {
         KontaktSDK.initialize(getString(R.string.apiKey));
         kontaktCloud = KontaktCloudFactory.create();
+        proximityManager = ProximityManagerFactory.create(this);
+        proximityManager.setSecureProfileListener(createSecureProfileListener());
+    }
+
+    private void startScanning() {
+        Log.d(AdminApplication.LOG_TAG, "Start scanning");
+        proximityManager.connect(new OnServiceReadyListener() {
+            @Override
+            public void onServiceReady() {
+                proximityManager.startScanning();
+            }
+        });
+    }
+
+    private SecureProfileListener createSecureProfileListener() {
+        return new SimpleSecureProfileListener() {
+            @Override
+            public void onProfileDiscovered(final ISecureProfile profile) {
+                updateBeaconNearby(profile);
+                super.onProfileDiscovered(profile);
+            }
+
+            @Override
+            public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                for (ISecureProfile profile : profiles) {
+                    updateBeaconNearby(profile);
+                }
+                super.onProfilesUpdated(profiles);
+            }
+
+            @Override
+            public void onProfileLost(ISecureProfile profile) {
+                Log.d(AdminApplication.LOG_TAG, "onProfileLost: " + profile.getUniqueId());
+                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                    secureProfile = null;
+                    btnShowPendingConfig.setVisibility(View.GONE);
+                }
+                super.onProfileLost(profile);
+            }
+
+            private void updateBeaconNearby(ISecureProfile profile) {
+                Log.d(AdminApplication.LOG_TAG, "onProfileDiscovered: " + profile.getUniqueId());
+                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                    secureProfile = profile;
+                    if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                        btnShowPendingConfig.setVisibility(View.VISIBLE);
+                    }
+                    // sometimes all values are 0: need to check timestamp to see if values are set, since temperature could be 0
+                    if ((profile.getTelemetry() != null) && (profile.getTelemetry().getTimestamp() > 0)) {
+                        txtTemperature.setText(getString(R.string.degree, profile.getTelemetry().getTemperature()));
+                    }
+                }
+            }
+        };
     }
 
     private void sendToCloud(Config secureConfig, WriteListener.WriteResponse writeResponse) {
@@ -404,6 +462,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     protected void onResume() {
         super.onResume();
+        startScanningIfLocationPermissionGranted();
         mapView.onResume();
         setUpToolbar();
         setContentEnabled(isEditing);
@@ -621,10 +680,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen() * 1000))));
 
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
-
-            if (temperature != null) {
-                txtTemperature.setText(getString(R.string.degree, temperature.doubleValue()));
-            }
 
             editName.setText(beacon.getName());
             if (beacon.getBatteryLevel() < 34) {
@@ -871,6 +926,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             case LOCATION_PERMISSION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showMyLocation();
+                    startScanning();
                 }
                 break;
             default:
@@ -1099,6 +1155,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     public void onPause() {
         super.onPause();
+        proximityManager.stopScanning();
         mapView.onPause();
     }
 
@@ -1296,5 +1353,34 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @Override
     public void afterTextChanged(Editable s) {
         showBatteryWarning();
+    }
+
+
+    private void startScanningIfLocationPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_PERMISSION_REQUEST);
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+            else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST);
+            }
+        }
+        else {
+            startScanning();
+        }
     }
 }

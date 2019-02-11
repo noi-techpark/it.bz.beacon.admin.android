@@ -35,11 +35,33 @@
                 android:id="@+id/details_status"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:contentDescription="@string/nav_header_desc"
+                android:contentDescription="@string/status_ok"
                 android:tint="@color/status_ok"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_status" />
+
+            <Button
+                android:id="@+id/show_pending_config"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@null"
+                android:gravity="center_vertical|end"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:text="@string/show_pending_config"
+                android:textAllCaps="true"
+                android:visibility="gone"
+                android:textColor="@color/primary"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_status" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/barrier1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="details_status,show_pending_config" />
 
             <LinearLayout
                 android:id="@+id/details_config_layout"
@@ -50,8 +72,8 @@
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_last_seen"
-                tools:visibility="gone">
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barrier1" >
 
                 <TextView
                     android:id="@+id/details_config"

@@ -58,7 +58,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_last_seen">Last seen: %s</string>
     <string name="percent">%d %%</string>
     <string name="rssi">Signal strength: %d dB</string>
-    <string name="degree">%.1f °C</string>
+    <string name="degree">%d °C</string>
     <string name="major_format">Major: %d</string>
     <string name="minor_format">Minor: %d</string>
     <string name="lat">Latitude</string>
@@ -124,5 +124,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="dont_show_again">Don\'t show again</string>
     <string name="no_internet">No internet connection detected. To save changes, an internet connection is needed!</string>
     <string name="general_error">An error occurred. Please try again!</string>
+    <string name="show_pending_config">Show pending configuration</string>
+    <string name="apply_now">Apply now</string>
 
 </resources>
