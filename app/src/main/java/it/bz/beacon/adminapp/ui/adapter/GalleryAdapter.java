@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-//import com.stfalcon.imageviewer.StfalconImageViewer;
-//import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
-import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 import it.bz.beacon.adminapp.ui.detail.ImageFullscreenActivity;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageViewHolder> {
@@ -100,7 +97,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                     if (deleteListener != null) {
                         if (deleteListener.onDeleteRequested()) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialogCustom));
-                            builder.setTitle(context.getString(R.string.details_delete));
                             builder.setMessage(context.getString(R.string.delete_warning));
                             builder.setPositiveButton(context.getString(R.string.details_delete), new DialogInterface.OnClickListener() {
                                 @Override
@@ -121,16 +117,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    new StfalconImageViewer.Builder<>(context, images, new ImageLoader<File>() {
-//
-//                        @Override
-//                        public void loadImage(ImageView imageView, File image) {
-//                            Picasso.with(context)
-//                                    .load(image)
-//                                    .placeholder(R.drawable.placeholder)
-//                                    .into(imageView);
-//                        }
-//                    }).show();
                     Intent intent = new Intent(context, ImageFullscreenActivity.class);
                     intent.putExtra(ImageFullscreenActivity.EXTRA_IMAGE_FILENAME, beaconImage.getFileName());
                     context.startActivity(intent);

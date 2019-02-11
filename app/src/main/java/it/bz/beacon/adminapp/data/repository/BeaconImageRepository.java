@@ -101,14 +101,16 @@ public class BeaconImageRepository {
 
         @Override
         protected Long doInBackground(final BeaconImage... params) {
-            long id = asyncTaskDao.insert(params[0]);
-            return id;
+            return asyncTaskDao.insert(params[0]);
         }
 
         @Override
         protected void onPostExecute(Long id) {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
+            }
+            else {
+                insertEvent.onFailure();
             }
         }
     }

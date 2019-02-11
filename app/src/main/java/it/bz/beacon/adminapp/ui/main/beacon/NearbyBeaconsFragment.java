@@ -80,7 +80,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
                         .setMessage(getString(R.string.location_permission_message))
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();

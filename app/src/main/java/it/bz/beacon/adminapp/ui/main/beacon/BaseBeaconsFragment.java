@@ -166,7 +166,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
         AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                 .setTitle(getString(R.string.status_error))
                 .setMessage(getString(R.string.error_authorization))
-                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();

@@ -163,7 +163,7 @@ public class MainActivity extends BaseActivity
                 isFilterActive = (item != 0);
             }
         });
-        builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -220,7 +220,7 @@ public class MainActivity extends BaseActivity
                 new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(R.string.location_permission_title)
                         .setMessage(R.string.location_permission_message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ActivityCompat.requestPermissions(MainActivity.this,

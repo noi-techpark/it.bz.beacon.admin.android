@@ -432,7 +432,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_cancel);
             }
             toolbar.setTitle(getString(R.string.details_edit));
-        } else {
+        }
+        else {
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
@@ -444,13 +445,13 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private void showCloseWarning() {
         AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                 .setMessage(R.string.close_warning)
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 })
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -495,7 +496,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
             });
             btnCurrentPosition.setVisibility(View.VISIBLE);
-        } else {
+        }
+        else {
             fabAddIssue.show();
             rbSignalStrength.setOnRangeBarChangeListener(null);
             editInterval.removeTextChangedListener(this);
@@ -590,8 +592,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             if ((child instanceof SwitchCompat) ||
                     (child instanceof TextInputEditText) ||
                     (child instanceof Button) ||
-                    (child instanceof RangeBar))
+                    (child instanceof RangeBar)) {
                 child.setEnabled(enabled);
+            }
             else {
                 if (child instanceof ViewGroup) {
                     setViewTreeEnabled((ViewGroup) child, enabled);
@@ -626,10 +629,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             editName.setText(beacon.getName());
             if (beacon.getBatteryLevel() < 34) {
                 imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
-            } else {
+            }
+            else {
                 if (beacon.getBatteryLevel() < 66) {
                     imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
-                } else {
+                }
+                else {
                     imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_full));
                 }
             }
@@ -709,14 +714,16 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             deactivateToggleButton(btnIndoor);
             deactivateToggleButton(btnOutdoor);
             txtLocation.setVisibility(View.GONE);
-        } else {
+        }
+        else {
             txtLocation.setVisibility(View.VISIBLE);
             if (location.equals(Beacon.LOCATION_OUTDOOR)) {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
                 floorContainer.setVisibility(View.GONE);
                 txtLocation.setText(getString(R.string.outdoor));
-            } else {
+            }
+            else {
                 activateToggleButton(btnIndoor);
                 deactivateToggleButton(btnOutdoor);
                 floorContainer.setVisibility(View.VISIBLE);
@@ -752,7 +759,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if ((beacon != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
             setMarker(latlng);
-        } else {
+        }
+        else {
             showMyLocation();
         }
 
@@ -784,7 +792,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
                         .setMessage(getString(R.string.location_permission_message))
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
@@ -794,11 +802,13 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         })
                         .create();
                 dialog.show();
-            } else {
+            }
+            else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             map.getUiSettings().setMyLocationButtonEnabled(true);
             map.setMyLocationEnabled(true);
             fusedLocationClient.getLastLocation()
@@ -902,7 +912,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             case android.R.id.home:
                 if (isEditing) {
                     showCloseWarning();
-                } else {
+                }
+                else {
                     finish();
                 }
                 break;
@@ -961,12 +972,24 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     private class SaveTask extends AsyncTask<BeaconUpdate, Void, io.swagger.client.model.Beacon> {
 
+        private ProgressDialog dialog = new ProgressDialog(DetailActivity.this, R.style.AlertDialogCustom);
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage(getString(R.string.saving));
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(false);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.show();
+            super.onPreExecute();
+        }
+
         @Override
         protected io.swagger.client.model.Beacon doInBackground(BeaconUpdate... beaconUpdates) {
             try {
                 return AdminApplication.getBeaconApi().updateUsingPATCH(beaconUpdates[0], beaconId);
-
-            } catch (ApiException e) {
+            }
+            catch (ApiException e) {
                 e.printStackTrace();
             }
             return null;
@@ -1009,7 +1032,15 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 beaconViewModel.insert(updatedBeacon, new InsertEvent() {
                     @Override
                     public void onSuccess(long id) {
-                        Toast.makeText(DetailActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
 
@@ -1024,11 +1055,15 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         }
     }
 
+    private void showToast(String string, int lengthShort) {
+        Toast.makeText(DetailActivity.this, string, lengthShort).show();
+    }
+
     @OnClick(R.id.details_images_add)
     public void addImage(View view) {
         PickImageDialog.build(new PickSetup()
                 .setTitle(getString(R.string.choose_source))
-                .setCancelText(getString(android.R.string.cancel))
+                .setCancelText(getString(R.string.cancel))
                 .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
                 .show(this);
     }
@@ -1038,7 +1073,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if (currentLocation != null) {
             setLatLngEditFields(currentLocation.latitude, currentLocation.longitude);
             setMarker(currentLocation);
-        } else {
+        }
+        else {
             showDialog(getString(R.string.position_not_available));
         }
     }
@@ -1109,7 +1145,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
                     @Override
                     public void onSuccess(io.swagger.client.model.BeaconImage result, int statusCode, Map<String, List<String>> responseHeaders) {
-                        dialog.dismiss();
                         ContextWrapper contextWrapper = new ContextWrapper(DetailActivity.this);
                         File directory = contextWrapper.getDir(getString(R.string.image_folder), Context.MODE_PRIVATE);
                         File newFile = new File(directory, result.getFileName());
@@ -1118,14 +1153,27 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         beaconImage.setFileName(result.getFileName());
                         beaconImage.setBeaconId(beaconId);
                         beaconImage.setId(result.getId());
-                        beaconImageViewModel.insert(beaconImage);
+                        beaconImageViewModel.insert(beaconImage, new InsertEvent() {
+                            @Override
+                            public void onSuccess(long id) {
+                                dialog.dismiss();
+                                showToast(getString(R.string.image_saved), Toast.LENGTH_SHORT);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                dialog.dismiss();
+                                showToast(getString(R.string.image_error), Toast.LENGTH_LONG);
+                            }
+                        });
                     }
 
                     @Override
                     public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
                         if (!done) {
                             dialog.setProgress((int) (bytesWritten * 100 / contentLength));
-                        } else {
+                        }
+                        else {
                             dialog.dismiss();
                         }
                     }
@@ -1134,12 +1182,14 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                     }
                 });
-            } catch (ApiException e) {
+            }
+            catch (ApiException e) {
                 e.printStackTrace();
             }
 
-        } else {
-            Toast.makeText(this, pickResult.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
+        else {
+            showToast(pickResult.getError().getMessage(), Toast.LENGTH_LONG);
         }
     }
 
@@ -1159,7 +1209,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             builder.setTitle(getString(R.string.warning));
             builder.setMessage(getString(R.string.battery_warning));
             builder.setView(checkBoxView);
-            builder.setPositiveButton(getString(android.R.string.ok), null);
+            builder.setPositiveButton(getString(R.string.ok), null);
             builder.show();
         }
     }
@@ -1167,18 +1217,26 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private void showDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
         builder.setMessage(message);
-        builder.setPositiveButton(getString(android.R.string.ok), null);
+        builder.setPositiveButton(getString(R.string.ok), null);
         builder.show();
     }
 
     @Override
     public void onDelete(final BeaconImage beaconImage) {
+        final ProgressDialog dialog = new ProgressDialog(DetailActivity.this, R.style.AlertDialogCustom);
+        dialog.setMessage(getString(R.string.deleting));
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.show();
 
         try {
             AdminApplication.getImageApi().deleteUsingDELETEAsync(beaconId, beaconImage.getId(), new ApiCallback<BaseMessage>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -1190,6 +1248,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                             BitmapTools.deleteFromInternalStorage(DetailActivity.this, getString(R.string.image_folder), beaconImage.getFileName());
                         }
                     }).start();
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -1202,8 +1263,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
                 }
             });
-        } catch (ApiException e) {
+        }
+        catch (ApiException e) {
             e.printStackTrace();
+            if (dialog != null) {
+                dialog.dismiss();
+            }
         }
     }
 
