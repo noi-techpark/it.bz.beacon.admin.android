@@ -231,7 +231,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                             nearbyBeacons.setValue(newList);
                         }
                         else {
-                            updateBeaconInList(newList, beaconMinimal);
+                            newList = updateBeaconInList(newList, beaconMinimal);
                             nearbyBeacons.setValue(newList);
                         }
                     }
@@ -263,6 +263,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     public void onRefresh() {
+        startScanningIfLocationPermissionGranted();
         swipeBeacons.setRefreshing(false);
     }
 }

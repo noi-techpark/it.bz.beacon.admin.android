@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -33,7 +34,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -61,24 +61,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.kontakt.sdk.android.ble.connection.ErrorCause;
-import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
-import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
+import com.google.gson.Gson;
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
-import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
-import com.kontakt.sdk.android.ble.connection.WriteListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
 import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
 import com.kontakt.sdk.android.ble.manager.listeners.SecureProfileListener;
 import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleSecureProfileListener;
-import com.kontakt.sdk.android.cloud.KontaktCloud;
-import com.kontakt.sdk.android.cloud.KontaktCloudFactory;
-import com.kontakt.sdk.android.cloud.response.CloudCallback;
-import com.kontakt.sdk.android.cloud.response.CloudError;
-import com.kontakt.sdk.android.cloud.response.CloudHeaders;
-import com.kontakt.sdk.android.cloud.response.paginated.Configs;
 import com.kontakt.sdk.android.common.KontaktSDK;
-import com.kontakt.sdk.android.common.model.Config;
 import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
@@ -281,9 +270,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private BeaconImageViewModel beaconImageViewModel;
 
     private ProximityManager proximityManager;
-    private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
-    private KontaktCloud kontaktCloud;
-    private KontaktDeviceConnection kontaktDeviceConnection;
     private ISecureProfile secureProfile;
 
     @Override
@@ -291,7 +277,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
 
         if (getIntent() != null) {
@@ -322,13 +307,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     private void initializeKontakt() {
         KontaktSDK.initialize(getString(R.string.apiKey));
-        kontaktCloud = KontaktCloudFactory.create();
         proximityManager = ProximityManagerFactory.create(this);
         proximityManager.setSecureProfileListener(createSecureProfileListener());
     }
 
     private void startScanning() {
-        Log.d(AdminApplication.LOG_TAG, "Start scanning");
         proximityManager.connect(new OnServiceReadyListener() {
             @Override
             public void onServiceReady() {
@@ -355,7 +338,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
-                Log.d(AdminApplication.LOG_TAG, "onProfileLost: " + profile.getUniqueId());
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = null;
                     btnShowPendingConfig.setVisibility(View.GONE);
@@ -364,7 +346,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
 
             private void updateBeaconNearby(ISecureProfile profile) {
-                Log.d(AdminApplication.LOG_TAG, "onProfileDiscovered: " + profile.getUniqueId());
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = profile;
                     if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
@@ -377,86 +358,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
             }
         };
-    }
-
-    private void sendToCloud(Config secureConfig, WriteListener.WriteResponse writeResponse) {
-        secureConfig.applySecureResponse(writeResponse.getExtra(), writeResponse.getUnixTimestamp());
-        kontaktCloud.devices()
-                .applySecureConfigs(secureConfig)
-                .execute(new CloudCallback<Configs>() {
-                    @Override
-                    public void onSuccess(Configs response, CloudHeaders headers) {
-                        if (response != null && response.getContent() != null && response.getContent().size() > 0) {
-
-                        }
-                        Log.d(AdminApplication.LOG_TAG, "successfully applied config");
-                    }
-
-                    @Override
-                    public void onError(CloudError error) {
-                        Log.d(AdminApplication.LOG_TAG, "config api error");
-                    }
-                });
-    }
-
-    private void sendToBeacon(final ISecureProfile profile) {
-        kontaktCloud.configs().secure().withIds(profile.getUniqueId()).execute(new CloudCallback<Configs>() {
-            @Override
-            public void onSuccess(Configs response, CloudHeaders headers) {
-                if (response != null && response.getContent() != null && response.getContent().size() > 0) {
-                    final Config config = response.getContent().get(0);
-                    Log.d(AdminApplication.LOG_TAG, "Config for beacon received: " + profile.getUniqueId());
-
-                    kontaktDeviceConnection = KontaktDeviceConnectionFactory.create(DetailActivity.this, profile, new KontaktDeviceConnection.ConnectionListener() {
-                        @Override
-                        public void onConnectionOpened() {
-                            Log.d(AdminApplication.LOG_TAG, "Connection opened");
-                        }
-
-                        @Override
-                        public void onConnected() {
-                            kontaktDeviceConnection.applySecureConfig(config.getSecureRequest(), new WriteListener() {
-                                @Override
-                                public void onWriteSuccess(WriteListener.WriteResponse response) {
-                                    sendToCloud(config, response);
-                                    disconnect();
-                                    Log.d(AdminApplication.LOG_TAG, "Written");
-                                }
-
-                                @Override
-                                public void onWriteFailure(ErrorCause cause) {
-                                    Log.d(AdminApplication.LOG_TAG, "Write failure");
-                                    disconnect();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onErrorOccured(int errorCode) {
-                            Log.d(AdminApplication.LOG_TAG, "Connection failure");
-                        }
-
-                        @Override
-                        public void onDisconnected() {
-                            Log.d(AdminApplication.LOG_TAG, "Disconnect");
-                        }
-                    });
-                    kontaktDeviceConnection.connect();
-                }
-            }
-
-            @Override
-            public void onError(CloudError error) {
-
-            }
-        });
-    }
-
-    private void disconnect() {
-        if (kontaktDeviceConnection != null) {
-            kontaktDeviceConnection.close();
-            kontaktDeviceConnection = null;
-        }
     }
 
     @Override
@@ -1047,6 +948,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
             catch (ApiException e) {
                 e.printStackTrace();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
             }
             return null;
         }
@@ -1107,6 +1011,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
             else {
                 showDialog(getString(R.string.no_internet));
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
             }
         }
     }
@@ -1122,6 +1029,15 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 .setCancelText(getString(R.string.cancel))
                 .setCancelTextColor(ContextCompat.getColor(this, R.color.primary)))
                 .show(this);
+    }
+
+    @OnClick(R.id.show_pending_config)
+    public void showPendingConfig(View view) {
+        Gson gson = new Gson();
+        Intent intent = new Intent(this, PendingConfigurationActivity.class);
+        intent.putExtra(PendingConfigurationActivity.EXTRA_BEACON, gson.toJson(beacon));
+        intent.putExtra(PendingConfigurationActivity.EXTRA_SECURE_PROFILE, secureProfile);
+        startActivity(intent);
     }
 
     @OnClick(R.id.gps_current_position)
