@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
@@ -130,6 +132,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         map.clear();
         showMyLocation();
         setUpClusterer();
+
+        try {
+            // Customise map styling via JSON file
+            boolean success = googleMap.setMapStyle( MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
+
+            if (!success) {
+                Log.e(AdminApplication.LOG_TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(AdminApplication.LOG_TAG, "Can't find style. Error: ", e);
+        }
     }
 
     private void showMyLocation() {

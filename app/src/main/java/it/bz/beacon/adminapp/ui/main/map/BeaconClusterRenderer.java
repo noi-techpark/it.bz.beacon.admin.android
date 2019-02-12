@@ -44,20 +44,19 @@ public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterI
     @Override
     protected void onBeforeClusterRendered(Cluster<BeaconClusterItem> cluster, MarkerOptions markerOptions){
 
-        final Drawable clusterIcon = ContextCompat.getDrawable(context, R.drawable.map_pin);
-        clusterIcon.setColorFilter(clusterColor, PorterDuff.Mode.SRC_ATOP);
+        final Drawable clusterIcon = ContextCompat.getDrawable(context, R.drawable.ic_cluster);
 
         clusterIconGenerator.setBackground(clusterIcon);
 
         //modify padding for one or two digit numbers
         if (cluster.getSize() < 10) {
-            clusterIconGenerator.setContentPadding(62, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(54, 36, 0, 0);
         } else if (cluster.getSize() < 100) {
-            clusterIconGenerator.setContentPadding(50, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(50, 36, 0, 0);
         } else if (cluster.getSize() < 1000) {
-            clusterIconGenerator.setContentPadding(38, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(38, 36, 0, 0);
         } else {
-            clusterIconGenerator.setContentPadding(26, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(26, 36, 0, 0);
         }
         clusterIconGenerator.setTextAppearance(context, R.style.MapClusterAppearance);
 

@@ -145,6 +145,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.gps_content)
     protected LinearLayout contentGPS;
 
+    @BindView(R.id.details_config_layout)
+    protected LinearLayout configLayout;
+
     @BindView(R.id.description_content)
     protected ConstraintLayout contentDescription;
 
@@ -340,7 +343,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             public void onProfileLost(ISecureProfile profile) {
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = null;
-                    btnShowPendingConfig.setVisibility(View.GONE);
+                    btnShowPendingConfig.setEnabled(false);
                 }
                 super.onProfileLost(profile);
             }
@@ -349,7 +352,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = profile;
                     if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
-                        btnShowPendingConfig.setVisibility(View.VISIBLE);
+                        btnShowPendingConfig.setEnabled(true);
                     }
                     // sometimes all values are 0: need to check timestamp to see if values are set, since temperature could be 0
                     if ((profile.getTelemetry() != null) && (profile.getTelemetry().getTimestamp() > 0)) {
@@ -613,6 +616,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
                 txtStatus.setText(getString(R.string.status_configuration_pending));
+                btnShowPendingConfig.setEnabled(false);
+                btnShowPendingConfig.setVisibility(View.VISIBLE);
+            }
+            else {
+                btnShowPendingConfig.setVisibility(View.GONE);
             }
 
             rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower() - 1);

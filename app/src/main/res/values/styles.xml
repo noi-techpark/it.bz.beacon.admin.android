@@ -29,6 +29,7 @@
 
     <style name="MapClusterAppearance" parent="TextAppearance.AppCompat.Title.Inverse">
         <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/primaryText</item>
     </style>
 
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
@@ -39,6 +40,12 @@
 
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/primary</item>
+    </style>
+
+    <style name="ButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>
