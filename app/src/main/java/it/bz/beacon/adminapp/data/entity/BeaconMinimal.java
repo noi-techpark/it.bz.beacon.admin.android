@@ -1,6 +1,6 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import android.arch.persistence.room.Ignore;
+import androidx.room.Ignore;
 
 public class BeaconMinimal {
 

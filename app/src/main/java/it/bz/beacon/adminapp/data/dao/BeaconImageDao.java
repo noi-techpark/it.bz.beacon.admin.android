@@ -1,15 +1,13 @@
 package it.bz.beacon.adminapp.data.dao;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Transaction;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Query;
+import androidx.room.Transaction;
 
 import java.util.List;
 
-import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
-import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 
 @Dao
 public abstract class BeaconImageDao implements BaseDao<BeaconImage> {

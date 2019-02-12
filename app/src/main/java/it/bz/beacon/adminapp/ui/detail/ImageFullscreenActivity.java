@@ -2,7 +2,7 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 

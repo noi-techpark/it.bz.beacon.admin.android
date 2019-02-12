@@ -1,13 +1,11 @@
 package it.bz.beacon.adminapp.ui.adapter;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.ui.about.AboutFragment;
-import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.AllBeaconsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.NearbyBeaconsFragment;
 

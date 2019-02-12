@@ -1,9 +1,9 @@
 package it.bz.beacon.adminapp.ui.detail;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,8 +14,6 @@ import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
 import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.WriteListener;
-import com.kontakt.sdk.android.ble.manager.ProximityManager;
-import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
 import com.kontakt.sdk.android.cloud.KontaktCloud;
 import com.kontakt.sdk.android.cloud.KontaktCloudFactory;
 import com.kontakt.sdk.android.cloud.response.CloudCallback;
@@ -26,14 +24,10 @@ import com.kontakt.sdk.android.common.KontaktSDK;
 import com.kontakt.sdk.android.common.model.Config;
 import com.kontakt.sdk.android.common.profile.ISecureProfile;
 
-import java.util.List;
-
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.data.entity.BeaconImage;
-import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
