@@ -21,6 +21,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.client.model.PendingConfiguration;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -186,6 +187,9 @@ public class Beacon {
 
   @SerializedName("namespace")
   private String namespace = null;
+
+  @SerializedName("pendingConfiguration")
+  private PendingConfiguration pendingConfiguration = null;
 
   /**
    * Gets or Sets status
@@ -647,6 +651,24 @@ public class Beacon {
     this.namespace = namespace;
   }
 
+  public Beacon pendingConfiguration(PendingConfiguration pendingConfiguration) {
+    this.pendingConfiguration = pendingConfiguration;
+    return this;
+  }
+
+   /**
+   * Get pendingConfiguration
+   * @return pendingConfiguration
+  **/
+  @ApiModelProperty(value = "")
+  public PendingConfiguration getPendingConfiguration() {
+    return pendingConfiguration;
+  }
+
+  public void setPendingConfiguration(PendingConfiguration pendingConfiguration) {
+    this.pendingConfiguration = pendingConfiguration;
+  }
+
   public Beacon status(StatusEnum status) {
     this.status = status;
     return this;
@@ -769,6 +791,7 @@ public class Beacon {
         Objects.equals(this.minor, beacon.minor) &&
         Objects.equals(this.name, beacon.name) &&
         Objects.equals(this.namespace, beacon.namespace) &&
+        Objects.equals(this.pendingConfiguration, beacon.pendingConfiguration) &&
         Objects.equals(this.status, beacon.status) &&
         Objects.equals(this.telemetry, beacon.telemetry) &&
         Objects.equals(this.txPower, beacon.txPower) &&
@@ -778,7 +801,7 @@ public class Beacon {
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, status, telemetry, txPower, url, uuid);
+    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, pendingConfiguration, status, telemetry, txPower, url, uuid);
   }
 
 
@@ -809,6 +832,7 @@ public class Beacon {
     sb.append("    minor: ").append(toIndentedString(minor)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
+    sb.append("    pendingConfiguration: ").append(toIndentedString(pendingConfiguration)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    telemetry: ").append(toIndentedString(telemetry)).append("\n");
     sb.append("    txPower: ").append(toIndentedString(txPower)).append("\n");

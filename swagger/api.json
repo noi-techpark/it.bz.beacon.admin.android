@@ -245,7 +245,7 @@
         "summary": "Get an image for a beacon",
         "operationId": "serveFileUsingGET",
         "produces": [
-          "*/*"
+          "image/*"
         ],
         "parameters": [
           {
@@ -347,7 +347,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues for the specified beacon ID",
-        "operationId": "getListUsingGET_3",
+        "operationId": "getListUsingGET_2",
         "produces": [
           "application/json"
         ],
@@ -503,7 +503,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues",
-        "operationId": "getListUsingGET_2",
+        "operationId": "getListUsingGET_3",
         "produces": [
           "application/json"
         ],
@@ -1176,6 +1176,9 @@
         "namespace": {
           "type": "string"
         },
+        "pendingConfiguration": {
+          "$ref": "#/definitions/PendingConfiguration"
+        },
         "status": {
           "type": "string",
           "enum": [
@@ -1490,6 +1493,62 @@
         }
       },
       "title": "Order"
+    },
+    "PendingConfiguration": {
+      "type": "object",
+      "properties": {
+        "eddystoneEid": {
+          "type": "boolean"
+        },
+        "eddystoneEtlm": {
+          "type": "boolean"
+        },
+        "eddystoneTlm": {
+          "type": "boolean"
+        },
+        "eddystoneUid": {
+          "type": "boolean"
+        },
+        "eddystoneUrl": {
+          "type": "boolean"
+        },
+        "iBeacon": {
+          "type": "boolean"
+        },
+        "instanceId": {
+          "type": "string"
+        },
+        "interval": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "major": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "minor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "telemetry": {
+          "type": "boolean"
+        },
+        "txPower": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "url": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "title": "PendingConfiguration"
     },
     "Resource": {
       "type": "object",

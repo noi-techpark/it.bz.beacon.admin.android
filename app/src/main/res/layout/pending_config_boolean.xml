@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/app_default_margin"
+    android:background="@color/backgroundBox"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/pending_config_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/primaryText"
+        tools:text="@string/details_info_telemetry" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/pending_config_value_old"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:buttonTint="@color/secondaryText"
+        android:enabled="false" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/pending_config_value_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:buttonTint="@color/primary"
+        android:enabled="false" />
+</LinearLayout>

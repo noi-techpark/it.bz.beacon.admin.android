@@ -1,19 +1,24 @@
 package it.bz.beacon.adminapp.ui.detail;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
+import com.google.android.material.button.MaterialButton;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
 import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.WriteListener;
+import com.kontakt.sdk.android.ble.manager.ProximityManager;
+import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
+import com.kontakt.sdk.android.ble.manager.listeners.SecureProfileListener;
+import com.kontakt.sdk.android.ble.manager.listeners.simple.SimpleSecureProfileListener;
 import com.kontakt.sdk.android.cloud.KontaktCloud;
 import com.kontakt.sdk.android.cloud.KontaktCloudFactory;
 import com.kontakt.sdk.android.cloud.response.CloudCallback;
@@ -24,25 +29,46 @@ import com.kontakt.sdk.android.common.KontaktSDK;
 import com.kontakt.sdk.android.common.model.Config;
 import com.kontakt.sdk.android.common.profile.ISecureProfile;
 
+import java.util.List;
+import java.util.Map;
+
+import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.swagger.client.ApiCallback;
+import io.swagger.client.ApiException;
+import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
+import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_ID;
+import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_NAME;
+
 public class PendingConfigurationActivity extends BaseActivity {
 
-    public static final String EXTRA_BEACON = "EXTRA_BEACON";
-    public static final String EXTRA_SECURE_PROFILE = "EXTRA_SECURE_PROFILE";
+    private static final int LOCATION_PERMISSION_REQUEST = 1;
 
+    @BindView(R.id.fab_apply_now)
+    protected MaterialButton btnApplyNow;
+
+    @BindView(R.id.containerView)
+    protected LinearLayout containerView;
+
+    private long beaconId;
+    private String beaconName;
     private Beacon beacon;
+    private PendingConfiguration pendingConfiguration;
 
     private BeaconViewModel beaconViewModel;
 
     private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
     private KontaktCloud kontaktCloud;
     private KontaktDeviceConnection kontaktDeviceConnection;
+    private ProximityManager proximityManager;
     private ISecureProfile secureProfile;
 
     @Override
@@ -53,12 +79,13 @@ public class PendingConfigurationActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         if (getIntent() != null) {
-            Gson gson = new Gson();
-            beacon = gson.fromJson(getIntent().getStringExtra(EXTRA_BEACON), Beacon.class);
-            secureProfile = getIntent().getParcelableExtra(EXTRA_SECURE_PROFILE);
+            beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
+            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
         }
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+
+        loadBeacon();
         initializeKontakt();
     }
 
@@ -71,6 +98,8 @@ public class PendingConfigurationActivity extends BaseActivity {
     private void initializeKontakt() {
         KontaktSDK.initialize(getString(R.string.apiKey));
         kontaktCloud = KontaktCloudFactory.create();
+        proximityManager = ProximityManagerFactory.create(this);
+        proximityManager.setSecureProfileListener(createSecureProfileListener());
     }
 
     @Override
@@ -78,6 +107,170 @@ public class PendingConfigurationActivity extends BaseActivity {
         return R.layout.activity_pending_configuration;
     }
 
+    private void loadBeacon() {
+        try {
+            AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<io.swagger.client.model.Beacon>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+
+                }
+
+                @Override
+                public void onSuccess(io.swagger.client.model.Beacon result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    if (result != null) {
+                        beacon = new Beacon();
+                        beacon.setId(result.getId());
+                        beacon.setBatteryLevel(result.getBatteryLevel());
+                        beacon.setDescription(result.getDescription());
+                        beacon.setEddystoneEid(result.isEddystoneEid());
+                        beacon.setEddystoneEtlm(result.isEddystoneEtlm());
+                        beacon.setEddystoneTlm(result.isEddystoneTlm());
+                        beacon.setEddystoneUid(result.isEddystoneUid());
+                        beacon.setEddystoneUrl(result.isEddystoneUrl());
+                        beacon.setIBeacon(result.isIBeacon());
+                        beacon.setInstanceId(result.getInstanceId());
+                        beacon.setInterval(result.getInterval());
+                        beacon.setLastSeen(result.getLastSeen());
+                        beacon.setLat(result.getLat());
+                        beacon.setLng(result.getLng());
+                        beacon.setLocationDescription(result.getLocationDescription());
+                        if (result.getLocationType() != null) {
+                            beacon.setLocationType(result.getLocationType().getValue());
+                        }
+                        beacon.setMajor(result.getMajor());
+                        beacon.setMinor(result.getMinor());
+                        beacon.setManufacturer(result.getManufacturer().getValue());
+                        beacon.setManufacturerId(result.getManufacturerId());
+                        beacon.setName(result.getName());
+                        beacon.setNamespace(result.getNamespace());
+                        beacon.setStatus(result.getStatus().getValue());
+                        beacon.setTelemetry(result.isTelemetry());
+                        beacon.setTxPower(result.getTxPower());
+                        beacon.setUrl(result.getUrl());
+                        beacon.setUuid(result.getUuid().toString());
+                        pendingConfiguration = result.getPendingConfiguration();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setUpToolbar();
+                                showDifferences();
+                            }
+                        });
+
+                    }
+                    else {
+                        // TODO: show error and hide progress dialog
+//                        showDialog(getString(R.string.no_internet));
+//                        if (dialog != null) {
+//                            dialog.dismiss();
+//                        }
+                    }
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
+        }
+        catch (ApiException e) {
+            e.printStackTrace();
+            // TODO: show some progress dialog
+        }
+    }
+
+    private void showDifferences() {
+        LinearLayout section = null;
+        section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
+        section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
+        if (section != null) {
+            setSectionTitle(section, getString(R.string.details_info));
+            containerView.addView(section);
+        }
+
+        section = null;
+        section = addTextDifference(String.valueOf(beacon.getUuid()), String.valueOf(pendingConfiguration.getUuid()), "UUID", section);
+        section = addTextDifference(String.valueOf(beacon.getMajor()), String.valueOf(pendingConfiguration.getMajor()), getString(R.string.details_config_major), section);
+        section = addTextDifference(String.valueOf(beacon.getMinor()), String.valueOf(pendingConfiguration.getMinor()), getString(R.string.details_config_minor), section);
+        if (section != null) {
+            setSectionTitle(section, getString(R.string.details_ibeacon));
+            containerView.addView(section);
+        }
+
+        section = null;
+        section = addTextDifference(String.valueOf(beacon.getNamespace()), String.valueOf(pendingConfiguration.getNamespace()), getString(R.string.details_config_namespace), section);
+        section = addTextDifference(String.valueOf(beacon.getInstanceId()), String.valueOf(pendingConfiguration.getInstanceId()), getString(R.string.details_config_instanceid), section);
+        section = addTextDifference(String.valueOf(beacon.getUrl()), String.valueOf(pendingConfiguration.getUrl()), getString(R.string.details_config_url), section);
+        if (section != null) {
+            setSectionTitle(section, getString(R.string.details_eddystone));
+            containerView.addView(section);
+        }
+    }
+
+    private void setSectionTitle(LinearLayout section, String title) {
+        TextView textView = section.findViewById(R.id.section_title);
+        textView.setText(title);
+    }
+
+    private LinearLayout addTextDifference(String oldValue, String newValue, String title, LinearLayout parent) {
+        View differenceText = null;
+        if (!oldValue.equalsIgnoreCase(newValue)) {
+            if (parent == null) {
+                parent = (LinearLayout) getLayoutInflater().inflate(R.layout.section_pending_config, null);
+            }
+            differenceText = getLayoutInflater().inflate(R.layout.pending_config_text, null);
+            TextView textView = differenceText.findViewById(R.id.pending_config_title);
+            textView.setText(title);
+            textView = differenceText.findViewById(R.id.pending_config_value_old);
+            textView.setText(oldValue);
+            textView = differenceText.findViewById(R.id.pending_config_value_new);
+            textView.setText(newValue);
+            parent.addView(differenceText);
+        }
+        return parent;
+    }
+
+    private SecureProfileListener createSecureProfileListener() {
+        return new SimpleSecureProfileListener() {
+            @Override
+            public void onProfileDiscovered(final ISecureProfile profile) {
+                updateBeaconNearby(profile);
+                super.onProfileDiscovered(profile);
+            }
+
+            @Override
+            public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                for (ISecureProfile profile : profiles) {
+                    updateBeaconNearby(profile);
+                }
+                super.onProfilesUpdated(profiles);
+            }
+
+            @Override
+            public void onProfileLost(ISecureProfile profile) {
+                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                    secureProfile = null;
+                    btnApplyNow.setEnabled(false);
+                }
+                super.onProfileLost(profile);
+            }
+
+            private void updateBeaconNearby(ISecureProfile profile) {
+                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                    secureProfile = profile;
+                    if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                        btnApplyNow.setEnabled(true);
+                    }
+                }
+            }
+        };
+    }
 
     private void setUpToolbar() {
         if (getSupportActionBar() != null) {

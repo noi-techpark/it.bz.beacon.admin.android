@@ -125,6 +125,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="no_internet">No internet connection detected. To save changes, an internet connection is needed!</string>
     <string name="general_error">An error occurred. Please try again!</string>
     <string name="show_pending_config">Show pending configuration</string>
+    <string name="pending_config">Pending configuration</string>
     <string name="apply_now">Apply now</string>
 
 </resources>

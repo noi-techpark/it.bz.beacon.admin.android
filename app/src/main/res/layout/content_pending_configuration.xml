@@ -7,95 +7,29 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-    tools:context=".ui.detail.PendingConfigurationActivity"
-    tools:showIn="@layout/activity_pending_configuration">
+    tools:context=".ui.detail.PendingConfigurationActivity">
 
     <ScrollView
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/containerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/backgroundActivity"
-            android:padding="@dimen/app_default_margin"
-            tools:context=".ui.detail.DetailActivity">
+            android:orientation="vertical"
+            android:padding="@dimen/app_default_margin" >
 
-            <LinearLayout
-                android:id="@+id/details_config_layout"
+            <TextView
+                style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/app_default_margin"
-                android:background="@drawable/background_config_card"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
+                android:padding="@dimen/app_default_margin"
+                android:text="@string/pending_config" />
 
-                <TextView
-                    android:id="@+id/details_config"
-                    style="@style/TextAppearance.AppCompat.Large"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_config"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/details_location_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/app_default_margin"
-                android:background="@drawable/background_config_card"
-                android:orientation="vertical"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_config_layout">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/app_default_margin">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Large"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/details_section_location" />
-
-                    <TextView
-                        android:id="@+id/details_location_subtitle"
-                        android:textSize="18sp"
-                        android:textColor="@color/tertiaryText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="@string/outdoor" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/show_pending_config"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="@null"
-                android:gravity="center_vertical|end"
-                android:layout_marginTop="@dimen/app_default_margin"
-                android:text="@string/apply_now"
-                android:textAllCaps="true"
-                android:textColor="@color/primary"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_location_layout" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </ScrollView>
 

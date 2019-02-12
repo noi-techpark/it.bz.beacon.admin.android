@@ -13,14 +13,18 @@
 
     <include layout="@layout/content_pending_configuration" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fab_apply_now"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/ExtendedFabButton"
+        app:icon="@drawable/ic_check"
+        android:text="@string/apply_now"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/background_fab"
-        android:layout_margin="@dimen/fab_margin"
-        android:text="asdasd"
-        app:srcCompat="@drawable/ic_check" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:cornerRadius="32dp"        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

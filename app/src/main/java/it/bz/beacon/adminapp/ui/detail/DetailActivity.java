@@ -904,7 +904,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private void save() {
         BeaconUpdate beaconUpdate = new BeaconUpdate();
         beaconUpdate.setName(editName.getText().toString());
-        beaconUpdate.setTxPower(rbSignalStrength.getRightIndex());
+        beaconUpdate.setTxPower(rbSignalStrength.getRightIndex() + 1);
         beaconUpdate.setInterval(Integer.valueOf(editInterval.getText().toString()));
         beaconUpdate.setTelemetry(switchTelemetry.isChecked());
         beaconUpdate.setIBeacon(switchIBeacon.isChecked());
@@ -1041,10 +1041,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     @OnClick(R.id.show_pending_config)
     public void showPendingConfig(View view) {
-        Gson gson = new Gson();
         Intent intent = new Intent(this, PendingConfigurationActivity.class);
-        intent.putExtra(PendingConfigurationActivity.EXTRA_BEACON, gson.toJson(beacon));
-        intent.putExtra(PendingConfigurationActivity.EXTRA_SECURE_PROFILE, secureProfile);
+        intent.putExtra(EXTRA_BEACON_ID, beaconId);
+        intent.putExtra(EXTRA_BEACON_NAME, beaconName);
         startActivity(intent);
     }
 
