@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/section_title"
-        style="@style/TextAppearance.AppCompat.Medium"
+        style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/app_default_margin"

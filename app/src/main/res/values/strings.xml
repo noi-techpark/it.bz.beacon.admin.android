@@ -127,5 +127,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="show_pending_config">Show pending configuration</string>
     <string name="pending_config">Pending configuration</string>
     <string name="apply_now">Apply now</string>
+    <string name="current_value">current</string>
+    <string name="new_value">new</string>
 
 </resources>

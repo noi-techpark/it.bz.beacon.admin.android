@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -189,28 +190,19 @@ public class PendingConfigurationActivity extends BaseActivity {
         LinearLayout section = null;
         section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
         section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
-        if (section != null) {
-            setSectionTitle(section, getString(R.string.details_info));
-            containerView.addView(section);
-        }
+        addSection(section, getString(R.string.details_info));
 
         section = null;
         section = addTextDifference(String.valueOf(beacon.getUuid()), String.valueOf(pendingConfiguration.getUuid()), "UUID", section);
         section = addTextDifference(String.valueOf(beacon.getMajor()), String.valueOf(pendingConfiguration.getMajor()), getString(R.string.details_config_major), section);
         section = addTextDifference(String.valueOf(beacon.getMinor()), String.valueOf(pendingConfiguration.getMinor()), getString(R.string.details_config_minor), section);
-        if (section != null) {
-            setSectionTitle(section, getString(R.string.details_ibeacon));
-            containerView.addView(section);
-        }
+        addSection(section, getString(R.string.details_ibeacon));
 
         section = null;
         section = addTextDifference(String.valueOf(beacon.getNamespace()), String.valueOf(pendingConfiguration.getNamespace()), getString(R.string.details_config_namespace), section);
         section = addTextDifference(String.valueOf(beacon.getInstanceId()), String.valueOf(pendingConfiguration.getInstanceId()), getString(R.string.details_config_instanceid), section);
         section = addTextDifference(String.valueOf(beacon.getUrl()), String.valueOf(pendingConfiguration.getUrl()), getString(R.string.details_config_url), section);
-        if (section != null) {
-            setSectionTitle(section, getString(R.string.details_eddystone));
-            containerView.addView(section);
-        }
+        addSection(section, getString(R.string.details_eddystone));
     }
 
     private void setSectionTitle(LinearLayout section, String title) {
@@ -221,6 +213,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private LinearLayout addTextDifference(String oldValue, String newValue, String title, LinearLayout parent) {
         View differenceText = null;
         if (!oldValue.equalsIgnoreCase(newValue)) {
+            Log.d(AdminApplication.LOG_TAG, "found difference for " + title);
             if (parent == null) {
                 parent = (LinearLayout) getLayoutInflater().inflate(R.layout.section_pending_config, null);
             }
@@ -234,6 +227,16 @@ public class PendingConfigurationActivity extends BaseActivity {
             parent.addView(differenceText);
         }
         return parent;
+    }
+
+    private void addSection(LinearLayout section, String title) {
+        if (section != null) {
+            setSectionTitle(section, title);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, (int) getResources().getDimension(R.dimen.app_default_margin), 0, 0);
+            containerView.addView(section, layoutParams);
+        }
     }
 
     private SecureProfileListener createSecureProfileListener() {
