@@ -228,7 +228,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         } catch (IllegalStateException e) {
             Log.e(AdminApplication.LOG_TAG, e.getLocalizedMessage());
         }
-
         hideProgress();
     }
 

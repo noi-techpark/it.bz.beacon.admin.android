@@ -36,10 +36,6 @@ public class BeaconViewModel extends AndroidViewModel {
         return repository.getById(id);
     }
 
-    public void getByMajorMinor(int major, int minor, LoadEvent loadEvent) {
-        repository.getByMajorMinor(major, minor, loadEvent);
-    }
-
     public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
         repository.getByInstanceId(instanceId, loadEvent);
     }

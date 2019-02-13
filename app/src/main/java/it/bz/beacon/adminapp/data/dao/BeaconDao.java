@@ -21,9 +21,6 @@ public abstract class BeaconDao implements BaseDao<Beacon> {
     @Query("SELECT * FROM Beacon WHERE id = :id")
     public abstract LiveData<Beacon> getById(long id);
 
-    @Query("SELECT id, batteryLevel, lat, lng, major, minor, manufacturerId, name, status FROM Beacon WHERE major = :major AND minor = :minor")
-    public abstract BeaconMinimal getByMajorMinor(int major, int minor);
-
     @Query("SELECT id, batteryLevel, lat, lng, major, minor, manufacturerId, name, status FROM Beacon WHERE manufacturerId = :instanceId")
     public abstract BeaconMinimal getByInstanceId(String instanceId);
 

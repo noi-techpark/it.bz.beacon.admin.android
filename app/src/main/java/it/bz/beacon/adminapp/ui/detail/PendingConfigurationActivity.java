@@ -2,13 +2,10 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
@@ -33,6 +30,7 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +40,6 @@ import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
@@ -190,18 +187,25 @@ public class PendingConfigurationActivity extends BaseActivity {
         LinearLayout section = null;
         section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
         section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
+        section = addBooleanDifference(beacon.getTelemetry(), pendingConfiguration.isTelemetry(), getString(R.string.details_info_telemetry), section);
         addSection(section, getString(R.string.details_info));
 
         section = null;
+        section = addBooleanDifference(beacon.isIBeacon(), pendingConfiguration.isIBeacon(), getString(R.string.details_ibeacon), section);
         section = addTextDifference(String.valueOf(beacon.getUuid()), String.valueOf(pendingConfiguration.getUuid()), "UUID", section);
         section = addTextDifference(String.valueOf(beacon.getMajor()), String.valueOf(pendingConfiguration.getMajor()), getString(R.string.details_config_major), section);
         section = addTextDifference(String.valueOf(beacon.getMinor()), String.valueOf(pendingConfiguration.getMinor()), getString(R.string.details_config_minor), section);
         addSection(section, getString(R.string.details_ibeacon));
 
         section = null;
+        section = addBooleanDifference(beacon.isEddystoneUid(), pendingConfiguration.isEddystoneUid(), getString(R.string.details_eddystone_uid), section);
         section = addTextDifference(String.valueOf(beacon.getNamespace()), String.valueOf(pendingConfiguration.getNamespace()), getString(R.string.details_config_namespace), section);
         section = addTextDifference(String.valueOf(beacon.getInstanceId()), String.valueOf(pendingConfiguration.getInstanceId()), getString(R.string.details_config_instanceid), section);
+        section = addBooleanDifference(beacon.isEddystoneUrl(), pendingConfiguration.isEddystoneUrl(), getString(R.string.details_eddystone_url), section);
         section = addTextDifference(String.valueOf(beacon.getUrl()), String.valueOf(pendingConfiguration.getUrl()), getString(R.string.details_config_url), section);
+        section = addBooleanDifference(beacon.isEddystoneEid(), pendingConfiguration.isEddystoneEid(), getString(R.string.details_eddystone_eid), section);
+        section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
+        section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
         addSection(section, getString(R.string.details_eddystone));
     }
 
@@ -225,6 +229,25 @@ public class PendingConfigurationActivity extends BaseActivity {
             textView = differenceText.findViewById(R.id.pending_config_value_new);
             textView.setText(newValue);
             parent.addView(differenceText);
+        }
+        return parent;
+    }
+
+    private LinearLayout addBooleanDifference(boolean oldValue, boolean newValue, String title, LinearLayout parent) {
+        View differenceBoolean = null;
+        if (oldValue != newValue) {
+            Log.d(AdminApplication.LOG_TAG, "found difference for " + title);
+            if (parent == null) {
+                parent = (LinearLayout) getLayoutInflater().inflate(R.layout.section_pending_config, null);
+            }
+            differenceBoolean = getLayoutInflater().inflate(R.layout.pending_config_boolean, null);
+            TextView textView = differenceBoolean.findViewById(R.id.pending_config_title);
+            textView.setText(title);
+            AppCompatCheckBox checkBox = differenceBoolean.findViewById(R.id.pending_config_value_old);
+            checkBox.setChecked(oldValue);
+            checkBox = differenceBoolean.findViewById(R.id.pending_config_value_new);
+            checkBox.setChecked(newValue);
+            parent.addView(differenceBoolean);
         }
         return parent;
     }

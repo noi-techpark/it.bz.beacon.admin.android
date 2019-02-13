@@ -61,6 +61,7 @@ public class Beacon {
     private Integer txPower;
     private String url;
     private String uuid;
+    private String pendingConfiguration;
 
     public Beacon() {
     }
@@ -297,5 +298,13 @@ public class Beacon {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getPendingConfiguration() {
+        return pendingConfiguration;
+    }
+
+    public void setPendingConfiguration(String pendingConfiguration) {
+        this.pendingConfiguration = pendingConfiguration;
     }
 }

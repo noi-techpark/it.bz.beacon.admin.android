@@ -6,7 +6,7 @@
     android:layout_marginBottom="@dimen/app_default_margin"
     android:background="@color/backgroundBox"
     android:orientation="vertical"
-    android:padding="@dimen/app_default_margin">
+    android:padding="@dimen/app_default_margin" >
 
     <TextView
         android:id="@+id/pending_config_title"
@@ -25,8 +25,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:text="@string/current_value"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/secondaryText" />
 
@@ -35,10 +35,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="32dp"
+            android:paddingEnd="4dp"
             android:gravity="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/secondaryText"
-            tools:text="4" />
+            tools:text="4"
+            tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
     <View
@@ -56,16 +59,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:text="@string/new_value"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/primary" />
 
         <TextView
             android:id="@+id/pending_config_value_new"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="end"
+            tools:ignore="RtlSymmetry"
+            android:paddingStart="32dp"
+            android:paddingEnd="4dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/primary"
             tools:text="6" />

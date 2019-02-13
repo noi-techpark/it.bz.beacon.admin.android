@@ -1,5 +1,6 @@
 package it.bz.beacon.adminapp.data;
 
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -24,7 +25,7 @@ import it.bz.beacon.adminapp.data.entity.BeaconIssue;
                 BeaconImage.class,
                 BeaconIssue.class
         },
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -42,6 +43,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             BeaconDatabase.class, DB_NAME)
                             .addCallback(roomDatabaseCallback)
+                            .addMigrations(MIGRATION_1_2)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -65,6 +67,14 @@ public abstract class BeaconDatabase extends RoomDatabase {
 //                    new PopulateDbTask(INSTANCE).execute();
 //                }
             };
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Beacon "
+                    + " ADD COLUMN pendingConfiguration TEXT");
+        }
+    };
 
     private static class PopulateDbTask extends AsyncTask<Void, Void, Void> {
 

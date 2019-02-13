@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 import java.util.Map;
 
@@ -45,10 +47,6 @@ public class BeaconRepository {
 
     public LiveData<Beacon> getById(long id) {
         return beaconDao.getById(id);
-    }
-
-    public void getByMajorMinor(int major, int minor, LoadEvent loadEvent) {
-        new LoadByMajorMinorTask(beaconDao, loadEvent).execute(major, minor);
     }
 
     public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
@@ -111,6 +109,7 @@ public class BeaconRepository {
                             beacon.setTxPower(remoteBeacon.getTxPower());
                             beacon.setUrl(remoteBeacon.getUrl());
                             beacon.setUuid(remoteBeacon.getUuid().toString());
+                            beacon.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
                             beaconDao.insert(beacon);
                         }
                         if (dataUpdateEvent != null) {
@@ -165,29 +164,6 @@ public class BeaconRepository {
         protected void onPostExecute(Long id) {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
-            }
-        }
-    }
-
-    private static class LoadByMajorMinorTask extends AsyncTask<Integer, Void, BeaconMinimal> {
-
-        private BeaconDao asyncTaskDao;
-        private LoadEvent loadEvent;
-
-        LoadByMajorMinorTask(BeaconDao dao, LoadEvent event) {
-            asyncTaskDao = dao;
-            loadEvent = event;
-        }
-
-        @Override
-        protected BeaconMinimal doInBackground(Integer... ids) {
-            return asyncTaskDao.getByMajorMinor(ids[0], ids[1]);
-        }
-
-        @Override
-        protected void onPostExecute(BeaconMinimal beaconMinimal) {
-            if ((loadEvent != null) && (beaconMinimal != null)) {
-                loadEvent.onSuccess(beaconMinimal);
             }
         }
     }

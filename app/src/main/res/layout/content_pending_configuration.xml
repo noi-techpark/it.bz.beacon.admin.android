@@ -20,7 +20,10 @@
             android:layout_height="wrap_content"
             android:background="@color/backgroundActivity"
             android:orientation="vertical"
-            android:padding="@dimen/app_default_margin" >
+            android:paddingTop="@dimen/app_default_margin"
+            android:paddingStart="@dimen/app_default_margin"
+            android:paddingEnd="@dimen/app_default_margin"
+            android:paddingBottom="92dp">
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Large"

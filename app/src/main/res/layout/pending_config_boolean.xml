@@ -6,29 +6,81 @@
     android:layout_marginBottom="@dimen/app_default_margin"
     android:background="@color/backgroundBox"
     android:orientation="vertical"
-    android:padding="4dp">
+    android:padding="@dimen/app_default_margin" >
 
     <TextView
         android:id="@+id/pending_config_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/primaryText"
-        tools:text="@string/details_info_telemetry" />
+        android:textStyle="bold"
+        tools:text="@string/details_config_signalstrength" />
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/pending_config_value_old"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:buttonTint="@color/secondaryText"
-        android:enabled="false" />
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/pending_config_value_new"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/current_value"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/secondaryText" />
+
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/pending_config_value_old"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:buttonTint="@color/secondaryText"
+            android:enabled="false"
+            tools:checked="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:buttonTint="@color/primary"
-        android:enabled="false" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/new_value"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/primary" />
+
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/pending_config_value_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:buttonTint="@color/primary"
+            android:enabled="false"
+            tools:checked="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/divider" />
+
 </LinearLayout>

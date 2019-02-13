@@ -3,8 +3,6 @@ package it.bz.beacon.adminapp.ui.detail;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -15,24 +13,8 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.appcompat.widget.SwitchCompat;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +43,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
@@ -81,6 +67,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -88,6 +89,7 @@ import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
 import io.swagger.client.model.BaseMessage;
 import io.swagger.client.model.BeaconUpdate;
+import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -123,6 +125,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     @BindView(R.id.info_content)
     protected LinearLayout contentInfo;
+
+    @BindView(R.id.details_info_pending)
+    protected LinearLayout pendingInfo;
 
     @BindView(R.id.nameContainer)
     protected TextInputLayout containerName;
@@ -414,7 +419,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         dialog.dismiss();
                     }
                 })
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -459,6 +464,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
             });
             btnCurrentPosition.setVisibility(View.VISIBLE);
+            pendingInfo.setVisibility(View.VISIBLE);
+            btnShowPendingConfig.setVisibility(View.GONE);
         }
         else {
             fabAddIssue.show();
@@ -470,6 +477,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             if (map != null) {
                 map.setOnMapClickListener(null);
             }
+            pendingInfo.setVisibility(View.GONE);
         }
     }
 
@@ -671,6 +679,54 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
+    }
+
+    private void showPendingData() {
+        if ((beacon != null) && (!TextUtils.isEmpty(beacon.getPendingConfiguration()))) {
+            PendingConfiguration pendingConfiguration = (new Gson()).fromJson(beacon.getPendingConfiguration(), PendingConfiguration.class);
+
+            rbSignalStrength.setRangePinsByIndices(0, pendingConfiguration.getTxPower() - 1);
+            editInterval.setText(String.valueOf(pendingConfiguration.getInterval()));
+            switchTelemetry.setChecked(pendingConfiguration.isTelemetry() != null && pendingConfiguration.isTelemetry());
+
+            switchIBeacon.setChecked(pendingConfiguration.isIBeacon() != null && pendingConfiguration.isIBeacon());
+            editUuid.setText(pendingConfiguration.getUuid().toString());
+            editMajor.setText(String.valueOf(pendingConfiguration.getMajor()));
+            editMinor.setText(String.valueOf(pendingConfiguration.getMinor()));
+
+            switchEid.setChecked(pendingConfiguration.isEddystoneEid() != null && pendingConfiguration.isEddystoneEid());
+            switchEtlm.setChecked(pendingConfiguration.isEddystoneEtlm() != null && pendingConfiguration.isEddystoneEtlm());
+            switchTlm.setChecked(pendingConfiguration.isEddystoneTlm() != null && pendingConfiguration.isEddystoneTlm());
+            switchUid.setChecked(pendingConfiguration.isEddystoneUid() != null && pendingConfiguration.isEddystoneUid());
+            switchUrl.setChecked(pendingConfiguration.isEddystoneUrl() != null && pendingConfiguration.isEddystoneUrl());
+
+            editNamespace.setText(pendingConfiguration.getNamespace());
+            editInstanceId.setText(pendingConfiguration.getInstanceId());
+            editUrl.setText(pendingConfiguration.getUrl());
+        }
+    }
+
+    private void resetPendingData() {
+        if (beacon != null) {
+            rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower() - 1);
+            editInterval.setText(String.valueOf(beacon.getInterval()));
+            switchTelemetry.setChecked(beacon.getTelemetry() != null && beacon.getTelemetry());
+
+            switchIBeacon.setChecked(beacon.isIBeacon() != null && beacon.isIBeacon());
+            editUuid.setText(beacon.getUuid());
+            editMajor.setText(String.valueOf(beacon.getMajor()));
+            editMinor.setText(String.valueOf(beacon.getMinor()));
+
+            switchEid.setChecked(beacon.isEddystoneEid() != null && beacon.isEddystoneEid());
+            switchEtlm.setChecked(beacon.isEddystoneEtlm() != null && beacon.isEddystoneEtlm());
+            switchTlm.setChecked(beacon.isEddystoneTlm() != null && beacon.isEddystoneTlm());
+            switchUid.setChecked(beacon.isEddystoneUid() != null && beacon.isEddystoneUid());
+            switchUrl.setChecked(beacon.isEddystoneUrl() != null && beacon.isEddystoneUrl());
+
+            editNamespace.setText(beacon.getNamespace());
+            editInstanceId.setText(beacon.getInstanceId());
+            editUrl.setText(beacon.getUrl());
+        }
     }
 
     private void updateLocationButtons(String location) {
@@ -888,6 +944,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     map.setOnMapClickListener(this);
                 }
                 setContentEnabled(isEditing);
+                showPendingData();
                 invalidateOptionsMenu();
                 setUpToolbar();
                 break;
@@ -996,6 +1053,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 updatedBeacon.setTxPower(result.getTxPower());
                 updatedBeacon.setUrl(result.getUrl());
                 updatedBeacon.setUuid(result.getUuid().toString());
+                updatedBeacon.setPendingConfiguration((new Gson()).toJson(result.getPendingConfiguration()));
 
                 beaconViewModel.insert(updatedBeacon, new InsertEvent() {
                     @Override
@@ -1045,6 +1103,26 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         intent.putExtra(EXTRA_BEACON_ID, beaconId);
         intent.putExtra(EXTRA_BEACON_NAME, beaconName);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.reset_pending_config)
+    public void resetPendingConfig(View view) {
+        AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                .setMessage(R.string.reset_warning)
+                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        resetPendingData();
+                    }
+                }).create();
+        dialog.show();
     }
 
     @OnClick(R.id.gps_current_position)
