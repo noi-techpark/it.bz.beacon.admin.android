@@ -2,8 +2,12 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -13,11 +17,11 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.ui.BaseActivity;
 
-public class ImageFullscreenActivity extends AppCompatActivity {
+public class ImageFullscreenActivity extends BaseActivity {
 
     public static final String EXTRA_IMAGE_FILENAME = "EXTRA_IMAGE_FILENAME";
-
 
     @BindView(R.id.image)
     protected ImageView img;
@@ -25,10 +29,9 @@ public class ImageFullscreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_fullscreen);
-
-
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        setUpToolbar();
 
         if (getIntent() != null) {
             String fileName = getIntent().getStringExtra(EXTRA_IMAGE_FILENAME);
@@ -44,6 +47,30 @@ public class ImageFullscreenActivity extends AppCompatActivity {
                         .into(img);
             }
         }
+    }
 
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_image_fullscreen;
+    }
+
+    private void setUpToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                finish();
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

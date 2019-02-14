@@ -419,7 +419,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         dialog.dismiss();
                     }
                 })
-                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -1053,7 +1053,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 updatedBeacon.setTxPower(result.getTxPower());
                 updatedBeacon.setUrl(result.getUrl());
                 updatedBeacon.setUuid(result.getUuid().toString());
-                updatedBeacon.setPendingConfiguration((new Gson()).toJson(result.getPendingConfiguration()));
+                if (result.getPendingConfiguration() != null) {
+                    updatedBeacon.setPendingConfiguration((new Gson()).toJson(result.getPendingConfiguration()));
+                }
+                else {
+                    updatedBeacon.setPendingConfiguration(null);
+                }
 
                 beaconViewModel.insert(updatedBeacon, new InsertEvent() {
                     @Override

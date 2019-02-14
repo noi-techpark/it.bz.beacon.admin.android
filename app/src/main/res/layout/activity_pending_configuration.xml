@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container"
     android:animateLayoutChanges="true"
+    android:background="@android:color/white"
     tools:context=".ui.detail.PendingConfigurationActivity">
 
     <include layout="@layout/app_bar" />
@@ -15,16 +15,18 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fab_apply_now"
+        style="@style/ExtendedFabButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/ExtendedFabButton"
-        app:icon="@drawable/ic_check"
-        android:text="@string/apply_now"
-        android:layout_marginBottom="@dimen/app_default_margin"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:text="@string/apply_now"
+        android:enabled="false"
+        android:backgroundTint="@color/background_material_button"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:cornerRadius="32dp"
+        app:icon="@drawable/ic_check"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:cornerRadius="32dp"        />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
+import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 import it.bz.beacon.adminapp.ui.detail.ImageFullscreenActivity;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageViewHolder> {

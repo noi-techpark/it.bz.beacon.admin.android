@@ -10,9 +10,6 @@ import it.bz.beacon.adminapp.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @BindView(R.id.container)
-    protected CoordinatorLayout container;
-
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
 

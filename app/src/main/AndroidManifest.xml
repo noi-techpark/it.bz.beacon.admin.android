@@ -40,19 +40,19 @@
             android:label="@string/beacons"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.detail.PendingConfigurationActivity"
             android:label="@string/beacons"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.detail.ImageFullscreenActivity"
             android:label="@string/beacons"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
             android:name="com.kontakt.sdk.android.ble.service.ProximityService"

@@ -117,7 +117,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="deleting">Deleting image…</string>
     <string name="image_saved">Image saved</string>
     <string name="image_error">Image could not be saved</string>
-    <string name="close_warning">Do you want to close without saving?</string>
+    <string name="close_warning">Do you want to quit editing without saving?</string>
     <string name="delete_warning">Do you really want to delete this image?</string>
     <string name="warning">Warning</string>
     <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
@@ -126,11 +126,12 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="general_error">An error occurred. Please try again!</string>
     <string name="show_pending_config">Show pending configuration</string>
     <string name="pending_config">Pending configuration</string>
+    <string name="pending_config_empty">Pending configuration is empty</string>
     <string name="pending_config_info">In edit mode, the data from the pending configuration is shown to allow editing of the data to be written.</string>
     <string name="pending_config_reset">Reset pending configuration</string>
     <string name="reset_warning">Do you really want to reset the pending configuration?</string>
     <string name="reset">Reset</string>
-    <string name="close">Close</string>
+    <string name="quit">Quit</string>
     <string name="apply_now">Apply now</string>
     <string name="current_value">current</string>
     <string name="new_value">new</string>

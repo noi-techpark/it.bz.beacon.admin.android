@@ -1,6 +1,10 @@
 package it.bz.beacon.adminapp.ui.detail;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,9 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
+import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.WriteListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
@@ -28,14 +34,18 @@ import com.kontakt.sdk.android.common.model.Config;
 import com.kontakt.sdk.android.common.profile.ISecureProfile;
 
 import java.util.List;
-import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
 import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
@@ -59,7 +69,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
-    private PendingConfiguration pendingConfiguration;
+    private boolean isPendingConfigEmpty = true;
 
     private BeaconViewModel beaconViewModel;
 
@@ -80,7 +90,6 @@ public class PendingConfigurationActivity extends BaseActivity {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
         }
-
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
 
         loadBeacon();
@@ -90,7 +99,14 @@ public class PendingConfigurationActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        startScanningIfLocationPermissionGranted();
         setUpToolbar();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        proximityManager.stopScanning();
     }
 
     private void initializeKontakt() {
@@ -106,84 +122,29 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void loadBeacon() {
-        try {
-            AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<io.swagger.client.model.Beacon>() {
-                @Override
-                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+//        showProgress(getString(R.string.loading));
 
+        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
+            @Override
+            public void onChanged(@Nullable Beacon changedBeacon) {
+                beacon = changedBeacon;
+                beaconName = changedBeacon.getName();
+                setUpToolbar();
+                if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
+                    showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
                 }
-
-                @Override
-                public void onSuccess(io.swagger.client.model.Beacon result, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (result != null) {
-                        beacon = new Beacon();
-                        beacon.setId(result.getId());
-                        beacon.setBatteryLevel(result.getBatteryLevel());
-                        beacon.setDescription(result.getDescription());
-                        beacon.setEddystoneEid(result.isEddystoneEid());
-                        beacon.setEddystoneEtlm(result.isEddystoneEtlm());
-                        beacon.setEddystoneTlm(result.isEddystoneTlm());
-                        beacon.setEddystoneUid(result.isEddystoneUid());
-                        beacon.setEddystoneUrl(result.isEddystoneUrl());
-                        beacon.setIBeacon(result.isIBeacon());
-                        beacon.setInstanceId(result.getInstanceId());
-                        beacon.setInterval(result.getInterval());
-                        beacon.setLastSeen(result.getLastSeen());
-                        beacon.setLat(result.getLat());
-                        beacon.setLng(result.getLng());
-                        beacon.setLocationDescription(result.getLocationDescription());
-                        if (result.getLocationType() != null) {
-                            beacon.setLocationType(result.getLocationType().getValue());
-                        }
-                        beacon.setMajor(result.getMajor());
-                        beacon.setMinor(result.getMinor());
-                        beacon.setManufacturer(result.getManufacturer().getValue());
-                        beacon.setManufacturerId(result.getManufacturerId());
-                        beacon.setName(result.getName());
-                        beacon.setNamespace(result.getNamespace());
-                        beacon.setStatus(result.getStatus().getValue());
-                        beacon.setTelemetry(result.isTelemetry());
-                        beacon.setTxPower(result.getTxPower());
-                        beacon.setUrl(result.getUrl());
-                        beacon.setUuid(result.getUuid().toString());
-                        pendingConfiguration = result.getPendingConfiguration();
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setUpToolbar();
-                                showDifferences();
-                            }
-                        });
-
-                    }
-                    else {
-                        // TODO: show error and hide progress dialog
-//                        showDialog(getString(R.string.no_internet));
-//                        if (dialog != null) {
-//                            dialog.dismiss();
-//                        }
-                    }
+                else {
+                    isPendingConfigEmpty = true;
                 }
-
-                @Override
-                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-
-                }
-
-                @Override
-                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-
-                }
-            });
-        }
-        catch (ApiException e) {
-            e.printStackTrace();
-            // TODO: show some progress dialog
-        }
+            }
+        });
     }
 
-    private void showDifferences() {
+    private void showDifferences(Beacon beacon, PendingConfiguration pendingConfiguration) {
+        if (containerView.getChildCount() > 2) {
+            containerView.removeViews(2, containerView.getChildCount() - 2);
+        }
+
         LinearLayout section = null;
         section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
         section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
@@ -207,6 +168,10 @@ public class PendingConfigurationActivity extends BaseActivity {
         section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
         section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
         addSection(section, getString(R.string.details_eddystone));
+
+        if (containerView.getChildCount() > 2) {
+            containerView.removeViews(1, 1);
+        }
     }
 
     private void setSectionTitle(LinearLayout section, String title) {
@@ -259,6 +224,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, (int) getResources().getDimension(R.dimen.app_default_margin), 0, 0);
             containerView.addView(section, layoutParams);
+            isPendingConfigEmpty = false;
         }
     }
 
@@ -290,7 +256,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             private void updateBeaconNearby(ISecureProfile profile) {
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = profile;
-                    if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                    if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigEmpty) {
                         btnApplyNow.setEnabled(true);
                     }
                 }
@@ -303,8 +269,8 @@ public class PendingConfigurationActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         }
-        if (beacon != null) {
-            toolbar.setTitle(beacon.getName());
+        if (!TextUtils.isEmpty(beaconName)) {
+            toolbar.setTitle(beaconName);
         }
     }
 
@@ -393,6 +359,58 @@ public class PendingConfigurationActivity extends BaseActivity {
 
             }
         });
+    }
+
+
+    private void startScanning() {
+        proximityManager.connect(new OnServiceReadyListener() {
+            @Override
+            public void onServiceReady() {
+                proximityManager.startScanning();
+            }
+        });
+    }
+
+    private void startScanningIfLocationPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_PERMISSION_REQUEST);
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+            else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST);
+            }
+        }
+        else {
+            startScanning();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startScanning();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
     }
 
     private void disconnect() {
