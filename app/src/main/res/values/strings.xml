@@ -53,6 +53,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="location_permission_message">The permission to use location services is needed to indicate your current position on the map, and to show nearby beacons.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
     <string name="reload_map">Reload map</string>
+    <string name="retry">Retry</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="details_last_seen">Last seen: %s</string>
@@ -139,5 +140,14 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="current_value">current</string>
     <string name="applied_successfully">Configuration applied successfully</string>
     <string name="new_value">new</string>
+    <string name="error_connecting_to_beacon">Could not connect to beacon</string>
+    <string name="error_writing_to_beacon">Could not write configuration to beacon</string>
+    <string name="error_sending_to_cloud">Could not synchronize configuration</string>
+    <string name="mandatory">Mandatory field</string>
+    <string name="invalid_interval">Value must be between 100 and 10240</string>
+    <string name="invalid_major_minor">Value must be between 0 and 65535</string>
+    <string name="invalid_uuid">Invalid value for an UUID</string>
+    <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
+
 
 </resources>

@@ -1,14 +1,17 @@
 package it.bz.beacon.adminapp.ui.main.map;
 
 import android.Manifest;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -16,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,7 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private BeaconViewModel beaconViewModel;
     private List<BeaconMinimal> mapBeacons = new ArrayList<>();
-    protected String statusFilter = Beacon.STATUS_ALL;
+    private String statusFilter = Beacon.STATUS_ALL;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,13 +138,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         setUpClusterer();
 
         try {
-            // Customise map styling via JSON file
-            boolean success = googleMap.setMapStyle( MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
-
+            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
             if (!success) {
                 Log.e(AdminApplication.LOG_TAG, "Style parsing failed.");
             }
-        } catch (Resources.NotFoundException e) {
+        }
+        catch (Resources.NotFoundException e) {
             Log.e(AdminApplication.LOG_TAG, "Can't find style. Error: ", e);
         }
     }
@@ -162,11 +165,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         })
                         .create();
                 dialog.show();
-            } else {
+            }
+            else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             map.setMyLocationEnabled(true);
         }
     }
@@ -186,24 +191,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private void setUpClusterer() {
         if (isAdded() && (getContext() != null)) {
-            clusterManager = new ClusterManager<>(getContext(), map);
+            if (clusterManager == null) {
+                clusterManager = new ClusterManager<>(getContext(), map);
+            }
             clusterManager.setAlgorithm(new GridBasedAlgorithm<BeaconClusterItem>());
             clusterManager.setRenderer(new BeaconClusterRenderer(getContext(), map, clusterManager, getClusterColor()));
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
-            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {
-                @Override
-                public boolean onClusterClick(Cluster<BeaconClusterItem> cluster) {
-                    map.getUiSettings().setMapToolbarEnabled(false);
-                    return false;
-                }
-            });
-            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BeaconClusterItem>() {
-                @Override
-                public boolean onClusterItemClick(BeaconClusterItem poiClusterItem) {
-                    map.getUiSettings().setMapToolbarEnabled(true);
-                    return false;
-                }
-            });
+//            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {
+//                @Override
+//                public boolean onClusterClick(Cluster<BeaconClusterItem> cluster) {
+//                    map.getUiSettings().setMapToolbarEnabled(false);
+//                    return false;
+//                }
+//            });
+//            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BeaconClusterItem>() {
+//                @Override
+//                public boolean onClusterItemClick(BeaconClusterItem poiClusterItem) {
+//                    map.getUiSettings().setMapToolbarEnabled(true);
+//                    return false;
+//                }
+//            });
             map.setOnCameraIdleListener(clusterManager);
             map.setOnMarkerClickListener(clusterManager);
             map.setOnInfoWindowClickListener(clusterManager);
@@ -225,7 +232,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         try {
             LatLngBounds bounds = boundsBuilder.build();
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 64));
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             Log.e(AdminApplication.LOG_TAG, e.getLocalizedMessage());
         }
         hideProgress();

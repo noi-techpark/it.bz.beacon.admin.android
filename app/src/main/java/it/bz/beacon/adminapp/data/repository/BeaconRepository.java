@@ -188,10 +188,10 @@ public class BeaconRepository {
             });
         }
         catch (ApiException e) {
+            Log.e(AdminApplication.LOG_TAG, e.getMessage());
             if (dataUpdateEvent != null) {
                 dataUpdateEvent.onError();
             }
-            Log.e(AdminApplication.LOG_TAG, e.getMessage());
         }
     }
 

@@ -5,8 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.navigation.NavigationView;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
@@ -15,6 +18,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,12 +72,12 @@ public class MainActivity extends BaseActivity
         setSupportActionBar(toolbar);
         setupNavigationDrawer();
 
-        filterItems = new String[] {getString(R.string.status_all),
+        filterItems = new String[]{getString(R.string.status_all),
                 getString(R.string.status_ok),
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
                 getString(R.string.status_error)};
-        filterValues = new String[] {Beacon.STATUS_ALL,
+        filterValues = new String[]{Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
@@ -121,7 +125,8 @@ public class MainActivity extends BaseActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -182,7 +187,8 @@ public class MainActivity extends BaseActivity
         if (filterItem != null) {
             if (isFilterActive) {
                 filterItem.setIcon(R.drawable.ic_menu_filter);
-            } else {
+            }
+            else {
                 filterItem.setIcon(R.drawable.ic_menu_filter_outline);
             }
         }
@@ -198,6 +204,7 @@ public class MainActivity extends BaseActivity
         switch (id) {
             case R.id.navigation_beacons:
                 switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                isMapShowing = false;
                 break;
             case R.id.navigation_issues:
                 switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
@@ -230,12 +237,14 @@ public class MainActivity extends BaseActivity
                         })
                         .create()
                         .show();
-            } else {
+            }
+            else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             showMapFragment();
         }
     }
@@ -267,10 +276,12 @@ public class MainActivity extends BaseActivity
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         showMapFragment();
-                    } else {
+                    }
+                    else {
                         showLocationDisabledFragment();
                     }
-                } else {
+                }
+                else {
                     showLocationDisabledFragment();
                 }
                 break;

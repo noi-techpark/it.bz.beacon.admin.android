@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:hint="@string/details_config_major"
+            android:hint="@string/details_config_minor"
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLines="1"

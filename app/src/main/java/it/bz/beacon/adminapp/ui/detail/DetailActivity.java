@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -435,10 +436,11 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         isEditing = false;
-                        showData();
                         setContentEnabled(isEditing);
+                        showData();
                         invalidateOptionsMenu();
                         setUpToolbar();
+                        clearValidationErrors();
                     }
                 }).create();
         dialog.show();
@@ -952,17 +954,19 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
                 break;
             case R.id.menu_edit:
+                showPendingData();
                 isEditing = true;
                 if (map != null) {
                     map.setOnMapClickListener(this);
                 }
                 setContentEnabled(isEditing);
-                showPendingData();
                 invalidateOptionsMenu();
                 setUpToolbar();
                 break;
             case R.id.menu_save:
-                save();
+                if (validate()) {
+                    save();
+                }
                 break;
             default:
                 break;
@@ -971,7 +975,102 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean validate() {
+        boolean valid = true;
+
+        int value;
+        if (TextUtils.isEmpty(editName.getText().toString())) {
+            containerName.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        if (TextUtils.isEmpty(editInterval.getText().toString())) {
+            editInterval.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        else {
+            value = Integer.valueOf(editInterval.getText().toString());
+            if ((value < 100) || (value > 10240)) {
+                editInterval.setError(getString(R.string.invalid_interval));
+                valid = false;
+            }
+        }
+        if (TextUtils.isEmpty(editUuid.getText().toString())) {
+            editUuid.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        else {
+            try {
+                UUID uuid = UUID.fromString(editUuid.getText().toString());
+            }
+            catch (Exception e) {
+                editUuid.setError(getString(R.string.invalid_uuid));
+                valid = false;
+            }
+        }
+        if (TextUtils.isEmpty(editMajor.getText().toString())) {
+            editMajor.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        else {
+            value = Integer.valueOf(editMajor.getText().toString());
+            if ((value < 0) || (value > 65535)) {
+                editMajor.setError(getString(R.string.invalid_major_minor));
+                valid = false;
+            }
+        }
+        if (TextUtils.isEmpty(editMinor.getText().toString())) {
+            editMinor.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        else {
+            value = Integer.valueOf(editMinor.getText().toString());
+            if ((value < 0) || (value > 65535)) {
+                editMinor.setError(getString(R.string.invalid_major_minor));
+                valid = false;
+            }
+        }
+
+        float latitude = 0f;
+        if ((editLatitude.getText() != null) && (editLatitude.getText().toString().length() > 0)) {
+            latitude = Float.parseFloat(editLatitude.getText().toString().replace(',', '.'));
+            if ((latitude < 46.2f) || (latitude > 47.1f)) {
+                editLatitude.setError(getString(R.string.invalid_coordinate));
+                valid = false;
+            }
+        }
+        float longitude = 0f;
+        if ((editLongitude.getText() != null) && (editLongitude.getText().toString().length() > 0)) {
+            longitude = Float.parseFloat(editLongitude.getText().toString().replace(',', '.'));
+            if ((longitude < 10.3f) || (longitude > 12.5f)) {
+                editLongitude.setError(getString(R.string.invalid_coordinate));
+                valid = false;
+            }
+        }
+        if ((latitude == 0f) && (longitude > 0f)) {
+            editLatitude.setError(getString(R.string.invalid_coordinate));
+            valid = false;
+        }
+        if ((latitude > 0f) && (longitude == 0f)) {
+            editLongitude.setError(getString(R.string.invalid_coordinate));
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    private void clearValidationErrors() {
+        editName.setError(null);
+        editInterval.setError(null);
+        editUuid.setError(null);
+        editMajor.setError(null);
+        editMinor.setError(null);
+        editName.setError(null);
+        editLatitude.setError(null);
+        editLongitude.setError(null);
+    }
+
     private void save() {
+        AdminApplication.hideKeyboard(this);
         BeaconUpdate beaconUpdate = new BeaconUpdate();
         beaconUpdate.setName(editName.getText().toString());
         beaconUpdate.setTxPower(rbSignalStrength.getRightIndex() + 1);
@@ -989,8 +1088,12 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         beaconUpdate.setNamespace(editNamespace.getText().toString());
         beaconUpdate.setInstanceId(editInstanceId.getText().toString());
         beaconUpdate.setUrl(editUrl.getText().toString());
-        beaconUpdate.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
-        beaconUpdate.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
+        if (editLatitude.getText() != null) {
+            beaconUpdate.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
+        }
+        if (editLongitude.getText() != null) {
+            beaconUpdate.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
+        }
         beaconUpdate.setDescription(editDescription.getText().toString());
         beaconUpdate.setLocationDescription(editFloor.getText().toString());
         beaconUpdate.setTelemetry(switchTelemetry.isChecked());
@@ -1060,6 +1163,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 updatedBeacon.setManufacturer(result.getManufacturer().getValue());
                 updatedBeacon.setManufacturerId(result.getManufacturerId());
                 updatedBeacon.setName(result.getName());
+                beaconName = result.getName();
                 updatedBeacon.setNamespace(result.getNamespace());
                 updatedBeacon.setStatus(result.getStatus().getValue());
                 updatedBeacon.setTelemetry(result.isTelemetry());
@@ -1087,17 +1191,23 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                         showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
-
                 isEditing = false;
                 setContentEnabled(isEditing);
                 invalidateOptionsMenu();
                 setUpToolbar();
             }
             else {
-                showDialog(getString(R.string.no_internet));
                 if (dialog != null) {
                     dialog.dismiss();
                 }
+                Snackbar.make(content, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.retry), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                save();
+                            }
+                        })
+                        .show();
             }
         }
     }

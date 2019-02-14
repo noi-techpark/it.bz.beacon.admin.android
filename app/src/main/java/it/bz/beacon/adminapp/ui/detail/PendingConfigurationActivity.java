@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
@@ -340,6 +341,14 @@ public class PendingConfigurationActivity extends BaseActivity {
                         txtEmpty.setText(error.getMessage());
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);
+                        Snackbar.make(scrollView, getString(R.string.error_sending_to_cloud), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        sendToCloud(secureConfig, writeResponse);
+                                    }
+                                })
+                                .show();
                     }
                 });
     }
@@ -382,6 +391,14 @@ public class PendingConfigurationActivity extends BaseActivity {
                                 public void onWriteFailure(ErrorCause cause) {
                                     Log.d(AdminApplication.LOG_TAG, "Write failure");
                                     disconnect();
+                                    Snackbar.make(scrollView, getString(R.string.error_writing_to_beacon), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    sendToBeacon(profile);
+                                                }
+                                            })
+                                            .show();
                                 }
                             });
                         }
@@ -392,6 +409,14 @@ public class PendingConfigurationActivity extends BaseActivity {
                             if (dialog != null) {
                                 dialog.dismiss();
                             }
+                            Snackbar.make(scrollView, getString(R.string.error_connecting_to_beacon), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            sendToBeacon(profile);
+                                        }
+                                    })
+                                    .show();
                         }
 
                         @Override
