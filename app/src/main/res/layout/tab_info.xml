@@ -48,18 +48,19 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_columnWeight="1"
             android:text="@string/details_info_battery"
+            android:gravity="center_vertical"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/info_battery"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_gravity="end"
+            android:gravity="center_vertical|end"
             android:ellipsize="marquee"
-            android:gravity="end"
             android:singleLine="true"
             tools:text="60 %" />
 
@@ -80,18 +81,19 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_columnWeight="1"
+            android:gravity="center_vertical"
             android:text="@string/details_info_temperature"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/info_temperature"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_gravity="end"
             android:ellipsize="marquee"
-            android:gravity="end"
+            android:gravity="center_vertical|end"
             android:singleLine="true"
             android:text="-"
             tools:ignore="HardcodedText"
@@ -105,18 +107,19 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_columnWeight="1"
+            android:gravity="center_vertical"
             android:text="@string/details_info_devicestatus"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/info_status"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_gravity="end"
             android:ellipsize="marquee"
-            android:gravity="end"
+            android:gravity="center_vertical|end"
             android:singleLine="true"
             android:textAllCaps="true"
             tools:text="OK" />

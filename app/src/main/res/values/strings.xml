@@ -70,6 +70,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_section_config">Beacon Config</string>
     <string name="details_section_location">Location</string>
     <string name="details_section_images">Images</string>
+    <string name="images_empty">No images found</string>
     <string name="details_config">Config</string>
     <string name="details_config_major">Major</string>
     <string name="details_config_minor">Minor</string>
@@ -114,6 +115,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
     <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving changes…</string>
+    <string name="applying">Applying configuration to beacon…</string>
     <string name="deleting">Deleting image…</string>
     <string name="image_saved">Image saved</string>
     <string name="image_error">Image could not be saved</string>
@@ -130,10 +132,12 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="pending_config_info">In edit mode, the data from the pending configuration is shown to allow editing of the data to be written.</string>
     <string name="pending_config_reset">Reset pending configuration</string>
     <string name="reset_warning">Do you really want to reset the pending configuration?</string>
+    <string name="really_apply_now">Do you really want to apply the pending configuration to the beacon now?</string>
     <string name="reset">Reset</string>
     <string name="quit">Quit</string>
     <string name="apply_now">Apply now</string>
     <string name="current_value">current</string>
+    <string name="applied_successfully">Configuration applied successfully</string>
     <string name="new_value">new</string>
 
 </resources>

@@ -252,6 +252,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     @BindView(R.id.details_images)
     protected RecyclerView images;
 
+    @BindView(R.id.details_images_empty)
+    protected TextView txtImagesEmpty;
+
     @BindView(R.id.details_images_add)
     protected Button btnAddImage;
 
@@ -346,7 +349,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
-                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
                     secureProfile = null;
                     btnShowPendingConfig.setEnabled(false);
                 }
@@ -354,7 +357,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             }
 
             private void updateBeaconNearby(ISecureProfile profile) {
-                if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
+                if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
                     secureProfile = profile;
                     if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                         btnShowPendingConfig.setEnabled(true);
@@ -381,7 +384,15 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             public void onChanged(@Nullable List<BeaconImage> beaconImages) {
                 if (beaconImages != null) {
                     refreshImages(beaconImages);
-                    galleryAdapter.setBeaconImages(beaconImages);
+                    if (beaconImages.size() > 0) {
+                        galleryAdapter.setBeaconImages(beaconImages);
+                        images.setVisibility(View.VISIBLE);
+                        txtImagesEmpty.setVisibility(View.GONE);
+                    }
+                    else {
+                        images.setVisibility(View.GONE);
+                        txtImagesEmpty.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -424,7 +435,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         isEditing = false;
-                        loadBeacon();
+                        showData();
                         setContentEnabled(isEditing);
                         invalidateOptionsMenu();
                         setUpToolbar();
@@ -464,7 +475,9 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 }
             });
             btnCurrentPosition.setVisibility(View.VISIBLE);
-            pendingInfo.setVisibility(View.VISIBLE);
+            if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                pendingInfo.setVisibility(View.VISIBLE);
+            }
             btnShowPendingConfig.setVisibility(View.GONE);
         }
         else {
@@ -1089,8 +1102,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         }
     }
 
-    private void showToast(String string, int lengthShort) {
-        Toast.makeText(DetailActivity.this, string, lengthShort).show();
+    private void showToast(String string, int length) {
+        Toast.makeText(this, string, length).show();
     }
 
     @OnClick(R.id.details_images_add)

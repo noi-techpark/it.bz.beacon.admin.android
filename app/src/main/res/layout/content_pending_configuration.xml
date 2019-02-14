@@ -11,6 +11,7 @@
 
     <ScrollView
         android:id="@+id/scrollview"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,8 +21,8 @@
             android:layout_height="wrap_content"
             android:background="@color/backgroundActivity"
             android:orientation="vertical"
-            android:paddingTop="@dimen/app_default_margin"
             android:paddingStart="@dimen/app_default_margin"
+            android:paddingTop="@dimen/app_default_margin"
             android:paddingEnd="@dimen/app_default_margin"
             android:paddingBottom="92dp">
 
@@ -31,18 +32,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/app_default_margin"
                 android:text="@string/pending_config" />
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="center"
-                android:layout_marginBottom="@dimen/app_default_margin"
-                android:text="@string/pending_config_empty" />
-
         </LinearLayout>
 
     </ScrollView>
+
+    <TextView
+        android:id="@+id/empty"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        android:gravity="center"
+        android:text="@string/pending_config_empty" />
 
     <FrameLayout
         android:id="@+id/corners"

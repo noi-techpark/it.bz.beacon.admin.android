@@ -1,6 +1,7 @@
 package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -46,10 +49,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
@@ -66,6 +71,12 @@ public class PendingConfigurationActivity extends BaseActivity {
     @BindView(R.id.containerView)
     protected LinearLayout containerView;
 
+    @BindView(R.id.scrollview)
+    protected ScrollView scrollView;
+
+    @BindView(R.id.empty)
+    protected TextView txtEmpty;
+
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
@@ -78,6 +89,8 @@ public class PendingConfigurationActivity extends BaseActivity {
     private KontaktDeviceConnection kontaktDeviceConnection;
     private ProximityManager proximityManager;
     private ISecureProfile secureProfile;
+
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,36 +154,37 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void showDifferences(Beacon beacon, PendingConfiguration pendingConfiguration) {
-        if (containerView.getChildCount() > 2) {
-            containerView.removeViews(2, containerView.getChildCount() - 2);
+        if (containerView.getChildCount() > 1) {
+            containerView.removeViews(1, containerView.getChildCount() - 1);
         }
+        isPendingConfigEmpty = true;
+        txtEmpty.setVisibility(View.VISIBLE);
+        scrollView.setVisibility(View.GONE);
 
-        LinearLayout section = null;
-        section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
-        section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
-        section = addBooleanDifference(beacon.getTelemetry(), pendingConfiguration.isTelemetry(), getString(R.string.details_info_telemetry), section);
-        addSection(section, getString(R.string.details_info));
+        if (pendingConfiguration != null) {
+            LinearLayout section = null;
+            section = addTextDifference(String.valueOf(beacon.getTxPower()), String.valueOf(pendingConfiguration.getTxPower()), getString(R.string.details_config_signalstrength), section);
+            section = addTextDifference(String.valueOf(beacon.getInterval()), String.valueOf(pendingConfiguration.getInterval()), getString(R.string.details_config_signalinterval), section);
+            section = addBooleanDifference(beacon.getTelemetry(), pendingConfiguration.isTelemetry(), getString(R.string.details_info_telemetry), section);
+            addSection(section, getString(R.string.details_info));
 
-        section = null;
-        section = addBooleanDifference(beacon.isIBeacon(), pendingConfiguration.isIBeacon(), getString(R.string.details_ibeacon), section);
-        section = addTextDifference(String.valueOf(beacon.getUuid()), String.valueOf(pendingConfiguration.getUuid()), "UUID", section);
-        section = addTextDifference(String.valueOf(beacon.getMajor()), String.valueOf(pendingConfiguration.getMajor()), getString(R.string.details_config_major), section);
-        section = addTextDifference(String.valueOf(beacon.getMinor()), String.valueOf(pendingConfiguration.getMinor()), getString(R.string.details_config_minor), section);
-        addSection(section, getString(R.string.details_ibeacon));
+            section = null;
+            section = addBooleanDifference(beacon.isIBeacon(), pendingConfiguration.isIBeacon(), getString(R.string.details_ibeacon), section);
+            section = addTextDifference(String.valueOf(beacon.getUuid()), String.valueOf(pendingConfiguration.getUuid()), "UUID", section);
+            section = addTextDifference(String.valueOf(beacon.getMajor()), String.valueOf(pendingConfiguration.getMajor()), getString(R.string.details_config_major), section);
+            section = addTextDifference(String.valueOf(beacon.getMinor()), String.valueOf(pendingConfiguration.getMinor()), getString(R.string.details_config_minor), section);
+            addSection(section, getString(R.string.details_ibeacon));
 
-        section = null;
-        section = addBooleanDifference(beacon.isEddystoneUid(), pendingConfiguration.isEddystoneUid(), getString(R.string.details_eddystone_uid), section);
-        section = addTextDifference(String.valueOf(beacon.getNamespace()), String.valueOf(pendingConfiguration.getNamespace()), getString(R.string.details_config_namespace), section);
-        section = addTextDifference(String.valueOf(beacon.getInstanceId()), String.valueOf(pendingConfiguration.getInstanceId()), getString(R.string.details_config_instanceid), section);
-        section = addBooleanDifference(beacon.isEddystoneUrl(), pendingConfiguration.isEddystoneUrl(), getString(R.string.details_eddystone_url), section);
-        section = addTextDifference(String.valueOf(beacon.getUrl()), String.valueOf(pendingConfiguration.getUrl()), getString(R.string.details_config_url), section);
-        section = addBooleanDifference(beacon.isEddystoneEid(), pendingConfiguration.isEddystoneEid(), getString(R.string.details_eddystone_eid), section);
-        section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
-        section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
-        addSection(section, getString(R.string.details_eddystone));
-
-        if (containerView.getChildCount() > 2) {
-            containerView.removeViews(1, 1);
+            section = null;
+            section = addBooleanDifference(beacon.isEddystoneUid(), pendingConfiguration.isEddystoneUid(), getString(R.string.details_eddystone_uid), section);
+            section = addTextDifference(String.valueOf(beacon.getNamespace()), String.valueOf(pendingConfiguration.getNamespace()), getString(R.string.details_config_namespace), section);
+            section = addTextDifference(String.valueOf(beacon.getInstanceId()), String.valueOf(pendingConfiguration.getInstanceId()), getString(R.string.details_config_instanceid), section);
+            section = addBooleanDifference(beacon.isEddystoneUrl(), pendingConfiguration.isEddystoneUrl(), getString(R.string.details_eddystone_url), section);
+            section = addTextDifference(String.valueOf(beacon.getUrl()), String.valueOf(pendingConfiguration.getUrl()), getString(R.string.details_config_url), section);
+            section = addBooleanDifference(beacon.isEddystoneEid(), pendingConfiguration.isEddystoneEid(), getString(R.string.details_eddystone_eid), section);
+            section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
+            section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
+            addSection(section, getString(R.string.details_eddystone));
         }
     }
 
@@ -225,6 +239,8 @@ public class PendingConfigurationActivity extends BaseActivity {
             layoutParams.setMargins(0, (int) getResources().getDimension(R.dimen.app_default_margin), 0, 0);
             containerView.addView(section, layoutParams);
             isPendingConfigEmpty = false;
+            txtEmpty.setVisibility(View.GONE);
+            scrollView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -274,6 +290,10 @@ public class PendingConfigurationActivity extends BaseActivity {
         }
     }
 
+    private void showToast(String string, int length) {
+        Toast.makeText(this, string, length).show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -296,19 +316,45 @@ public class PendingConfigurationActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Configs response, CloudHeaders headers) {
                         if (response != null && response.getContent() != null && response.getContent().size() > 0) {
-
+                            Log.d(AdminApplication.LOG_TAG, "Response from sendToCloud: " + response.toString());
                         }
-                        Log.d(AdminApplication.LOG_TAG, "Successfully applied config");
+                        Log.d(AdminApplication.LOG_TAG, "sendToCloud successful");
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        isPendingConfigEmpty = true;
+                        txtEmpty.setText(getString(R.string.applied_successfully));
+                        showDifferences(beacon, null);
+                        btnApplyNow.setEnabled(false);
+                        BeaconRepository beaconRepository = new BeaconRepository(PendingConfigurationActivity.this);
+                        beaconRepository.refreshBeacon(beaconId, null);
                     }
 
                     @Override
                     public void onError(CloudError error) {
-                        Log.e(AdminApplication.LOG_TAG, "config api error");
+                        Log.e(AdminApplication.LOG_TAG, "sendToCloud failed: " + error.getMessage());
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        isPendingConfigEmpty = true;
+                        txtEmpty.setText(error.getMessage());
+                        showDifferences(beacon, null);
+                        btnApplyNow.setEnabled(false);
                     }
                 });
     }
 
+    private void showProgressDialog() {
+        dialog = new ProgressDialog(PendingConfigurationActivity.this, R.style.AlertDialogCustom);
+        dialog.setMessage(getString(R.string.applying));
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.show();
+    }
+
     private void sendToBeacon(final ISecureProfile profile) {
+        showProgressDialog();
         kontaktCloud.configs().secure().withIds(profile.getUniqueId()).execute(new CloudCallback<Configs>() {
             @Override
             public void onSuccess(Configs response, CloudHeaders headers) {
@@ -343,6 +389,9 @@ public class PendingConfigurationActivity extends BaseActivity {
                         @Override
                         public void onErrorOccured(int errorCode) {
                             Log.d(AdminApplication.LOG_TAG, "Connection failure");
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
                         }
 
                         @Override
@@ -356,11 +405,12 @@ public class PendingConfigurationActivity extends BaseActivity {
 
             @Override
             public void onError(CloudError error) {
-
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
             }
         });
     }
-
 
     private void startScanning() {
         proximityManager.connect(new OnServiceReadyListener() {
@@ -418,5 +468,25 @@ public class PendingConfigurationActivity extends BaseActivity {
             kontaktDeviceConnection.close();
             kontaktDeviceConnection = null;
         }
+    }
+
+    @OnClick(R.id.fab_apply_now)
+    public void applyPendingConfig(View view) {
+        AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                .setMessage(R.string.really_apply_now)
+                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.apply_now, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        sendToBeacon(secureProfile);
+                    }
+                }).create();
+        dialog.show();
     }
 }

@@ -54,7 +54,8 @@
                 android:text="@string/show_pending_config"
                 android:textAllCaps="true"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_status" />
+                app:layout_constraintTop_toBottomOf="@id/details_status"
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/details_info_pending"
@@ -67,7 +68,8 @@
                 android:padding="@dimen/app_default_margin"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_status">
+                app:layout_constraintTop_toBottomOf="@id/details_status"
+                tools:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -255,14 +257,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_images"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:text="@string/details_section_images" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/details_images"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/details_images_empty"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/images_empty" />
 
                 <Button
                     android:id="@+id/details_images_add"
