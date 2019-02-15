@@ -1,8 +1,11 @@
 package it.bz.beacon.adminapp.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.kontakt.sdk.android.common.model.Config;
 
 public class Storage {
 
@@ -29,7 +32,7 @@ public class Storage {
         sharedPreferences.edit()
                 .putString(LOGIN_USER_NAME, username)
                 .putString(LOGIN_USER_TOKEN, token)
-                .commit();
+                .apply();
     }
 
     public void setLastSynchronizationBeacons(long lastSync) {
@@ -48,6 +51,7 @@ public class Storage {
         return sharedPreferences.getBoolean(DONT_SHOW_WARNING_AGAIN, false);
     }
 
+    @SuppressLint("ApplySharedPref")
     public void clearStorage() {
         sharedPreferences.edit().clear().commit();
     }

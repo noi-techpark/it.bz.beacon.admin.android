@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.kontakt.sdk.android.ble.connection.ErrorCause;
@@ -55,8 +56,10 @@ import io.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
 import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_ID;
@@ -84,6 +87,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private boolean isPendingConfigEmpty = true;
 
     private BeaconViewModel beaconViewModel;
+    private PendingSecureConfigViewModel pendingSecureConfigViewModel;
 
     private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
     private KontaktCloud kontaktCloud;
@@ -105,6 +109,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
         }
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        pendingSecureConfigViewModel = ViewModelProviders.of(this).get(PendingSecureConfigViewModel.class);
 
         loadBeacon();
         initializeKontakt();
@@ -141,14 +146,16 @@ public class PendingConfigurationActivity extends BaseActivity {
         beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
             @Override
             public void onChanged(@Nullable Beacon changedBeacon) {
-                beacon = changedBeacon;
-                beaconName = changedBeacon.getName();
-                setUpToolbar();
-                if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
-                    showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
-                }
-                else {
-                    isPendingConfigEmpty = true;
+                if (changedBeacon != null) {
+                    beacon = changedBeacon;
+                    beaconName = changedBeacon.getName();
+                    setUpToolbar();
+                    if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
+                        showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
+                    }
+                    else {
+                        isPendingConfigEmpty = true;
+                    }
                 }
             }
         });
@@ -341,11 +348,21 @@ public class PendingConfigurationActivity extends BaseActivity {
                         txtEmpty.setText(error.getMessage());
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);
-                        Snackbar.make(scrollView, getString(R.string.error_sending_to_cloud), Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(scrollView, getString(R.string.error_sending_to_cloud), Snackbar.LENGTH_LONG)
                                 .setAction(getString(R.string.retry), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         sendToCloud(secureConfig, writeResponse);
+                                    }
+                                })
+                                .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                    @Override
+                                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                                        if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
+                                            PendingSecureConfig pendingSecureConfig = new PendingSecureConfig();
+                                            pendingSecureConfig.setConfig((new Gson()).toJson(secureConfig));
+                                            pendingSecureConfigViewModel.insert(pendingSecureConfig);
+                                        }
                                     }
                                 })
                                 .show();
