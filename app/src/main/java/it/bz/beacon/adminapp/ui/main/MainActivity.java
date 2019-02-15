@@ -5,28 +5,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.navigation.NavigationView;
 import com.squareup.otto.Subscribe;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -76,12 +72,14 @@ public class MainActivity extends BaseActivity
                 getString(R.string.status_ok),
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
-                getString(R.string.status_error)};
+                getString(R.string.status_issue),
+                getString(R.string.status_no_signal)};
         filterValues = new String[]{Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
-                Beacon.STATUS_ERROR};
+                Beacon.STATUS_ISSUE,
+                Beacon.STATUS_NO_SIGNAL};
         navigationView.getMenu().getItem(0).setChecked(true);
 
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());

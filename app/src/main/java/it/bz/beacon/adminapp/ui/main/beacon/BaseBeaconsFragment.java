@@ -1,18 +1,8 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
-import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +11,15 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -80,13 +79,14 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
             public void onChanged(@Nullable List<BeaconMinimal> beacons) {
                 if (beacons == null || beacons.size() <= 0) {
                     showNoData();
-                } else {
+                }
+                else {
                     adapter.setBeacons(beacons);
+                    adapter.getFilter().filter(statusFilter + "#" + searchFilter);
                     showList();
                 }
             }
         });
-        showList();
     }
 
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
@@ -162,7 +162,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private void showAuthenticationFailureDialog() {
         AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                .setTitle(getString(R.string.status_error))
+                .setTitle(getString(R.string.status_no_signal))
                 .setMessage(getString(R.string.error_authorization))
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override

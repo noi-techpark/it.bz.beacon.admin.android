@@ -1,17 +1,9 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
 import android.Manifest;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
@@ -27,6 +19,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.LoadEvent;
@@ -77,11 +77,13 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         })
                         .create();
                 dialog.show();
-            } else {
+            }
+            else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             startScanning();
         }
     }
@@ -144,10 +146,12 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         }
         Collections.sort(list, new Comparator<BeaconMinimal>() {
             public int compare(BeaconMinimal obj1, BeaconMinimal obj2) {
-                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null))
+                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
                     return obj2.getRssi() - obj1.getRssi();
-                else
+                }
+                else {
                     return 0;
+                }
             }
         });
         return list;
@@ -157,10 +161,12 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         list.add(newBeacon);
         Collections.sort(list, new Comparator<BeaconMinimal>() {
             public int compare(BeaconMinimal obj1, BeaconMinimal obj2) {
-                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null))
+                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
                     return obj2.getRssi() - obj1.getRssi();
-                else
+                }
+                else {
                     return 0;
+                }
             }
         });
         return list;
@@ -250,6 +256,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     @Override
     public void onPause() {
         proximityManager.stopScanning();
+        proximityManager.disconnect();
         PubSub.getInstance().unregister(this);
         super.onPause();
     }

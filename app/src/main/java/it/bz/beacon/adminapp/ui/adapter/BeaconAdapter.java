@@ -3,10 +3,6 @@ package it.bz.beacon.adminapp.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +15,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
@@ -38,7 +38,8 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
     }
 
     @Override
-    public @NonNull BeaconViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public @NonNull
+    BeaconViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.listitem_beacon, parent, false);
         return new BeaconViewHolder(itemView);
     }
@@ -51,7 +52,6 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
     public void setBeacons(List<BeaconMinimal> beacons) {
         this.beacons.clear();
         this.beacons.addAll(beacons);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
             @SuppressWarnings("unchecked")
             @Override
-            protected void publishResults(CharSequence constraint,FilterResults results) {
+            protected void publishResults(CharSequence constraint, FilterResults results) {
 
                 beacons = (List<BeaconMinimal>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
@@ -78,11 +78,13 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 String statusFilter = Beacon.STATUS_ALL;
 
                 if (!TextUtils.isEmpty(constraint)) {
-                    if (constraint.toString().indexOf('#') > 0)
+                    if (constraint.toString().indexOf('#') > 0) {
                         statusFilter = constraint.toString().substring(0, constraint.toString().indexOf('#'));
+                    }
 
-                    if (constraint.toString().indexOf('#') < constraint.toString().length() - 1)
+                    if (constraint.toString().indexOf('#') < constraint.toString().length() - 1) {
                         searchFilter = constraint.toString().substring(constraint.toString().indexOf('#') + 1);
+                    }
                 }
 
                 FilterResults results = new FilterResults();
@@ -114,10 +116,10 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
                         if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL))) &&
-                            (beaconMinimal.getName().toLowerCase().contains(searchFilter.toString())
-                                    || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter.toString()))) {
-                                filteredBeacons.add(beaconMinimal);
-                            }
+                                (beaconMinimal.getName().toLowerCase().contains(searchFilter.toString())
+                                        || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter.toString()))) {
+                            filteredBeacons.add(beaconMinimal);
+                        }
                     }
                     results.count = filteredBeacons.size();
                     results.values = filteredBeacons;
@@ -165,10 +167,10 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
             }
-            if (beaconMinimal.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
+            if ((beaconMinimal.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) || (beaconMinimal.getStatus().equals(Beacon.STATUS_ISSUE))) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
             }
-            if (beaconMinimal.getStatus().equals(Beacon.STATUS_ERROR)) {
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
             }
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {

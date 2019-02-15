@@ -107,10 +107,11 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>
     <string name="status_configuration_pending">Configuration pending</string>
-    <string name="status_error">Error</string>
+    <string name="status_no_signal">No signal</string>
+    <string name="status_issue">Issue(s) reported</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>
-    <string name="error_invalid_password">Password is to short</string>
+    <string name="error_invalid_password">Password is too short</string>
     <string name="error_incorrect_login">Wrong username or password</string>
     <string name="error_field_required">Required field</string>
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
@@ -125,7 +126,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="warning">Warning</string>
     <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
     <string name="dont_show_again">Don\'t show again</string>
-    <string name="no_internet">No internet connection detected. To save changes, an internet connection is needed!</string>
+    <string name="no_internet">No internet connection detected!</string>
     <string name="general_error">An error occurred. Please try again!</string>
     <string name="show_pending_config">Show pending configuration</string>
     <string name="pending_config">Pending configuration</string>

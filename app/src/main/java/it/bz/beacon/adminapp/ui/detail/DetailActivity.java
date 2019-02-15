@@ -638,15 +638,20 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_ok)));
                 txtStatus.setText(getString(R.string.status_ok));
             }
-            if (beacon.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
+            if ((beacon.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) || (beacon.getStatus().equals(Beacon.STATUS_ISSUE))) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_warning)));
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
                 txtStatus.setText(getString(R.string.status_battery_low));
             }
-            if (beacon.getStatus().equals(Beacon.STATUS_ERROR)) {
+            if (beacon.getStatus().equals(Beacon.STATUS_ISSUE)) {
+                txtStatus.setText(getString(R.string.status_issue));
+            }
+            if (beacon.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
-                txtStatus.setText(getString(R.string.status_error));
+                txtStatus.setText(getString(R.string.status_no_signal));
             }
             if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
@@ -1320,6 +1325,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     public void onPause() {
         super.onPause();
         proximityManager.stopScanning();
+        proximityManager.disconnect();
         mapView.onPause();
     }
 

@@ -1,19 +1,10 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "An API to manage beacons of the Beacon Südtirol project.",
-    "version": "1.0-beta",
-    "title": "Beacon Südtirol API",
-    "termsOfService": "API TOS",
-    "contact": {
-      "name": "Raiffeisen Online GmbH",
-      "url": "https://www.raiffeisen.net",
-      "email": "web@raiffeisen.net"
-    },
-    "license": {
-      "name": "License of API",
-      "url": "API license URL"
-    }
+    "description": "The API for the Beacon Suedtirol project for configuring beacons and accessing beacon data.",
+    "title": "Beacon Suedtirol API TEST",
+    "contact": {},
+    "license": {}
   },
   "host": "api.beacon-dev.it",
   "basePath": "/",
@@ -1184,7 +1175,9 @@
           "enum": [
             "OK",
             "BATTERY_LOW",
-            "CONFIGURATION_PENDING"
+            "CONFIGURATION_PENDING",
+            "NO_SIGNAL",
+            "ISSUE"
           ]
         },
         "telemetry": {

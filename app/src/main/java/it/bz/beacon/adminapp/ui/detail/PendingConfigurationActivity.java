@@ -126,6 +126,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     public void onPause() {
         super.onPause();
         proximityManager.stopScanning();
+        proximityManager.disconnect();
     }
 
     private void initializeKontakt() {

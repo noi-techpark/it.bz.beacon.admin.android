@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +16,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
-import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 import it.bz.beacon.adminapp.ui.detail.ImageFullscreenActivity;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageViewHolder> {
@@ -53,16 +52,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
     public void setBeaconImages(List<BeaconImage> images) {
         this.images.clear();
         this.images.addAll(images);
-        notifyDataSetChanged();
-    }
-
-    public void addBeaconImage(BeaconImage image) {
-        this.images.add(0, image);
-        notifyDataSetChanged();
-    }
-
-    public void removeBeaconImage(BeaconImage image) {
-        this.images.remove (image);
         notifyDataSetChanged();
     }
 
