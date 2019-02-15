@@ -40,7 +40,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -132,6 +131,24 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     @BindView(R.id.nameContainer)
     protected TextInputLayout containerName;
+
+    @BindView(R.id.uuidContainer)
+    protected TextInputLayout containerUuid;
+
+    @BindView(R.id.intervalContainer)
+    protected TextInputLayout containerInterval;
+
+    @BindView(R.id.majorContainer)
+    protected TextInputLayout containerMajor;
+
+    @BindView(R.id.minorContainer)
+    protected TextInputLayout containerMinor;
+
+    @BindView(R.id.latitudeContainer)
+    protected TextInputLayout containerLatitude;
+
+    @BindView(R.id.longitudeContainer)
+    protected TextInputLayout containerLongitude;
 
     @BindView(R.id.info_name)
     protected TextInputEditText editName;
@@ -271,7 +288,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     protected GoogleMap map;
     private FusedLocationProviderClient fusedLocationClient;
-    private Marker marker;
     private LatLng currentLocation = null;
 
     protected boolean isEditing = false;
@@ -282,7 +298,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
     private BeaconImageViewModel beaconImageViewModel;
 
     private ProximityManager proximityManager;
-    private ISecureProfile secureProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,7 +366,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
             @Override
             public void onProfileLost(ISecureProfile profile) {
                 if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
-                    secureProfile = null;
                     btnShowPendingConfig.setEnabled(false);
                 }
                 super.onProfileLost(profile);
@@ -359,7 +373,6 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
             private void updateBeaconNearby(ISecureProfile profile) {
                 if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
-                    secureProfile = profile;
                     if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                         btnShowPendingConfig.setEnabled(true);
                     }
@@ -806,7 +819,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     private void setMarker(LatLng latLng) {
         map.clear();
-        marker = map.addMarker(new MarkerOptions()
+        map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(beacon.getStatus()))));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
@@ -814,7 +827,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     private void moveMarker(LatLng latLng) {
         map.clear();
-        marker = map.addMarker(new MarkerOptions()
+        map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(beacon.getStatus()))));
         map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -964,6 +977,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
                 setUpToolbar();
                 break;
             case R.id.menu_save:
+                AdminApplication.hideKeyboard(this);
                 if (validate()) {
                     save();
                 }
@@ -977,55 +991,71 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
     private boolean validate() {
         boolean valid = true;
+        clearValidationErrors();
 
         int value;
-        if (TextUtils.isEmpty(editName.getText().toString())) {
+        if ((editName.getText() == null) || (TextUtils.isEmpty(editName.getText().toString()))) {
             containerName.setError(getString(R.string.mandatory));
+            tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
             valid = false;
         }
-        if (TextUtils.isEmpty(editInterval.getText().toString())) {
-            editInterval.setError(getString(R.string.mandatory));
+        if ((editInterval.getText() == null) || (TextUtils.isEmpty(editInterval.getText().toString()))) {
+            containerInterval.setError(getString(R.string.mandatory));
+            tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
             valid = false;
         }
         else {
             value = Integer.valueOf(editInterval.getText().toString());
             if ((value < 100) || (value > 10240)) {
-                editInterval.setError(getString(R.string.invalid_interval));
+                containerInterval.setError(getString(R.string.invalid_interval));
+                tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
-        if (TextUtils.isEmpty(editUuid.getText().toString())) {
-            editUuid.setError(getString(R.string.mandatory));
-            valid = false;
+        if ((editUuid.getText() == null) || (TextUtils.isEmpty(editUuid.getText().toString()))) {
+            if (switchIBeacon.isChecked()) {
+                containerUuid.setError(getString(R.string.mandatory));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
+                valid = false;
+            }
         }
         else {
             try {
                 UUID uuid = UUID.fromString(editUuid.getText().toString());
             }
             catch (Exception e) {
-                editUuid.setError(getString(R.string.invalid_uuid));
+                containerUuid.setError(getString(R.string.invalid_uuid));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
-        if (TextUtils.isEmpty(editMajor.getText().toString())) {
-            editMajor.setError(getString(R.string.mandatory));
-            valid = false;
+        if ((editMajor.getText() == null) || (TextUtils.isEmpty(editMajor.getText().toString()))) {
+            if (switchIBeacon.isChecked()) {
+                containerMajor.setError(getString(R.string.mandatory));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
+                valid = false;
+            }
         }
         else {
             value = Integer.valueOf(editMajor.getText().toString());
             if ((value < 0) || (value > 65535)) {
-                editMajor.setError(getString(R.string.invalid_major_minor));
+                containerMajor.setError(getString(R.string.invalid_major_minor));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
-        if (TextUtils.isEmpty(editMinor.getText().toString())) {
-            editMinor.setError(getString(R.string.mandatory));
-            valid = false;
+        if ((editMinor.getText() == null) || (TextUtils.isEmpty(editMinor.getText().toString()))) {
+            if (switchIBeacon.isChecked()) {
+                containerMinor.setError(getString(R.string.mandatory));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
+                valid = false;
+            }
         }
         else {
             value = Integer.valueOf(editMinor.getText().toString());
             if ((value < 0) || (value > 65535)) {
-                editMinor.setError(getString(R.string.invalid_major_minor));
+                containerMinor.setError(getString(R.string.invalid_major_minor));
+                tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
@@ -1034,7 +1064,8 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if ((editLatitude.getText() != null) && (editLatitude.getText().toString().length() > 0)) {
             latitude = Float.parseFloat(editLatitude.getText().toString().replace(',', '.'));
             if ((latitude < 46.2f) || (latitude > 47.1f)) {
-                editLatitude.setError(getString(R.string.invalid_coordinate));
+                containerLatitude.setError(getString(R.string.invalid_coordinate));
+                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
@@ -1042,35 +1073,39 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
         if ((editLongitude.getText() != null) && (editLongitude.getText().toString().length() > 0)) {
             longitude = Float.parseFloat(editLongitude.getText().toString().replace(',', '.'));
             if ((longitude < 10.3f) || (longitude > 12.5f)) {
-                editLongitude.setError(getString(R.string.invalid_coordinate));
+                containerLongitude.setError(getString(R.string.invalid_coordinate));
+                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
         }
         if ((latitude == 0f) && (longitude > 0f)) {
-            editLatitude.setError(getString(R.string.invalid_coordinate));
+            containerLatitude.setError(getString(R.string.invalid_coordinate));
+            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
             valid = false;
         }
         if ((latitude > 0f) && (longitude == 0f)) {
-            editLongitude.setError(getString(R.string.invalid_coordinate));
+            containerLongitude.setError(getString(R.string.invalid_coordinate));
+            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
             valid = false;
         }
-
         return valid;
     }
 
     private void clearValidationErrors() {
-        editName.setError(null);
-        editInterval.setError(null);
-        editUuid.setError(null);
-        editMajor.setError(null);
-        editMinor.setError(null);
-        editName.setError(null);
-        editLatitude.setError(null);
-        editLongitude.setError(null);
+        containerInterval.setError(null);
+        containerUuid.setError(null);
+        containerMajor.setError(null);
+        containerMinor.setError(null);
+        containerName.setError(null);
+        containerLatitude.setError(null);
+        containerLongitude.setError(null);
+        tabLayoutLocation.getTabAt(1).setIcon(null);
+        tabLayoutConfig.getTabAt(0).setIcon(null);
+        tabLayoutConfig.getTabAt(1).setIcon(null);
+        tabLayoutConfig.getTabAt(2).setIcon(null);
     }
 
     private void save() {
-        AdminApplication.hideKeyboard(this);
         BeaconUpdate beaconUpdate = new BeaconUpdate();
         beaconUpdate.setName(editName.getText().toString());
         beaconUpdate.setTxPower(rbSignalStrength.getRightIndex() + 1);

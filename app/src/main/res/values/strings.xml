@@ -100,7 +100,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_description">Description</string>
     <string name="details_floor">Floor</string>
     <string name="add_image">Add image</string>
-    <string name="choose_source">Choose source</string>
+    <string name="choose_source">Source for image</string>
     <string name="uploading">Uploading image. Please wait…</string>
     <string name="filter_dialog_title">Filter Beacons</string>
     <string name="status_all">All</string>
