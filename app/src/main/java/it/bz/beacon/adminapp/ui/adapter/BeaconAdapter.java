@@ -60,20 +60,23 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
     }
 
     @Override
+    public long getItemId(int position) {
+        return beacons.get(position).getId();
+    }
+
+    @Override
     public Filter getFilter() {
         return new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
-                beacons = (List<BeaconMinimal>) results.values; // has the filtered values
-                notifyDataSetChanged();  // notifies the data with new filtered values
+                beacons = (List<BeaconMinimal>) results.values;
+                notifyDataSetChanged();
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String[] filters;
                 String searchFilter = "";
                 String statusFilter = Beacon.STATUS_ALL;
 

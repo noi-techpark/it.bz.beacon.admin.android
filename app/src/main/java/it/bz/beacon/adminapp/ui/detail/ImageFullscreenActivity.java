@@ -36,15 +36,17 @@ public class ImageFullscreenActivity extends BaseActivity {
         if (getIntent() != null) {
             String fileName = getIntent().getStringExtra(EXTRA_IMAGE_FILENAME);
 
-            ContextWrapper contextWrapper = new ContextWrapper(this);
-            File directory = contextWrapper.getDir(getString(R.string.image_folder), Context.MODE_PRIVATE);
-            final File file = new File(directory, fileName);
+            if (!TextUtils.isEmpty(fileName)) {
+                ContextWrapper contextWrapper = new ContextWrapper(this);
+                File directory = contextWrapper.getDir(getString(R.string.image_folder), Context.MODE_PRIVATE);
+                final File file = new File(directory, fileName);
 
-            if (file.exists()) {
-                Picasso.with(this)
-                        .load(file)
-                        .placeholder(R.drawable.placeholder)
-                        .into(img);
+                if (file.exists()) {
+                    Picasso.with(this)
+                            .load(file)
+                            .placeholder(R.drawable.placeholder)
+                            .into(img);
+                }
             }
         }
     }

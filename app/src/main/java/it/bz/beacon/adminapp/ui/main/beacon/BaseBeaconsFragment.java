@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -45,8 +46,8 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private BeaconAdapter adapter;
 
-    protected String statusFilter = Beacon.STATUS_ALL;
-    protected String searchFilter = "";
+    private String statusFilter = Beacon.STATUS_ALL;
+    private String searchFilter = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_beacons, container, false);
         ButterKnife.bind(this, view);
@@ -62,7 +63,6 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
         adapter = new BeaconAdapter(getContext());
         recyclerBeacons.setAdapter(adapter);
         recyclerBeacons.setHasFixedSize(true);
-        recyclerBeacons.setItemAnimator(new DefaultItemAnimator());
         recyclerBeacons.setLayoutManager(new LinearLayoutManager(getContext()));
 
         swipeBeacons.setOnRefreshListener(this);
