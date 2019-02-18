@@ -1,0 +1,4 @@
+<resources>
+    <string translatable="false" name="basePath">BEACON_SUEDTIROL_API_URL</string>
+    <string translatable="false" name="apiKey">KONTAKT_IO_API_KEY</string>
+</resources>
