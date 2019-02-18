@@ -8,10 +8,9 @@
     android:background="@color/backgroundBox"
     android:orientation="vertical"
     android:padding="@dimen/app_default_margin"
-    android:visibility="gone"
-    tools:visibility="visible">
+    android:visibility="gone" >
 
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/eddystone_switch_uid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,13 +18,13 @@
         android:text="@string/details_eddystone_uid"
         android:theme="@style/SwitchTheme" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hintTextAppearance="@style/TextAppearance.Hint">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/eddystone_namespace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,9 +37,9 @@
             android:textCursorDrawable="@null"
             tools:text="f04958fa3095482ae394" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +47,7 @@
         android:layout_marginBottom="@dimen/app_default_margin"
         app:hintTextAppearance="@style/TextAppearance.Hint">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/eddystone_instanceid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,9 +60,9 @@
             android:textCursorDrawable="@null"
             tools:text="431ac35d9v78a" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/eddystone_switch_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,14 +70,14 @@
         android:text="@string/details_eddystone_url"
         android:theme="@style/SwitchTheme" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/app_default_margin"
         app:hintTextAppearance="@style/TextAppearance.Hint">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/eddystone_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,9 +90,9 @@
             android:textCursorDrawable="@null"
             tools:text="https://kntk.io/eddystone" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/eddystone_switch_eid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,7 +100,7 @@
         android:text="@string/details_eddystone_eid"
         android:theme="@style/SwitchTheme" />
 
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/eddystone_switch_etlm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -109,7 +108,7 @@
         android:text="@string/details_eddystone_etlm"
         android:theme="@style/SwitchTheme" />
 
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/eddystone_switch_tlm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

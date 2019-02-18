@@ -1,20 +1,25 @@
 package it.bz.beacon.adminapp.ui.main.map;
 
 import android.Manifest;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
@@ -67,7 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private BeaconViewModel beaconViewModel;
     private List<BeaconMinimal> mapBeacons = new ArrayList<>();
-    protected String statusFilter = Beacon.STATUS_ALL;
+    private String statusFilter = Beacon.STATUS_ALL;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +136,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         map.clear();
         showMyLocation();
         setUpClusterer();
+
+        try {
+            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
+            if (!success) {
+                Log.e(AdminApplication.LOG_TAG, "Style parsing failed.");
+            }
+        }
+        catch (Resources.NotFoundException e) {
+            Log.e(AdminApplication.LOG_TAG, "Can't find style. Error: ", e);
+        }
     }
 
     private void showMyLocation() {
@@ -139,7 +155,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
                         .setMessage(getString(R.string.location_permission_message))
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
@@ -149,11 +165,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         })
                         .create();
                 dialog.show();
-            } else {
+            }
+            else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             map.setMyLocationEnabled(true);
         }
     }
@@ -173,24 +191,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private void setUpClusterer() {
         if (isAdded() && (getContext() != null)) {
-            clusterManager = new ClusterManager<>(getContext(), map);
+            if (clusterManager == null) {
+                clusterManager = new ClusterManager<>(getContext(), map);
+            }
             clusterManager.setAlgorithm(new GridBasedAlgorithm<BeaconClusterItem>());
             clusterManager.setRenderer(new BeaconClusterRenderer(getContext(), map, clusterManager, getClusterColor()));
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
-            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {
-                @Override
-                public boolean onClusterClick(Cluster<BeaconClusterItem> cluster) {
-                    map.getUiSettings().setMapToolbarEnabled(false);
-                    return false;
-                }
-            });
-            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BeaconClusterItem>() {
-                @Override
-                public boolean onClusterItemClick(BeaconClusterItem poiClusterItem) {
-                    map.getUiSettings().setMapToolbarEnabled(true);
-                    return false;
-                }
-            });
+//            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {
+//                @Override
+//                public boolean onClusterClick(Cluster<BeaconClusterItem> cluster) {
+//                    map.getUiSettings().setMapToolbarEnabled(false);
+//                    return false;
+//                }
+//            });
+//            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BeaconClusterItem>() {
+//                @Override
+//                public boolean onClusterItemClick(BeaconClusterItem poiClusterItem) {
+//                    map.getUiSettings().setMapToolbarEnabled(true);
+//                    return false;
+//                }
+//            });
             map.setOnCameraIdleListener(clusterManager);
             map.setOnMarkerClickListener(clusterManager);
             map.setOnInfoWindowClickListener(clusterManager);
@@ -212,10 +232,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         try {
             LatLngBounds bounds = boundsBuilder.build();
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 64));
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             Log.e(AdminApplication.LOG_TAG, e.getLocalizedMessage());
         }
-
         hideProgress();
     }
 

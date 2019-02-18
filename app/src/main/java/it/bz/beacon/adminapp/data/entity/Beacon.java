@@ -1,28 +1,28 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringDef;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import it.bz.beacon.adminapp.R;
 
 @Entity
 public class Beacon {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_CONFIGURATION_PENDING})
+    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_ISSUE, STATUS_CONFIGURATION_PENDING, STATUS_NO_SIGNAL})
     public @interface FilterStatus {
     }
 
     public static final String STATUS_ALL = "ALL";
     public static final String STATUS_OK = "OK";
     public static final String STATUS_BATTERY_LOW = "BATTERY_LOW";
+    public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
-    public static final String STATUS_ERROR = "ERROR";
+    public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({LOCATION_OUTDOOR, LOCATION_INDOOR})
@@ -61,19 +61,23 @@ public class Beacon {
     private Integer txPower;
     private String url;
     private String uuid;
+    private String pendingConfiguration;
 
     public Beacon() {
     }
 
     public static int getMarkerId(@FilterStatus String status) {
         int drawableId;
-        // TODO: add case for status error
         switch (status) {
+            case Beacon.STATUS_ISSUE:
             case Beacon.STATUS_BATTERY_LOW:
                 drawableId = R.drawable.marker_issue;
                 break;
             case Beacon.STATUS_CONFIGURATION_PENDING:
                 drawableId = R.drawable.marker_pending;
+                break;
+            case Beacon.STATUS_NO_SIGNAL:
+                drawableId = R.drawable.marker_nosignal;
                 break;
             default:
                 drawableId = R.drawable.marker_ok;
@@ -297,5 +301,13 @@ public class Beacon {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getPendingConfiguration() {
+        return pendingConfiguration;
+    }
+
+    public void setPendingConfiguration(String pendingConfiguration) {
+        this.pendingConfiguration = pendingConfiguration;
     }
 }

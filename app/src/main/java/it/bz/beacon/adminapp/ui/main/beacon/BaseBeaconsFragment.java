@@ -1,27 +1,26 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -32,7 +31,6 @@ import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
-import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -48,8 +46,8 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private BeaconAdapter adapter;
 
-    protected String statusFilter = Beacon.STATUS_ALL;
-    protected String searchFilter = "";
+    private String statusFilter = Beacon.STATUS_ALL;
+    private String searchFilter = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +55,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_beacons, container, false);
         ButterKnife.bind(this, view);
@@ -65,7 +63,6 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
         adapter = new BeaconAdapter(getContext());
         recyclerBeacons.setAdapter(adapter);
         recyclerBeacons.setHasFixedSize(true);
-        recyclerBeacons.setItemAnimator(new DefaultItemAnimator());
         recyclerBeacons.setLayoutManager(new LinearLayoutManager(getContext()));
 
         swipeBeacons.setOnRefreshListener(this);
@@ -82,13 +79,14 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
             public void onChanged(@Nullable List<BeaconMinimal> beacons) {
                 if (beacons == null || beacons.size() <= 0) {
                     showNoData();
-                } else {
+                }
+                else {
                     adapter.setBeacons(beacons);
+                    adapter.getFilter().filter(statusFilter + "#" + searchFilter);
                     showList();
                 }
             }
         });
-        showList();
     }
 
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
@@ -164,9 +162,9 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private void showAuthenticationFailureDialog() {
         AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                .setTitle(getString(R.string.status_error))
+                .setTitle(getString(R.string.status_no_signal))
                 .setMessage(getString(R.string.error_authorization))
-                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();

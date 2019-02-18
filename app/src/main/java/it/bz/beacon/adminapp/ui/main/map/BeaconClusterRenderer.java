@@ -2,9 +2,8 @@ package it.bz.beacon.adminapp.ui.main.map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -17,7 +16,7 @@ import com.google.maps.android.ui.IconGenerator;
 
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.util.BitmapConverter;
+import it.bz.beacon.adminapp.util.BitmapTools;
 
 public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterItem> {
 
@@ -36,7 +35,7 @@ public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterI
     @Override
     protected void onBeforeClusterItemRendered(BeaconClusterItem item, MarkerOptions markerOptions) {
         final Drawable drawable = ContextCompat.getDrawable(context, Beacon.getMarkerId(item.getBeaconMinimal().getStatus()));
-        Bitmap bitmap = BitmapConverter.drawableToBitmap(drawable);
+        Bitmap bitmap = BitmapTools.drawableToBitmap(drawable);
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
         markerOptions.icon(markerDescriptor);
     }
@@ -44,20 +43,19 @@ public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterI
     @Override
     protected void onBeforeClusterRendered(Cluster<BeaconClusterItem> cluster, MarkerOptions markerOptions){
 
-        final Drawable clusterIcon = ContextCompat.getDrawable(context, R.drawable.map_pin);
-        clusterIcon.setColorFilter(clusterColor, PorterDuff.Mode.SRC_ATOP);
+        final Drawable clusterIcon = ContextCompat.getDrawable(context, R.drawable.ic_cluster);
 
         clusterIconGenerator.setBackground(clusterIcon);
 
         //modify padding for one or two digit numbers
         if (cluster.getSize() < 10) {
-            clusterIconGenerator.setContentPadding(62, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(54, 36, 0, 0);
         } else if (cluster.getSize() < 100) {
-            clusterIconGenerator.setContentPadding(50, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(50, 36, 0, 0);
         } else if (cluster.getSize() < 1000) {
-            clusterIconGenerator.setContentPadding(38, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(38, 36, 0, 0);
         } else {
-            clusterIconGenerator.setContentPadding(26, 32, 0, 0);
+            clusterIconGenerator.setContentPadding(26, 36, 0, 0);
         }
         clusterIconGenerator.setTextAppearance(context, R.style.MapClusterAppearance);
 

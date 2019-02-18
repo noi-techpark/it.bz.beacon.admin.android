@@ -1,9 +1,9 @@
 package it.bz.beacon.adminapp.data.dao;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Transaction;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Query;
+import androidx.room.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,9 @@ public abstract class BeaconDao implements BaseDao<Beacon> {
 
     @Query("SELECT * FROM Beacon WHERE id = :id")
     public abstract LiveData<Beacon> getById(long id);
+
+    @Query("SELECT id, batteryLevel, lat, lng, major, minor, manufacturerId, name, status FROM Beacon WHERE manufacturerId = :instanceId")
+    public abstract BeaconMinimal getByInstanceId(String instanceId);
 
     @Transaction
     public void replaceAll(ArrayList<Beacon> beacons) {

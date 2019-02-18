@@ -1,15 +1,15 @@
 package it.bz.beacon.adminapp.data.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 
 public class BeaconViewModel extends AndroidViewModel {
@@ -34,6 +34,10 @@ public class BeaconViewModel extends AndroidViewModel {
 
     public LiveData<Beacon> getById(long id) {
         return repository.getById(id);
+    }
+
+    public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
+        repository.getByInstanceId(instanceId, loadEvent);
     }
 
     public void insert(Beacon beacon, InsertEvent event) {

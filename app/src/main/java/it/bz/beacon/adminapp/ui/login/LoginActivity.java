@@ -2,20 +2,22 @@ package it.bz.beacon.adminapp.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,10 +34,16 @@ import it.bz.beacon.adminapp.ui.main.MainActivity;
 public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.username)
-    protected EditText editUsername;
+    protected TextInputEditText editUsername;
 
     @BindView(R.id.password)
-    protected EditText editPassword;
+    protected TextInputEditText editPassword;
+
+    @BindView(R.id.usernameContainer)
+    protected TextInputLayout containerUsername;
+
+    @BindView(R.id.passwordContainer)
+    protected TextInputLayout containerPassword;
 
     @BindView(R.id.login_progress)
     protected LinearLayout progress;
@@ -53,11 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         storage = AdminApplication.getStorage();
         authControllerApi = AdminApplication.getAuthApi();
 
-        //TODO: remove this
-     //   openMain();
-
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
-           openMain();
+            openMain();
         }
 
         setContentView(R.layout.activity_login);
@@ -82,23 +87,22 @@ public class LoginActivity extends AppCompatActivity {
 
     private void attemptLogin() {
 
+        AdminApplication.hideKeyboard(this);
         editUsername.setError(null);
         editPassword.setError(null);
 
-        String username = editUsername.getText().toString();
-        String password = editPassword.getText().toString();
+        String username = (editUsername.getText() != null) ? editUsername.getText().toString() : "";
+        String password = (editPassword.getText() != null) ? editPassword.getText().toString() : "";
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || (!isPasswordValid(password))) {
             editPassword.setError(getString(R.string.error_invalid_password));
             focusView = editPassword;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(username)) {
             editUsername.setError(getString(R.string.error_field_required));
             focusView = editUsername;
@@ -107,7 +111,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (cancel) {
             focusView.requestFocus();
-        } else {
+        }
+        else {
             doLogin(username, password);
         }
     }
@@ -119,12 +124,26 @@ public class LoginActivity extends AppCompatActivity {
             request.setPassword(password);
 
             authControllerApi.signinUsingPOSTAsync(request, new ApiCallback<AuthenticationToken>() {
+
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             showProgress(false);
-                            Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_login), Toast.LENGTH_SHORT).show();
+                            if (statusCode == 403) {
+                                Snackbar.make(containerUsername, getString(R.string.error_incorrect_login), Snackbar.LENGTH_LONG)
+                                        .show();
+                            }
+                            else {
+                                Snackbar.make(containerUsername, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                attemptLogin();
+                                            }
+                                        })
+                                        .show();
+                            }
                         }
                     });
                 }
@@ -151,13 +170,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Log.e(AdminApplication.LOG_TAG, e.getMessage());
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -165,26 +181,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showProgress(final boolean show) {
-
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
         loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-//        loginForm.animate().setDuration(shortAnimTime).alpha(
-//                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-//            }
-//        });
-
         progress.setVisibility(show ? View.VISIBLE : View.GONE);
-//        progress.animate().setDuration(shortAnimTime).alpha(
-//                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                progress.setVisibility(show ? View.VISIBLE : View.GONE);
-//            }
-//        });
     }
 
     protected void openMain() {
@@ -194,4 +192,3 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 }
-

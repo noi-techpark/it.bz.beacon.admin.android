@@ -1,13 +1,15 @@
 package it.bz.beacon.adminapp.data.repository;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 import java.util.Map;
 
+import androidx.lifecycle.LiveData;
 import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -19,13 +21,14 @@ import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 
 public class BeaconRepository {
 
     private BeaconDao beaconDao;
     private LiveData<List<BeaconMinimal>> beacons;
     private Storage storage;
-    private int synchronizationInterval = 0;
+    private int synchronizationInterval;
 
     public BeaconRepository(Context context) {
         BeaconDatabase db = BeaconDatabase.getDatabase(context);
@@ -43,7 +46,12 @@ public class BeaconRepository {
     }
 
     public LiveData<Beacon> getById(long id) {
+        refreshBeacon(id, null);
         return beaconDao.getById(id);
+    }
+
+    public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
+        new LoadByInstanceIdTask(beaconDao, loadEvent).execute(instanceId);
     }
 
     private boolean shouldSynchronize() {
@@ -58,7 +66,8 @@ public class BeaconRepository {
                     if (dataUpdateEvent != null) {
                         if (statusCode == 403) {
                             dataUpdateEvent.onAuthenticationFailed();
-                        } else {
+                        }
+                        else {
                             dataUpdateEvent.onError();
                         }
                     }
@@ -68,41 +77,8 @@ public class BeaconRepository {
                 public void onSuccess(List<io.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
 
                     if (result != null) {
-                        Beacon beacon;
-                        io.swagger.client.model.Beacon remoteBeacon;
                         for (int i = 0; i < result.size(); i++) {
-                            remoteBeacon = result.get(i);
-                            beacon = new Beacon();
-                            beacon.setId(remoteBeacon.getId());
-                            beacon.setBatteryLevel(remoteBeacon.getBatteryLevel());
-                            beacon.setDescription(remoteBeacon.getDescription());
-                            beacon.setEddystoneEid(remoteBeacon.isEddystoneEid());
-                            beacon.setEddystoneEtlm(remoteBeacon.isEddystoneEtlm());
-                            beacon.setEddystoneTlm(remoteBeacon.isEddystoneTlm());
-                            beacon.setEddystoneUid(remoteBeacon.isEddystoneUid());
-                            beacon.setEddystoneUrl(remoteBeacon.isEddystoneUrl());
-                            beacon.setIBeacon(remoteBeacon.isIBeacon());
-                            beacon.setInstanceId(remoteBeacon.getInstanceId());
-                            beacon.setInterval(remoteBeacon.getInterval());
-                            beacon.setLastSeen(remoteBeacon.getLastSeen());
-                            beacon.setLat(remoteBeacon.getLat());
-                            beacon.setLng(remoteBeacon.getLng());
-                            beacon.setLocationDescription(remoteBeacon.getLocationDescription());
-                            if (remoteBeacon.getLocationType() != null) {
-                                beacon.setLocationType(remoteBeacon.getLocationType().getValue());
-                            }
-                            beacon.setMajor(remoteBeacon.getMajor());
-                            beacon.setMinor(remoteBeacon.getMinor());
-                            beacon.setManufacturer(remoteBeacon.getManufacturer().getValue());
-                            beacon.setManufacturerId(remoteBeacon.getManufacturerId());
-                            beacon.setName(remoteBeacon.getName());
-                            beacon.setNamespace(remoteBeacon.getNamespace());
-                            beacon.setStatus(remoteBeacon.getStatus().getValue());
-                            beacon.setTelemetry(remoteBeacon.isTelemetry());
-                            beacon.setTxPower(remoteBeacon.getTxPower());
-                            beacon.setUrl(remoteBeacon.getUrl());
-                            beacon.setUuid(remoteBeacon.getUuid().toString());
-                            beaconDao.insert(beacon);
+                            saveBeacon(result.get(i));
                         }
                         if (dataUpdateEvent != null) {
                             dataUpdateEvent.onSuccess();
@@ -125,11 +101,97 @@ public class BeaconRepository {
                     }
                 }
             });
-        } catch (ApiException e) {
+        }
+        catch (ApiException e) {
             if (dataUpdateEvent != null) {
                 dataUpdateEvent.onError();
             }
             Log.e(AdminApplication.LOG_TAG, e.getMessage());
+        }
+    }
+
+    private void saveBeacon(io.swagger.client.model.Beacon remoteBeacon) {
+        Beacon beacon;
+        beacon = new Beacon();
+        beacon.setId(remoteBeacon.getId());
+        beacon.setBatteryLevel(remoteBeacon.getBatteryLevel());
+        beacon.setDescription(remoteBeacon.getDescription());
+        beacon.setEddystoneEid(remoteBeacon.isEddystoneEid());
+        beacon.setEddystoneEtlm(remoteBeacon.isEddystoneEtlm());
+        beacon.setEddystoneTlm(remoteBeacon.isEddystoneTlm());
+        beacon.setEddystoneUid(remoteBeacon.isEddystoneUid());
+        beacon.setEddystoneUrl(remoteBeacon.isEddystoneUrl());
+        beacon.setIBeacon(remoteBeacon.isIBeacon());
+        beacon.setInstanceId(remoteBeacon.getInstanceId());
+        beacon.setInterval(remoteBeacon.getInterval());
+        beacon.setLastSeen(remoteBeacon.getLastSeen());
+        beacon.setLat(remoteBeacon.getLat());
+        beacon.setLng(remoteBeacon.getLng());
+        beacon.setLocationDescription(remoteBeacon.getLocationDescription());
+        if (remoteBeacon.getLocationType() != null) {
+            beacon.setLocationType(remoteBeacon.getLocationType().getValue());
+        }
+        beacon.setMajor(remoteBeacon.getMajor());
+        beacon.setMinor(remoteBeacon.getMinor());
+        beacon.setManufacturer(remoteBeacon.getManufacturer().getValue());
+        beacon.setManufacturerId(remoteBeacon.getManufacturerId());
+        beacon.setName(remoteBeacon.getName());
+        beacon.setNamespace(remoteBeacon.getNamespace());
+        beacon.setStatus(remoteBeacon.getStatus().getValue());
+        beacon.setTelemetry(remoteBeacon.isTelemetry());
+        beacon.setTxPower(remoteBeacon.getTxPower());
+        beacon.setUrl(remoteBeacon.getUrl());
+        beacon.setUuid(remoteBeacon.getUuid().toString());
+        if (remoteBeacon.getPendingConfiguration() != null) {
+            beacon.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
+        }
+        else {
+            beacon.setPendingConfiguration(null);
+        }
+        beaconDao.insert(beacon);
+    }
+
+    public void refreshBeacon(long beaconId, final DataUpdateEvent dataUpdateEvent) {
+        try {
+            AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<io.swagger.client.model.Beacon>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                    if (dataUpdateEvent != null) {
+                        if (statusCode == 403) {
+                            dataUpdateEvent.onAuthenticationFailed();
+                        }
+                        else {
+                            dataUpdateEvent.onError();
+                        }
+                    }
+                }
+
+                @Override
+                public void onSuccess(io.swagger.client.model.Beacon remoteBeacon, int statusCode, Map<String, List<String>> responseHeaders) {
+                    if (remoteBeacon != null) {
+                        saveBeacon(remoteBeacon);
+                        if (dataUpdateEvent != null) {
+                            dataUpdateEvent.onSuccess();
+                        }
+                    }
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
+        }
+        catch (ApiException e) {
+            Log.e(AdminApplication.LOG_TAG, e.getMessage());
+            if (dataUpdateEvent != null) {
+                dataUpdateEvent.onError();
+            }
         }
     }
 
@@ -149,14 +211,36 @@ public class BeaconRepository {
 
         @Override
         protected Long doInBackground(final Beacon... params) {
-            long id = asyncTaskDao.insert(params[0]);
-            return id;
+            return asyncTaskDao.insert(params[0]);
         }
 
         @Override
         protected void onPostExecute(Long id) {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
+            }
+        }
+    }
+
+    private static class LoadByInstanceIdTask extends AsyncTask<String, Void, BeaconMinimal> {
+
+        private BeaconDao asyncTaskDao;
+        private LoadEvent loadEvent;
+
+        LoadByInstanceIdTask(BeaconDao dao, LoadEvent event) {
+            asyncTaskDao = dao;
+            loadEvent = event;
+        }
+
+        @Override
+        protected BeaconMinimal doInBackground(String... ids) {
+            return asyncTaskDao.getByInstanceId(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(BeaconMinimal beaconMinimal) {
+            if ((loadEvent != null) && (beaconMinimal != null)) {
+                loadEvent.onSuccess(beaconMinimal);
             }
         }
     }

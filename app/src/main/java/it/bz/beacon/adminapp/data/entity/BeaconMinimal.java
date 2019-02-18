@@ -1,5 +1,7 @@
 package it.bz.beacon.adminapp.data.entity;
 
+import androidx.room.Ignore;
+
 public class BeaconMinimal {
 
     private long id;
@@ -11,6 +13,8 @@ public class BeaconMinimal {
     private String manufacturerId;
     private String name;
     private String status;
+    @Ignore
+    private Integer rssi;
 
     public BeaconMinimal() {
     }
@@ -85,5 +89,13 @@ public class BeaconMinimal {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getRssi() {
+        return rssi;
+    }
+
+    public void setRssi(Integer rssi) {
+        this.rssi = rssi;
     }
 }

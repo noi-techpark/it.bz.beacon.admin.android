@@ -1,14 +1,18 @@
 package it.bz.beacon.adminapp.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.kontakt.sdk.android.common.model.Config;
 
 public class Storage {
 
     private final static String LOGIN_USER_TOKEN = "LOGIN_USER_TOKEN";
     private final static String LOGIN_USER_NAME = "LOGIN_USER_NAME";
     private final static String LAST_SYNCHRONIZATION_BEACONS = "LAST_SYNCHRONIZATION_BEACONS";
+    private final static String DONT_SHOW_WARNING_AGAIN = "DONT_SHOW_WARNING_AGAIN";
 
     private SharedPreferences sharedPreferences;
 
@@ -28,7 +32,7 @@ public class Storage {
         sharedPreferences.edit()
                 .putString(LOGIN_USER_NAME, username)
                 .putString(LOGIN_USER_TOKEN, token)
-                .commit();
+                .apply();
     }
 
     public void setLastSynchronizationBeacons(long lastSync) {
@@ -39,6 +43,15 @@ public class Storage {
         return sharedPreferences.getLong(LAST_SYNCHRONIZATION_BEACONS, 0L);
     }
 
+    public void setDontShowWarningAgain(boolean dontShowWarningAgain) {
+        sharedPreferences.edit().putBoolean(DONT_SHOW_WARNING_AGAIN, dontShowWarningAgain).apply();
+    }
+
+    public boolean getDontShowWarningAgain() {
+        return sharedPreferences.getBoolean(DONT_SHOW_WARNING_AGAIN, false);
+    }
+
+    @SuppressLint("ApplySharedPref")
     public void clearStorage() {
         sharedPreferences.edit().clear().commit();
     }

@@ -1,30 +1,34 @@
 package it.bz.beacon.adminapp.data;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 
 import java.util.Random;
 import java.util.UUID;
 
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
+import it.bz.beacon.adminapp.data.dao.PendingSecureConfigDao;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 
 @Database(
         entities = {
                 Beacon.class,
                 BeaconImage.class,
-                BeaconIssue.class
+                BeaconIssue.class,
+                PendingSecureConfig.class
         },
-        version = 1, exportSchema = false)
+        version = 3, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -34,6 +38,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
     public abstract BeaconDao beaconDao();
     public abstract BeaconImageDao beaconImageDao();
     public abstract BeaconIssueDao beaconIssueDao();
+    public abstract PendingSecureConfigDao pendingSecureConfigDao();
 
     public static BeaconDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -42,6 +47,8 @@ public abstract class BeaconDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             BeaconDatabase.class, DB_NAME)
                             .addCallback(roomDatabaseCallback)
+                            .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_2_3)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -65,6 +72,21 @@ public abstract class BeaconDatabase extends RoomDatabase {
 //                    new PopulateDbTask(INSTANCE).execute();
 //                }
             };
+
+    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Beacon "
+                    + " ADD COLUMN pendingConfiguration TEXT");
+        }
+    };
+
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `PendingSecureConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `config` TEXT)");
+        }
+    };
 
     private static class PopulateDbTask extends AsyncTask<Void, Void, Void> {
 

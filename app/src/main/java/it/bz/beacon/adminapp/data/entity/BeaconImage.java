@@ -1,8 +1,8 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
 
 @Entity
 public class BeaconImage {
@@ -11,7 +11,7 @@ public class BeaconImage {
     @PrimaryKey
     private long id;
     private long beaconId;
-    private String url;
+    private String fileName;
 
     public BeaconImage() {
     }
@@ -33,12 +33,11 @@ public class BeaconImage {
         this.beaconId = beaconId;
     }
 
-    public String getUrl() {
-        return url;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
-
 }

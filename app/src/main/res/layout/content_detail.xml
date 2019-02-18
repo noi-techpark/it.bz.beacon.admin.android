@@ -2,11 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:id="@+id/content_detail"
-    app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     tools:context=".ui.detail.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/containerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,11 +35,70 @@
                 android:id="@+id/details_status"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:contentDescription="@string/nav_header_desc"
+                android:contentDescription="@string/status_ok"
                 android:tint="@color/status_ok"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_status" />
+
+            <Button
+                android:id="@+id/show_pending_config"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:background="@null"
+                android:enabled="false"
+                android:gravity="center_vertical|end"
+                android:text="@string/show_pending_config"
+                android:textAllCaps="true"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_status"
+                tools:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/details_info_pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/background_config_card"
+                android:backgroundTint="@color/primary"
+                android:orientation="vertical"
+                android:padding="@dimen/app_default_margin"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_status"
+                tools:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pending_config_info"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/reset_pending_config"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/app_default_margin"
+                    android:background="@null"
+                    android:gravity="center_vertical|end"
+                    android:text="@string/pending_config_reset"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="details_status,show_pending_config, details_info_pending" />
 
             <LinearLayout
                 android:id="@+id/details_config_layout"
@@ -50,7 +109,8 @@
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_last_seen">
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barrier1">
 
                 <TextView
                     android:id="@+id/details_config"
@@ -62,41 +122,39 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.design.widget.TabLayout
+                <com.google.android.material.tabs.TabLayout
                     android:id="@+id/config_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:tabGravity="fill"
+                    app:tabIconTint="@color/status_error"
                     app:tabIndicatorColor="@color/primaryLight"
                     app:tabMode="fixed"
                     app:tabSelectedTextColor="@color/primaryLight"
                     app:tabTextColor="@color/secondaryText">
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_info" />
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_ibeacon" />
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_eddystone" />
 
-                </android.support.design.widget.TabLayout>
+                </com.google.android.material.tabs.TabLayout>
 
-                <include
-                    layout="@layout/tab_info" />
+                <include layout="@layout/tab_info" />
 
-                <include
-                    layout="@layout/tab_ibeacon" />
+                <include layout="@layout/tab_ibeacon" />
 
-                <include
-                    layout="@layout/tab_eddystone" />
+                <include layout="@layout/tab_eddystone" />
 
             </LinearLayout>
 
@@ -110,49 +168,62 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/details_config_layout">
 
-                <TextView
-                    android:id="@+id/details_"
-                    style="@style/TextAppearance.AppCompat.Large"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_location"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:orientation="horizontal"
+                    android:padding="@dimen/app_default_margin">
 
-                <android.support.design.widget.TabLayout
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Large"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/details_section_location" />
+
+                    <TextView
+                        android:id="@+id/details_location_subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tertiaryText"
+                        android:textSize="18sp"
+                        tools:text="@string/outdoor" />
+                </LinearLayout>
+
+                <com.google.android.material.tabs.TabLayout
                     android:id="@+id/info_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:tabGravity="fill"
+                    app:tabIconTint="@color/status_error"
                     app:tabIndicatorColor="@color/primaryLight"
                     app:tabMode="fixed"
                     app:tabSelectedTextColor="@color/primaryLight"
                     app:tabTextColor="@color/secondaryText">
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_map" />
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_gps" />
 
-                    <android.support.design.widget.TabItem
+                    <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/details_description" />
 
-                </android.support.design.widget.TabLayout>
+                </com.google.android.material.tabs.TabLayout>
 
                 <RelativeLayout
                     android:id="@+id/map_layout"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/info_tablayout" >
+                    app:layout_constraintTop_toBottomOf="@id/info_tablayout">
 
                     <com.google.android.gms.maps.MapView
                         android:id="@+id/map_view"
@@ -166,11 +237,9 @@
 
                 </RelativeLayout>
 
-                <include
-                    layout="@layout/tab_gps" />
+                <include layout="@layout/tab_gps" />
 
-                <include
-                    layout="@layout/tab_description" />
+                <include layout="@layout/tab_description" />
 
             </LinearLayout>
 
@@ -185,17 +254,43 @@
                 app:layout_constraintTop_toBottomOf="@id/details_location_layout">
 
                 <TextView
-                    android:id="@+id/details_config_title"
+                    android:id="@+id/details_images_title"
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_images"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:text="@string/details_section_images" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/details_images"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/details_images_empty"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/images_empty" />
+
+                <Button
+                    android:id="@+id/details_images_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@null"
+                    android:gravity="end"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/add_image"
+                    android:textAllCaps="true"
+                    android:textColor="@color/primary" />
+
             </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 

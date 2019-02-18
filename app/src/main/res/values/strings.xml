@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Beacon Administration</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:override="true">Beacon Administration</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -8,6 +8,8 @@
     <string name="network_problems">Network Problems</string>
     <string name="disturbances">Disturbances</string>
     <string name="issues">Issues</string>
+    <string name="ok">OK</string>
+    <string name="cancel" tools:override="true">Cancel</string>
     <string name="about">About</string>
     <string name="all">All</string>
     <string name="nearby">Nearby</string>
@@ -48,13 +50,15 @@ Development of an Open Source web tool to manage the network.\n\n
 This work package aims to develop Open Source pilot services and applications that anyone can use as a reference implementation.
     </string>
     <string name="location_permission_title">Location permission needed</string>
-    <string name="location_permission_message">The permission to use location services is needed to show your current position on the map of the nearby beacons.</string>
+    <string name="location_permission_message">The permission to use location services is needed to indicate your current position on the map, and to show nearby beacons.</string>
     <string name="location_disabled_message">The location is disabled. Please retry and grant the permission to reload the map.</string>
     <string name="reload_map">Reload map</string>
+    <string name="retry">Retry</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="details_last_seen">Last seen: %s</string>
     <string name="percent">%d %%</string>
+    <string name="rssi">Signal strength: %d dB</string>
     <string name="degree">%d °C</string>
     <string name="major_format">Major: %d</string>
     <string name="minor_format">Minor: %d</string>
@@ -62,10 +66,12 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="lng">Longitude</string>
     <string name="details_edit">Edit</string>
     <string name="details_save">Save</string>
+    <string name="saved">Saved successfully</string>
     <string name="details_delete">Delete</string>
     <string name="details_section_config">Beacon Config</string>
     <string name="details_section_location">Location</string>
     <string name="details_section_images">Images</string>
+    <string name="images_empty">No images found</string>
     <string name="details_config">Config</string>
     <string name="details_config_major">Major</string>
     <string name="details_config_minor">Minor</string>
@@ -78,6 +84,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_info_battery">Battery</string>
     <string name="details_info_devicestatus">Device status</string>
     <string name="details_info_telemetry">Telemetry</string>
+    <string name="details_info_temperature">Temperature</string>
     <string name="details_info">Info</string>
     <string name="details_ibeacon">iBeacon</string>
     <string name="details_eddystone">Eddystone</string>
@@ -88,22 +95,60 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_eddystone_url">Eddystone Url</string>
     <string name="details_map">Map</string>
     <string name="details_gps">GPS</string>
+    <string name="current_position">Use current position</string>
+    <string name="position_not_available">The current position is not available. Please verify your settings and try again!</string>
     <string name="details_description">Description</string>
     <string name="details_floor">Floor</string>
+    <string name="add_image">Add image</string>
+    <string name="choose_source">Source for image</string>
+    <string name="uploading">Uploading image. Please wait…</string>
     <string name="filter_dialog_title">Filter Beacons</string>
     <string name="status_all">All</string>
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>
     <string name="status_configuration_pending">Configuration pending</string>
-    <string name="status_error">Error</string>
+    <string name="status_no_signal">No signal</string>
+    <string name="status_issue">Issue(s) reported</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>
-    <string name="error_invalid_password">Password is to short</string>
+    <string name="error_invalid_password">Password is too short</string>
     <string name="error_incorrect_login">Wrong username or password</string>
     <string name="error_field_required">Required field</string>
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
-    <string name="loading">Loading…</string>
-    <string name="saving">Saving…</string>
-    <string name="close_warning">Do you want to close without saving?</string>
+    <string name="loading" tools:override="true">Loading…</string>
+    <string name="saving">Saving changes…</string>
+    <string name="applying">Applying configuration to beacon…</string>
+    <string name="deleting">Deleting image…</string>
+    <string name="image_saved">Image saved</string>
+    <string name="image_error">Image could not be saved</string>
+    <string name="close_warning">Do you want to quit editing without saving?</string>
+    <string name="delete_warning">Do you really want to delete this image?</string>
+    <string name="warning">Warning</string>
+    <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
+    <string name="dont_show_again">Don\'t show again</string>
+    <string name="no_internet">No internet connection detected!</string>
+    <string name="general_error">An error occurred. Please try again!</string>
+    <string name="show_pending_config">Show pending configuration</string>
+    <string name="pending_config">Pending configuration</string>
+    <string name="pending_config_empty">Pending configuration is empty</string>
+    <string name="pending_config_info">In edit mode, the data from the pending configuration is shown to allow editing of the data to be written.</string>
+    <string name="pending_config_reset">Reset pending configuration</string>
+    <string name="reset_warning">Do you really want to reset the pending configuration?</string>
+    <string name="really_apply_now">Do you really want to apply the pending configuration to the beacon now?</string>
+    <string name="reset">Reset</string>
+    <string name="quit">Quit</string>
+    <string name="apply_now">Apply now</string>
+    <string name="current_value">current</string>
+    <string name="applied_successfully">Configuration applied successfully</string>
+    <string name="new_value">new</string>
+    <string name="error_connecting_to_beacon">Could not connect to beacon</string>
+    <string name="error_writing_to_beacon">Could not write configuration to beacon</string>
+    <string name="error_sending_to_cloud">Could not synchronize configuration</string>
+    <string name="mandatory">Mandatory field</string>
+    <string name="invalid_interval">Value must be between 100 and 10240</string>
+    <string name="invalid_major_minor">Value must be between 0 and 65535</string>
+    <string name="invalid_uuid">Invalid value for an UUID</string>
+    <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
+
 
 </resources>
