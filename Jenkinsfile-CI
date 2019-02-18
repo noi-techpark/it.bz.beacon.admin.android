@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        node {
+            label 'mac'
+        }
+    }
+
+    stages {
+        stage('Configure') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'cp config/beacon_suedtirol_api.xml app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'cp config/beacon_suedtirol_api.xml app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'cp config/google_maps_api.xml app/src/release/res/values/google_maps_api.xml'
+                    sh 'cp config/google_maps_api.xml app/src/debug/res/values/google_maps_api.xml'
+                }
+            }
+        }
+        stage('Dependencies') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'bundle install --path=vendor/bundle'
+                    sh 'bundle update'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'bundle exec fastlane test'
+                }
+            }
+        }
+    }
+}
