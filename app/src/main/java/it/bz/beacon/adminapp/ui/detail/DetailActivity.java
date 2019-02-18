@@ -318,6 +318,7 @@ public class DetailActivity extends BaseActivity implements OnMapReadyCallback, 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         makeMapScrollable();
+        // TODO: figure out how to optimize following step (takes much time)
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 

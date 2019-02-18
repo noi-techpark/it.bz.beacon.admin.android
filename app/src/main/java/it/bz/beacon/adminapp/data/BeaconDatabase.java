@@ -28,7 +28,7 @@ import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
                 BeaconIssue.class,
                 PendingSecureConfig.class
         },
-        version = 3, exportSchema = true)
+        version = 4, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -49,6 +49,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
                             .addCallback(roomDatabaseCallback)
                             .addMigrations(MIGRATION_1_2)
                             .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_3_4)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -85,6 +86,14 @@ public abstract class BeaconDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `PendingSecureConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `config` TEXT)");
+        }
+    };
+
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE IF EXISTS `BeaconIssue`");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BeaconIssue` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`))");
         }
     };
 

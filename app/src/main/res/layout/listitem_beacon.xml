@@ -7,7 +7,8 @@
     android:background="@drawable/background_listitem"
     android:minHeight="64dp"
     android:paddingStart="16dp"
-    android:paddingTop="10dp">
+    android:paddingTop="10dp"
+    tools:ignore="RtlSymmetry">
 
     <TextView
         android:id="@+id/beacon_name"

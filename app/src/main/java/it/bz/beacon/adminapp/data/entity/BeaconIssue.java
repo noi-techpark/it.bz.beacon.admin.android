@@ -1,5 +1,7 @@
 package it.bz.beacon.adminapp.data.entity;
 
+import java.util.Date;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
@@ -7,24 +9,26 @@ import androidx.annotation.NonNull;
 @Entity
 public class BeaconIssue {
 
-    @NonNull
     @PrimaryKey
     private long id;
     private long beaconId;
     private String problem;
     private String problemDescription;
-    private String reportDate;
     private String reporter;
+    private Long reportDate;
+    private boolean resolved;
+    private Long resolveDate;
+    private String solution;
+    private String solutionDescription;
 
     public BeaconIssue() {
     }
 
-    @NonNull
     public long getId() {
         return id;
     }
 
-    public void setId(@NonNull long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -52,19 +56,51 @@ public class BeaconIssue {
         this.problemDescription = problemDescription;
     }
 
-    public String getReportDate() {
-        return reportDate;
-    }
-
-    public void setReportDate(String reportDate) {
-        this.reportDate = reportDate;
-    }
-
     public String getReporter() {
         return reporter;
     }
 
     public void setReporter(String reporter) {
         this.reporter = reporter;
+    }
+
+    public Long getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(Long reportDate) {
+        this.reportDate = reportDate;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
+    }
+
+    public Long getResolveDate() {
+        return resolveDate;
+    }
+
+    public void setResolveDate(Long resolveDate) {
+        this.resolveDate = resolveDate;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
+
+    public String getSolutionDescription() {
+        return solutionDescription;
+    }
+
+    public void setSolutionDescription(String solutionDescription) {
+        this.solutionDescription = solutionDescription;
     }
 }

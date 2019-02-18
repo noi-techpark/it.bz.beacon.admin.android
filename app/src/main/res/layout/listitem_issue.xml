@@ -1,61 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:layout_marginBottom="1dp"
     android:background="@drawable/background_listitem"
-    android:elevation="1dp">
+    android:paddingStart="16dp"
+    android:paddingTop="10dp"
+    tools:ignore="RtlSymmetry">
+
+    <TextView
+        android:id="@+id/issue_beacon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Beacon1" />
 
     <ImageView
-        android:id="@+id/icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp" />
+        android:id="@+id/issue_status_icon"
+        android:layout_width="24dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/nav_header_desc"
+        android:tint="@color/status_ok"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_status" />
+
+    <ImageView
+        android:id="@+id/issue_battery_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/nav_header_desc"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/issue_status_icon"
+        app:srcCompat="@drawable/ic_battery_50" />
 
     <TextView
-        android:id="@+id/topMarker"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="72dp"
-        android:layout_marginTop="20dp"
-        android:paddingTop="11dp"
-        android:textSize="1dp" />
+        android:id="@+id/issue_description"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:gravity="bottom"
+        android:layout_weight="1"
+        android:minHeight="20dp"
+        android:textColor="@color/secondaryText"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/issue_beacon"
+        tools:text="@string/network_problems" />
 
-    <TextView
-        android:id="@+id/bottomMarker"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="72dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:padding="0dp"
-        android:textSize="1dp" />
-
-    <TextView
-        android:id="@+id/title"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/topMarker"
-        android:layout_marginLeft="72dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        tools:text="Primary text"
-        android:textColor="@android:color/primary_text_light"
-        android:textSize="16sp" />
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/bottomMarker"
-        android:layout_marginLeft="72dp"
-        tools:text="Secondary text"
-        android:textColor="@android:color/secondary_text_light"
-        android:textSize="14sp" />
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

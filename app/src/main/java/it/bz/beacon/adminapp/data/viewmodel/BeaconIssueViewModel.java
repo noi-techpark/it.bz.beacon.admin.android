@@ -1,12 +1,41 @@
 package it.bz.beacon.adminapp.data.viewmodel;
 
 import android.app.Application;
+
+import java.util.List;
+
 import androidx.lifecycle.AndroidViewModel;
-import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.repository.BeaconIssueRepository;
 
 public class BeaconIssueViewModel extends AndroidViewModel {
 
-    public BeaconIssueViewModel(@NonNull Application application) {
+    private BeaconIssueRepository repository;
+
+    public BeaconIssueViewModel(Application application) {
         super(application);
+        repository = new BeaconIssueRepository(application);
+    }
+
+    public LiveData<List<BeaconIssue>> getAll(long beaconId) {
+        return repository.getAll(beaconId);
+    }
+
+    public void deleteBeaconIssue(BeaconIssue bebeaconIssuecon) {
+        repository.deleteBeaconIssue(bebeaconIssuecon);
+    }
+
+    public LiveData<BeaconIssue> getById(long id) {
+        return repository.getById(id);
+    }
+
+    public void insert(BeaconIssue beaconIssue, InsertEvent event) {
+        repository.insert(beaconIssue, event);
+    }
+
+    public void insert(BeaconIssue beaconIssue) {
+        repository.insert(beaconIssue, null);
     }
 }
