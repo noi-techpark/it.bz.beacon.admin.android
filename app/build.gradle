@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "it.bz.beacon.adminapp"
+        applicationId "it.bz.beacon.admin"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
