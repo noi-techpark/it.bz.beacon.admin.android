@@ -338,7 +338,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues for the specified beacon ID",
-        "operationId": "getListUsingGET_2",
+        "operationId": "getListUsingGET_3",
         "produces": [
           "application/json"
         ],
@@ -494,7 +494,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues",
-        "operationId": "getListUsingGET_3",
+        "operationId": "getListUsingGET_2",
         "produces": [
           "application/json"
         ],
@@ -1227,15 +1227,15 @@
           "type": "string"
         },
         "reportDate": {
-          "type": "string",
-          "format": "date-time"
+          "type": "integer",
+          "format": "int64"
         },
         "reporter": {
           "type": "string"
         },
         "resolveDate": {
-          "type": "string",
-          "format": "date-time"
+          "type": "integer",
+          "format": "int64"
         },
         "resolved": {
           "type": "boolean"

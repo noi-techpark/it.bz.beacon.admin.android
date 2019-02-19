@@ -32,11 +32,16 @@ public class BeaconIssueRepository {
         synchronizationInterval = context.getResources().getInteger(R.integer.synchronization_interval);
     }
 
-    public LiveData<List<BeaconIssue>> getAll(long beaconId) {
+    public LiveData<List<BeaconIssue>> getAll(Long beaconId) {
         if (shouldSynchronize()) {
             refreshBeaconIssues(beaconId, null);
         }
-        return beaconIssueDao.getAll(beaconId);
+        if (beaconId != null) {
+            return beaconIssueDao.getAllByBeaconId(beaconId);
+        }
+        else {
+            return beaconIssueDao.getAll();
+        }
     }
 
     public LiveData<BeaconIssue> getById(long id) {
@@ -45,47 +50,98 @@ public class BeaconIssueRepository {
     }
 
     private boolean shouldSynchronize() {
-        return (storage.getLastSynchronizationIssues() + synchronizationInterval * 60000L < System.currentTimeMillis());
+        return true;
+//        return (storage.getLastSynchronizationIssues() + synchronizationInterval * 60000L < System.currentTimeMillis());
     }
 
-    public void refreshBeaconIssues(long beaconId, final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeaconIssues(Long beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getIssueApi().getListUsingGET2Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
-                @Override
-                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (dataUpdateEvent != null) {
-                        if (statusCode == 403) {
-                            dataUpdateEvent.onAuthenticationFailed();
-                        }
-                        else {
-                            dataUpdateEvent.onError();
-                        }
-                    }
-                }
-
-                @Override
-                public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (result != null) {
-                        for (int i = 0; i < result.size(); i++) {
-                            saveBeaconIssue(result.get(i));
-                        }
+            if (beaconId != null) {
+                AdminApplication.getIssueApi().getListUsingGET3Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
+                    @Override
+                    public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (dataUpdateEvent != null) {
-                            dataUpdateEvent.onSuccess();
+                            if (statusCode == 403) {
+                                dataUpdateEvent.onAuthenticationFailed();
+                            }
+                            else {
+                                dataUpdateEvent.onError();
+                            }
                         }
-                        storage.setLastSynchronizationIssues(System.currentTimeMillis());
                     }
-                }
 
-                @Override
-                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+                    @Override
+                    public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                        if (result != null) {
+                            for (int i = 0; i < result.size(); i++) {
+                                saveBeaconIssue(result.get(i));
+                            }
+                            if (dataUpdateEvent != null) {
+                                dataUpdateEvent.onSuccess();
+                            }
+                            storage.setLastSynchronizationIssues(System.currentTimeMillis());
+                        }
+                    }
 
-                }
+                    @Override
+                    public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+                        if (done) {
+                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
+                        }
+                    }
 
-                @Override
-                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+                    @Override
+                    public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+                        if (done) {
+                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesRead);
+                        }
+                    }
+                });
+            }
+            else {
+                AdminApplication.getIssueApi().getListUsingGET2Async(false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
+                    @Override
+                    public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                        Log.e(AdminApplication.LOG_TAG, "onFailure: " + e.getMessage());
+                        if (dataUpdateEvent != null) {
+                            if (statusCode == 403) {
+                                dataUpdateEvent.onAuthenticationFailed();
+                            }
+                            else {
+                                dataUpdateEvent.onError();
+                            }
+                        }
+                    }
 
-                }
-            });
+                    @Override
+                    public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                        Log.d(AdminApplication.LOG_TAG, "onSuccess: " + statusCode);
+                        if (result != null) {
+                            for (int i = 0; i < result.size(); i++) {
+                                saveBeaconIssue(result.get(i));
+                            }
+                            if (dataUpdateEvent != null) {
+                                dataUpdateEvent.onSuccess();
+                            }
+                            storage.setLastSynchronizationIssues(System.currentTimeMillis());
+                        }
+                    }
+
+                    @Override
+                    public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+                        if (done) {
+                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
+                        }
+                    }
+
+                    @Override
+                    public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+                        if (done) {
+                            Log.i(AdminApplication.LOG_TAG, "Bytes read: " + bytesRead);
+                        }
+                    }
+                });
+            }
         }
         catch (ApiException e) {
             if (dataUpdateEvent != null) {
@@ -102,12 +158,10 @@ public class BeaconIssueRepository {
         beaconIssue.setBeaconId(remoteBeaconIssue.getBeacon().getId());
         beaconIssue.setProblem(remoteBeaconIssue.getProblem());
         beaconIssue.setProblemDescription(remoteBeaconIssue.getProblemDescription());
-        // TODO: re-generate swagger entities which has date as long
-//        beaconIssue.setReportDate(remoteBeaconIssue.getReportDate());
+        beaconIssue.setReportDate(remoteBeaconIssue.getReportDate());
         beaconIssue.setReporter(remoteBeaconIssue.getReporter());
         beaconIssue.setResolved(remoteBeaconIssue.isResolved());
-        // TODO: re-generate swagger entities which has date as long
-//        beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
+        beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
         beaconIssue.setSolution(remoteBeaconIssue.getSolution());
         beaconIssue.setSolutionDescription(remoteBeaconIssue.getSolutionDescription());
         beaconIssueDao.insert(beaconIssue);

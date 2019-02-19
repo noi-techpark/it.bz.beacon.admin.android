@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:padding="@dimen/app_default_margin"
+            tools:context=".ui.detail.DetailActivity">
+
+            <TextView
+                android:id="@+id/beacon_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Beacon 12" />
+
+            <TextView
+                android:id="@+id/problem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/tertiaryText"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/beacon_name"
+                tools:text="Beacon 12" />
+
+            <GridLayout
+                android:id="@+id/overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:useDefaultMargins="true"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/problem">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_columnWeight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/last_seen"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/last_seen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical|end"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    tools:text="19.02.2019" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_columnWeight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/last_updated"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/last_updated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical|end"
+                    android:singleLine="true"
+                    android:text="-"
+                    android:textColor="@android:color/white"
+                    tools:ignore="HardcodedText"
+                    tools:text="19.02.2019" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_columnWeight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/details_info_battery"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/battery_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical|end"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    tools:text="99 %" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_columnWeight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/details_info_devicestatus"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/device_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical|end"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    tools:text="OK" />
+
+            </GridLayout>
+
+            <TextView
+                android:id="@+id/problem_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:gravity="center_vertical"
+                android:text="@string/problem_description"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/overview"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/problem_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="@dimen/app_default_margin"
+                android:text="@string/problem_description"
+                android:background="@color/backgroundBox"
+                android:textColor="@android:color/white"
+                android:padding="8dp"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/problem_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:id="@+id/content_issue_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.issue.IssueDetailActivity"
+            tools:showIn="@layout/activity_issue_detail" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+
+                <TextView
+                    android:id="@+id/details_config"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/report"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/corners"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_top_rounded" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+
+</ScrollView>

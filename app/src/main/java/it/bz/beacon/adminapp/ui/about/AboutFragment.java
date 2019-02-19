@@ -42,29 +42,6 @@ public class AboutFragment extends Fragment {
         return view;
     }
 
-//    private void loadData() {
-//        showLoading();
-//        final LiveData<List<IncidentHistory>> liveData = viewModel.getAllByMatriculationNumber(matriculationNumber);
-//        liveData.observe(this, new Observer<List<IncidentHistory>>() {
-//            @Override
-//            public void onChanged(@Nullable List<IncidentHistory> incidentHistories) {
-//                liveData.removeObserver(this);
-//                if (incidentHistories != null) {
-//                    adapter.setIncidentHistorys(incidentHistories);
-//                    if (incidentHistories.size() > 0) {
-//                        showList();
-//                    }
-//                    else {
-//                        showNoData();
-//                    }
-//                }
-//                else {
-//                    showNoData();
-//                }
-//            }
-//        });
-//    }
-
     private void showLoading() {
         txtEmpty.setVisibility(View.GONE);
         //  loader.setVisibility(View.VISIBLE);

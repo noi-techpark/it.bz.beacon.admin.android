@@ -1,26 +1,25 @@
 package it.bz.beacon.adminapp.ui.adapter;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
 
 public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.BeaconIssueViewHolder> implements Filterable {
 
@@ -53,7 +52,12 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
     @Override
     public int getItemCount() {
-        return issues.size();
+        return issues != null ? issues.size() : 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return issues.get(position).getId();
     }
 
     @Override
@@ -62,7 +66,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
             @SuppressWarnings("unchecked")
             @Override
-            protected void publishResults(CharSequence constraint,FilterResults results) {
+            protected void publishResults(CharSequence constraint, FilterResults results) {
 
                 issues = (List<BeaconIssue>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
@@ -100,11 +104,17 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
     class BeaconIssueViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title)
+        @BindView(R.id.issue_beacon)
         TextView title;
 
-        @BindView(R.id.description)
+        @BindView(R.id.issue_description)
         TextView description;
+
+        @BindView(R.id.issue_status_icon)
+        ImageView status;
+
+        @BindView(R.id.issue_battery_icon)
+        ImageView battery;
 
         private BeaconIssueViewHolder(View itemView) {
             super(itemView);
@@ -119,13 +129,9 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: implement onClick
-//                    Log.d(AdminApplication.LOG_TAG, "# 1 #");
-//                    Intent intent = new Intent(context, DetailActivity.class);
-//                    intent.putExtra(DetailActivity.EXTRA_BEACON_ID, issue.getId());
-//                    intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, issue.getName());
-//                    context.startActivity(intent);
-//                    Log.d(AdminApplication.LOG_TAG, "# 2 #");
+                    Intent intent = new Intent(context, IssueDetailActivity.class);
+                    intent.putExtra(IssueDetailActivity.EXTRA_ISSUE_ID, issue.getId());
+                    context.startActivity(intent);
                 }
             });
         }

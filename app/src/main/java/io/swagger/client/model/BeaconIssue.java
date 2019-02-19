@@ -23,7 +23,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.client.model.Beacon;
 import java.io.IOException;
-import org.threeten.bp.OffsetDateTime;
 
 /**
  * BeaconIssue
@@ -43,13 +42,13 @@ public class BeaconIssue {
   private String problemDescription = null;
 
   @SerializedName("reportDate")
-  private OffsetDateTime reportDate = null;
+  private Long reportDate = null;
 
   @SerializedName("reporter")
   private String reporter = null;
 
   @SerializedName("resolveDate")
-  private OffsetDateTime resolveDate = null;
+  private Long resolveDate = null;
 
   @SerializedName("resolved")
   private Boolean resolved = null;
@@ -132,7 +131,7 @@ public class BeaconIssue {
     this.problemDescription = problemDescription;
   }
 
-  public BeaconIssue reportDate(OffsetDateTime reportDate) {
+  public BeaconIssue reportDate(Long reportDate) {
     this.reportDate = reportDate;
     return this;
   }
@@ -142,11 +141,11 @@ public class BeaconIssue {
    * @return reportDate
   **/
   @ApiModelProperty(value = "")
-  public OffsetDateTime getReportDate() {
+  public Long getReportDate() {
     return reportDate;
   }
 
-  public void setReportDate(OffsetDateTime reportDate) {
+  public void setReportDate(Long reportDate) {
     this.reportDate = reportDate;
   }
 
@@ -168,7 +167,7 @@ public class BeaconIssue {
     this.reporter = reporter;
   }
 
-  public BeaconIssue resolveDate(OffsetDateTime resolveDate) {
+  public BeaconIssue resolveDate(Long resolveDate) {
     this.resolveDate = resolveDate;
     return this;
   }
@@ -178,11 +177,11 @@ public class BeaconIssue {
    * @return resolveDate
   **/
   @ApiModelProperty(value = "")
-  public OffsetDateTime getResolveDate() {
+  public Long getResolveDate() {
     return resolveDate;
   }
 
-  public void setResolveDate(OffsetDateTime resolveDate) {
+  public void setResolveDate(Long resolveDate) {
     this.resolveDate = resolveDate;
   }
 

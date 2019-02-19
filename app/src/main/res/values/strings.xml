@@ -8,6 +8,7 @@
     <string name="network_problems">Network Problems</string>
     <string name="disturbances">Disturbances</string>
     <string name="issues">Issues</string>
+    <string name="issue">Issue</string>
     <string name="ok">OK</string>
     <string name="cancel" tools:override="true">Cancel</string>
     <string name="about">About</string>
@@ -57,6 +58,8 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="details_last_seen">Last seen: %s</string>
+    <string name="last_seen">Last seen</string>
+    <string name="last_updated">Last updated</string>
     <string name="percent">%d %%</string>
     <string name="rssi">Signal strength: %d dB</string>
     <string name="degree">%d °C</string>
@@ -149,6 +152,8 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="invalid_major_minor">Value must be between 0 and 65535</string>
     <string name="invalid_uuid">Invalid value for an UUID</string>
     <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
+    <string name="problem_description">Problem description</string>
+    <string name="report">Report</string>
 
 
 </resources>

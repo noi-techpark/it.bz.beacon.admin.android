@@ -1,5 +1,7 @@
 package it.bz.beacon.adminapp.ui.issue;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -14,9 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.ui.adapter.BeaconIssueAdapter;
 
@@ -42,7 +48,6 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setHasOptionsMenu(true);
         beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
     }
 
@@ -55,7 +60,6 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
         adapter = new BeaconIssueAdapter(getContext());
         recyclerIssues.setAdapter(adapter);
         recyclerIssues.setHasFixedSize(true);
-        recyclerIssues.setItemAnimator(new DefaultItemAnimator());
         recyclerIssues.setLayoutManager(new LinearLayoutManager(getContext()));
 
         swipeIssues.setOnRefreshListener(this);
@@ -66,20 +70,18 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void loadData() {
-//        showLoading();
-//        getIssues(new Observer<List<IssueMinimal>>() {
-//            @Override
-//            public void onChanged(@Nullable List<IssueMinimal> issues) {
-//                if (issues == null || issues.size() <= 0) {
-//                    showNoData();
-//                } else {
-//                    adapter.setIssues(issues);
-//                    showList();
-//                }
-//            }
-//        });
-//        showList();
-        showNoData();
+        showLoading();
+        beaconIssueViewModel.getAll(null).observe(this, new Observer<List<BeaconIssue>>() {
+            @Override
+            public void onChanged(List<BeaconIssue> beaconIssues) {
+                if (beaconIssues == null || beaconIssues.size() <= 0) {
+                    showNoData();
+                } else {
+                    adapter.setIssues(beaconIssues);
+                    showList();
+                }
+            }
+        });
     }
 
     public static IssuesFragment newInstance() {
@@ -101,12 +103,12 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private void showList() {
         txtEmpty.setVisibility(View.GONE);
-        swipeIssues.setVisibility(View.VISIBLE);
+        recyclerIssues.setVisibility(View.VISIBLE);
         swipeIssues.setRefreshing(false);
     }
 
     private void showNoData() {
-        swipeIssues.setVisibility(View.GONE);
+        recyclerIssues.setVisibility(View.GONE);
         txtEmpty.setVisibility(View.VISIBLE);
         swipeIssues.setRefreshing(false);
     }

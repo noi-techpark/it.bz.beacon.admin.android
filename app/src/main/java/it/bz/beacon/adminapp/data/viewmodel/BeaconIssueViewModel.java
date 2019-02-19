@@ -19,7 +19,7 @@ public class BeaconIssueViewModel extends AndroidViewModel {
         repository = new BeaconIssueRepository(application);
     }
 
-    public LiveData<List<BeaconIssue>> getAll(long beaconId) {
+    public LiveData<List<BeaconIssue>> getAll(Long beaconId) {
         return repository.getAll(beaconId);
     }
 

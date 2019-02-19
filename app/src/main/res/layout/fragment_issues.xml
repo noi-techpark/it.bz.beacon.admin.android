@@ -16,15 +16,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1.0"
+        tools:visibility="visible" >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/issues_list"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:nestedScrollingEnabled="false"
-            android:visibility="gone"
             app:fastScrollEnabled="true"
+            android:visibility="gone"
             app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
@@ -34,18 +35,17 @@
 
     <TextView
         android:id="@+id/issues_empty"
-        android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="32dp"
+        android:text="@string/empty_list"
+        android:textSize="18sp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingTop="32dp"
-        android:paddingBottom="32dp"
-        android:text="@string/empty_list"
-        android:textSize="18sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

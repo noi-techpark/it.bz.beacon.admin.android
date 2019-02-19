@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,6 +65,10 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
         recyclerBeacons.setAdapter(adapter);
         recyclerBeacons.setHasFixedSize(true);
         recyclerBeacons.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerView.ItemAnimator animator = recyclerBeacons.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
 
         swipeBeacons.setOnRefreshListener(this);
         swipeBeacons.setColorSchemeResources(R.color.primary);

@@ -42,6 +42,12 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".ui.issue.IssueDetailActivity"
+            android:label="@string/issue"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".ui.detail.PendingConfigurationActivity"
             android:label="@string/beacons"
             android:screenOrientation="portrait"
