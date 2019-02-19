@@ -12,6 +12,7 @@ pipeline {
     environment {
         GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
         BEACON_SUEDTIROL_API_URL = "https://api.beacon.bz.it"
+        KONTAKT_IO_API_KEY = credentials('beacon-admin-android-kontakt-io-api-key')
         KEYSTORE_FILE = credentials('beacon-admin-android-keystore-file')
         KEYSTORE_PASSWORD = credentials('beacon-admin-android-keystore-password')
         KEYSTORE_ALIAS = credentials('beacon-admin-android-keystore-alias')
@@ -33,6 +34,8 @@ pipeline {
                     sh 'cp config/beacon_suedtirol_api.xml app/src/debug/res/values/beacon_suedtirol_api.xml'
                     sh 'sed -i "" "s%BEACON_SUEDTIROL_API_URL%${BEACON_SUEDTIROL_API_URL}%" app/src/release/res/values/beacon_suedtirol_api.xml'
                     sh 'sed -i "" "s%BEACON_SUEDTIROL_API_URL%${BEACON_SUEDTIROL_API_URL}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
 
                     sh 'cat "${KEYSTORE_FILE}" > keystore.jks'
                 }
