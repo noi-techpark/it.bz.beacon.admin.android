@@ -57,6 +57,10 @@ public class BeaconIssueRepository {
         return issueWithBeaconDao.getAllIssuesWithBeacon();
     }
 
+    public LiveData<IssueWithBeacon> getIssueWithBeaconById(long id) {
+        return issueWithBeaconDao.getIssueWithBeaconById(id);
+    }
+
     public LiveData<BeaconIssue> getById(long id) {
         refreshBeaconIssue(id, null);
         return beaconIssueDao.getById(id);

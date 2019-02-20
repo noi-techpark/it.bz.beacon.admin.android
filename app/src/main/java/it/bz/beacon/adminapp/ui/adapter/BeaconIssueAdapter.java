@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
@@ -125,7 +129,32 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
         private void setIssue(final IssueWithBeacon issue) {
 
             title.setText(issue.getProblem());
-            description.setText(issue.getProblemDescription() + issue.getName());
+            description.setText(issue.getProblemDescription());
+
+            if (issue.getStatus().equals(Beacon.STATUS_OK)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
+            }
+            if ((issue.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) || (issue.getStatus().equals(Beacon.STATUS_ISSUE))) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
+            }
+
+            if (issue.getBatteryLevel() < 34) {
+                battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
+            }
+            else {
+                if (issue.getBatteryLevel() < 66) {
+                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
+                }
+                else {
+                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
+                }
+            }
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

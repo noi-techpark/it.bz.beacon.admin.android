@@ -1,16 +1,21 @@
 package it.bz.beacon.adminapp.ui.issue;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Date;
 
+import androidx.core.widget.ImageViewCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.util.DateFormatter;
@@ -31,11 +36,17 @@ public class IssueDetailActivity extends BaseDetailActivity {
     @BindView(R.id.problem_description)
     protected TextView txtProblemDescription;
 
+    @BindView(R.id.battery_status)
+    protected TextView txtBatteryStatus;
+
+    @BindView(R.id.device_status)
+    protected TextView txtDeviceStatus;
+
     private BeaconIssueViewModel beaconIssueViewModel;
 
     private boolean isEditing = false;
     private long issueId;
-    private BeaconIssue beaconIssue;
+    private IssueWithBeacon issue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +85,10 @@ public class IssueDetailActivity extends BaseDetailActivity {
     private void loadIssue() {
         showProgress(getString(R.string.loading));
 
-        beaconIssueViewModel.getById(issueId).observe(this, new Observer<BeaconIssue>() {
+        beaconIssueViewModel.getIssueWithBeaconById(issueId).observe(this, new Observer<IssueWithBeacon>() {
             @Override
-            public void onChanged(BeaconIssue changedBeaconIssue) {
-                beaconIssue = changedBeaconIssue;
+            public void onChanged(IssueWithBeacon issueWithBeacon) {
+                issue = issueWithBeacon;
                 showData();
             }
         });
@@ -134,13 +145,27 @@ public class IssueDetailActivity extends BaseDetailActivity {
 //    }
 
     protected void showData() {
-        if (beaconIssue != null) {
-
-            // TODO: load beacon and its name
-            txtBeaconName.setText(String.valueOf(beaconIssue.getId()));
-            txtProblem.setText(beaconIssue.getProblem());
-            txtLastSeen.setText(beaconIssue.getReportDate() != null ? DateFormatter.dateToDateString(new Date(beaconIssue.getReportDate())) : "-");
-            txtProblemDescription.setText(beaconIssue.getProblemDescription());
+        if (issue != null) {
+            txtBeaconName.setText(issue.getName());
+            txtProblem.setText(issue.getProblem());
+            txtLastSeen.setText(issue.getLastSeen() != null ? DateFormatter.dateToDateString(new Date(issue.getLastSeen())) : "-");
+            txtProblemDescription.setText(issue.getProblemDescription());
+            txtBatteryStatus.setText(getString(R.string.percent, issue.getBatteryLevel()));
+            if (issue.getStatus().equals(Beacon.STATUS_OK)) {
+                txtDeviceStatus.setText(getString(R.string.status_ok));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) {
+                txtDeviceStatus.setText(getString(R.string.status_battery_low));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_ISSUE)) {
+                txtDeviceStatus.setText(getString(R.string.status_issue));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
+                txtDeviceStatus.setText(getString(R.string.status_no_signal));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
+                txtDeviceStatus.setText(getString(R.string.status_configuration_pending));
+            }
         }
     }
 

@@ -28,6 +28,10 @@ public class BeaconIssueViewModel extends AndroidViewModel {
         return repository.getAllIssuesWithBeacon();
     }
 
+    public LiveData<IssueWithBeacon> getIssueWithBeaconById(long id) {
+        return repository.getIssueWithBeaconById(id);
+    }
+
     public void deleteBeaconIssue(BeaconIssue bebeaconIssuecon) {
         repository.deleteBeaconIssue(bebeaconIssuecon);
     }
