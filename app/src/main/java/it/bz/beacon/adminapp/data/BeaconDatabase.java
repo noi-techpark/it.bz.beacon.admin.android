@@ -20,7 +20,6 @@ import it.bz.beacon.adminapp.data.dao.PendingSecureConfigDao;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
-import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 
 @Database(
@@ -30,8 +29,7 @@ import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
                 BeaconIssue.class,
                 PendingSecureConfig.class
         },
-        views = {IssueWithBeacon.class},
-        version = 5, exportSchema = true)
+        version = 4, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -39,9 +37,13 @@ public abstract class BeaconDatabase extends RoomDatabase {
     public static String DB_NAME = "beacon_db";
 
     public abstract BeaconDao beaconDao();
+
     public abstract BeaconImageDao beaconImageDao();
+
     public abstract BeaconIssueDao beaconIssueDao();
+
     public abstract IssueWithBeaconDao issueWithBeaconDao();
+
     public abstract PendingSecureConfigDao pendingSecureConfigDao();
 
     public static BeaconDatabase getDatabase(final Context context) {
@@ -97,7 +99,8 @@ public abstract class BeaconDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("DROP TABLE IF EXISTS `BeaconIssue`");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `BeaconIssue` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`))");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BeaconIssue` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`beaconId`) REFERENCES `Beacon`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+            database.execSQL("CREATE INDEX `index_BeaconIssue_beaconId` ON `BeaconIssue` (`beaconId`)");
         }
     };
 
@@ -121,13 +124,16 @@ public abstract class BeaconDatabase extends RoomDatabase {
                 beacon.setName("Beacon " + i);
                 beacon.setLastSeen(System.currentTimeMillis() - random.nextInt(65000));
                 beacon.setBatteryLevel(random.nextInt(100));
-                beacon.setManufacturerId("fJ" + (10 + random.nextInt(80)) + "le"+ (10 + random.nextInt(80)));
+                beacon.setManufacturerId("fJ" + (10 + random.nextInt(80)) + "le" + (10 + random.nextInt(80)));
                 switch (random.nextInt(5)) {
-                    case 1: beacon.setStatus(Beacon.STATUS_BATTERY_LOW);
-                    break;
-                    case 2: beacon.setStatus(Beacon.STATUS_CONFIGURATION_PENDING);
-                    break;
-                    default: beacon.setStatus(Beacon.STATUS_OK);
+                    case 1:
+                        beacon.setStatus(Beacon.STATUS_BATTERY_LOW);
+                        break;
+                    case 2:
+                        beacon.setStatus(Beacon.STATUS_CONFIGURATION_PENDING);
+                        break;
+                    default:
+                        beacon.setStatus(Beacon.STATUS_OK);
                 }
                 beacon.setTxPower(1 + random.nextInt(6));
                 beacon.setInterval(100 * (1 + random.nextInt(9)));

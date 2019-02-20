@@ -1,20 +1,21 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import androidx.room.DatabaseView;
-
-@DatabaseView("SELECT BeaconIssue.id, BeaconIssue.problem, BeaconIssue.problemDescription, BeaconIssue.reportDate, " +
-        " Beacon.id AS beaconId, Beacon.name, Beacon.batteryLevel, Beacon.lastSeen, Beacon.status FROM BeaconIssue INNER JOIN Beacon ON BeaconIssue.beaconId = Beacon.id")
 public class IssueWithBeacon {
 
     private long id;
+    private long beaconId;
     private String problem;
     private String problemDescription;
+    private String reporter;
     private Long reportDate;
+    private boolean resolved;
+    private Long resolveDate;
+    private String solution;
+    private String solutionDescription;
 
-    private long beaconId;
-    private String name;
     private Integer batteryLevel;
     private Long lastSeen;
+    private String name;
     private String status;
 
     public long getId() {
@@ -23,6 +24,14 @@ public class IssueWithBeacon {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getBeaconId() {
+        return beaconId;
+    }
+
+    public void setBeaconId(long beaconId) {
+        this.beaconId = beaconId;
     }
 
     public String getProblem() {
@@ -41,6 +50,14 @@ public class IssueWithBeacon {
         this.problemDescription = problemDescription;
     }
 
+    public String getReporter() {
+        return reporter;
+    }
+
+    public void setReporter(String reporter) {
+        this.reporter = reporter;
+    }
+
     public Long getReportDate() {
         return reportDate;
     }
@@ -49,20 +66,36 @@ public class IssueWithBeacon {
         this.reportDate = reportDate;
     }
 
-    public long getBeaconId() {
-        return beaconId;
+    public boolean isResolved() {
+        return resolved;
     }
 
-    public void setBeaconId(long beaconId) {
-        this.beaconId = beaconId;
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 
-    public String getName() {
-        return name;
+    public Long getResolveDate() {
+        return resolveDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setResolveDate(Long resolveDate) {
+        this.resolveDate = resolveDate;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
+
+    public String getSolutionDescription() {
+        return solutionDescription;
+    }
+
+    public void setSolutionDescription(String solutionDescription) {
+        this.solutionDescription = solutionDescription;
     }
 
     public Integer getBatteryLevel() {
@@ -79,6 +112,14 @@ public class IssueWithBeacon {
 
     public void setLastSeen(Long lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStatus() {

@@ -58,7 +58,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
     @Override
     public long getItemId(int position) {
-        return issues.get(position).getId();// getBeaconIssue().getId();
+        return issues.get(position).getId();
     }
 
     @Override

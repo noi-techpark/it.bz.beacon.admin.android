@@ -1,8 +1,8 @@
 package it.bz.beacon.adminapp.data.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.annotation.NonNull;
 
 @Entity
 public class BeaconImage {
