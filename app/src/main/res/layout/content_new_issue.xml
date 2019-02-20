@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@android:color/white"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+    tools:context=".ui.issue.NewIssueActivity"
+    tools:showIn="@layout/activity_new_issue">
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/backgroundActivity"
+            android:padding="@dimen/app_default_margin">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/problem_name_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                app:hintTextAppearance="@style/TextAppearance.Hint"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/problem_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="@string/problem"
+                    android:inputType="textCapWords"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@null"
+                    tools:text="@string/network_problems" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/problem_description_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                app:hintTextAppearance="@style/TextAppearance.Hint"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/problem_name_container">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/problem_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:background="@null"
+                    android:hint="@string/problem_description"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:maxLines="10"
+                    android:singleLine="false"
+                    android:textCursorDrawable="@null"
+                    tools:text="beacon is located outdoor near the entrance under the window" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/app_default_margin"
+                android:text="@string/description_hint"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/problem_description_container" />
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:background="@color/divider"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hint" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/reporter_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                app:hintTextAppearance="@style/TextAppearance.Hint"
+                app:layout_constraintEnd_toStartOf="@id/report_date_container"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/separator">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/reporter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:hint="@string/reporter"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@null"
+                    tools:text="@string/login_username" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/report_date_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                app:hintTextAppearance="@style/TextAppearance.Hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/reporter_container"
+                app:layout_constraintTop_toBottomOf="@id/separator">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/report_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:hint="@string/report_date"
+                    android:focusable="false"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@null"
+                    tools:text="02.10.2019" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/corners"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_top_rounded" />
+</FrameLayout>

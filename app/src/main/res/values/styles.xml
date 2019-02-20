@@ -24,7 +24,7 @@
     </style>
 
     <style name="TextAppearance.Hint" parent="@android:style/TextAppearance">
-        <item name="android:textColor">@color/secondaryText</item>
+        <item name="android:textColor">@color/primary</item>
     </style>
 
     <style name="MapClusterAppearance" parent="TextAppearance.AppCompat.Title.Inverse">

@@ -99,6 +99,7 @@ import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
+import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -1206,6 +1207,13 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         Intent intent = new Intent(this, PendingConfigurationActivity.class);
         intent.putExtra(EXTRA_BEACON_ID, beaconId);
         intent.putExtra(EXTRA_BEACON_NAME, beaconName);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.fab)
+    public void createIssue(View view) {
+        Intent intent = new Intent(this, NewIssueActivity.class);
+        intent.putExtra(EXTRA_BEACON_ID, beaconId);
         startActivity(intent);
     }
 

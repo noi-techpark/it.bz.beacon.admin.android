@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/issue_beacon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
         android:singleLine="true"
@@ -19,6 +19,7 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/issue_status_icon"
         tools:text="Beacon1" />
 
     <ImageView
@@ -48,7 +49,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
-        android:layout_weight="1"
         android:ellipsize="marquee"
         android:gravity="bottom"
         android:minHeight="20dp"
@@ -56,7 +56,8 @@
         android:textColor="@color/secondaryText"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/issue_status_icon"
         tools:text="@string/network_problems" />
 
     <View
