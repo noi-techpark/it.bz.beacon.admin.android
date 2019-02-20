@@ -2,7 +2,6 @@ package it.bz.beacon.adminapp.ui.issue;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,12 +14,15 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
 import io.swagger.client.model.IssueCreation;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -29,6 +31,8 @@ import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
+import it.bz.beacon.adminapp.eventbus.LogoutEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -129,89 +133,116 @@ public class NewIssueActivity extends BaseActivity {
     }
 
     protected void save() {
+        final ProgressDialog dialog = new ProgressDialog(NewIssueActivity.this, R.style.AlertDialogCustom);
+
         IssueCreation issueCreation = new IssueCreation();
         issueCreation.setBeaconId(beaconId);
         issueCreation.setProblem(editName.getText().toString());
         issueCreation.setProblemDescription(editDescription.getText().toString());
         issueCreation.setReporter(storage.getLoginUserName());
 
-        SaveTask saveTask = new SaveTask();
-        saveTask.execute(issueCreation);
+        dialog.setMessage(getString(R.string.creating_issue));
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.show();
+        try {
+            AdminApplication.getIssueApi().createUsingPOST2Async(issueCreation, new ApiCallback<io.swagger.client.model.BeaconIssue>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            if (statusCode == 403) {
+                                Snackbar.make(findViewById(R.id.container), getString(R.string.error_authorization), Snackbar.LENGTH_LONG)
+                                        .show();
+                                PubSub.getInstance().post(new LogoutEvent());
+                            }
+                            else {
+                                showSnackbarWithRetry(getString(R.string.no_internet));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onSuccess(io.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            if (remoteBeaconIssue != null) {
+                                BeaconIssue beaconIssue = new BeaconIssue();
+                                beaconIssue.setId(remoteBeaconIssue.getId());
+                                beaconIssue.setBeaconId(remoteBeaconIssue.getBeacon().getId());
+                                beaconIssue.setProblem(remoteBeaconIssue.getProblem());
+                                beaconIssue.setProblemDescription(remoteBeaconIssue.getProblemDescription());
+                                beaconIssue.setReportDate(remoteBeaconIssue.getReportDate());
+                                beaconIssue.setReporter(remoteBeaconIssue.getReporter());
+                                beaconIssue.setResolved(remoteBeaconIssue.isResolved());
+                                beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
+                                beaconIssue.setSolution(remoteBeaconIssue.getSolution());
+                                beaconIssue.setSolutionDescription(remoteBeaconIssue.getSolutionDescription());
+
+                                beaconIssueViewModel.insert(beaconIssue, new InsertEvent() {
+                                    @Override
+                                    public void onSuccess(long id) {
+                                        if (dialog != null) {
+                                            dialog.dismiss();
+                                        }
+                                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                                    }
+                                });
+                            }
+                            else {
+                                showSnackbarWithRetry(getString(R.string.general_error));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
+        }
+        catch (ApiException e) {
+            e.printStackTrace();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                    showSnackbarWithRetry(getString(R.string.general_error));
+                }
+            });
+        }
     }
 
-    private class SaveTask extends AsyncTask<IssueCreation, Void, io.swagger.client.model.BeaconIssue> {
-
-        private ProgressDialog dialog = new ProgressDialog(NewIssueActivity.this, R.style.AlertDialogCustom);
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage(getString(R.string.creating_issue));
-            dialog.setIndeterminate(true);
-            dialog.setCancelable(false);
-            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected io.swagger.client.model.BeaconIssue doInBackground(IssueCreation... issue) {
-            try {
-                return AdminApplication.getIssueApi().createUsingPOST2(issue[0]);
-            }
-            catch (ApiException e) {
-                e.printStackTrace();
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(io.swagger.client.model.BeaconIssue remoteBeaconIssue) {
-            if (remoteBeaconIssue != null) {
-                BeaconIssue beaconIssue = new BeaconIssue();
-                beaconIssue.setId(remoteBeaconIssue.getId());
-                beaconIssue.setBeaconId(remoteBeaconIssue.getBeacon().getId());
-                beaconIssue.setProblem(remoteBeaconIssue.getProblem());
-                beaconIssue.setProblemDescription(remoteBeaconIssue.getProblemDescription());
-                beaconIssue.setReportDate(remoteBeaconIssue.getReportDate());
-                beaconIssue.setReporter(remoteBeaconIssue.getReporter());
-                beaconIssue.setResolved(remoteBeaconIssue.isResolved());
-                beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
-                beaconIssue.setSolution(remoteBeaconIssue.getSolution());
-                beaconIssue.setSolutionDescription(remoteBeaconIssue.getSolutionDescription());
-
-                beaconIssueViewModel.insert(beaconIssue, new InsertEvent() {
+    private void showSnackbarWithRetry(String message) {
+        Snackbar.make(findViewById(R.id.container), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.retry), new View.OnClickListener() {
                     @Override
-                    public void onSuccess(long id) {
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
-                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
-                        finish();
+                    public void onClick(View v) {
+                        save();
                     }
-
-                    @Override
-                    public void onFailure() {
-                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
-                    }
-                });
-            }
-            else {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-                Snackbar.make(findViewById(R.id.container), getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.retry), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                save();
-                            }
-                        })
-                        .show();
-            }
-        }
+                })
+                .show();
     }
 
     private void showToast(String string, int length) {
