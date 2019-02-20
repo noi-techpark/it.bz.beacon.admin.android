@@ -7,6 +7,7 @@ import java.util.List;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconIssueRepository;
 
@@ -21,6 +22,10 @@ public class BeaconIssueViewModel extends AndroidViewModel {
 
     public LiveData<List<BeaconIssue>> getAll(Long beaconId) {
         return repository.getAll(beaconId);
+    }
+
+    public LiveData<List<IssueWithBeacon>> getAllIssuesWithBeacon() {
+        return repository.getAllIssuesWithBeacon();
     }
 
     public void deleteBeaconIssue(BeaconIssue bebeaconIssuecon) {

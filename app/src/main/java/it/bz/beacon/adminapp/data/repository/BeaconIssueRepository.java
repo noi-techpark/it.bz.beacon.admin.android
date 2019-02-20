@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import io.swagger.client.ApiCallback;
 import io.swagger.client.ApiException;
@@ -15,19 +16,23 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
+import it.bz.beacon.adminapp.data.dao.IssueWithBeaconDao;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 
 public class BeaconIssueRepository {
 
     private BeaconIssueDao beaconIssueDao;
+    private IssueWithBeaconDao issueWithBeaconDao;
     private Storage storage;
     private int synchronizationInterval;
 
     public BeaconIssueRepository(Context context) {
         BeaconDatabase db = BeaconDatabase.getDatabase(context);
         beaconIssueDao = db.beaconIssueDao();
+        issueWithBeaconDao = db.issueWithBeaconDao();
         storage = AdminApplication.getStorage();
         synchronizationInterval = context.getResources().getInteger(R.integer.synchronization_interval);
     }
@@ -44,17 +49,23 @@ public class BeaconIssueRepository {
         }
     }
 
+    public LiveData<List<IssueWithBeacon>> getAllIssuesWithBeacon() {
+        if (shouldSynchronize()) {
+            refreshBeaconIssues(null, null);
+        }
+        return issueWithBeaconDao.getAllIssuesWithBeacon();
+    }
+
     public LiveData<BeaconIssue> getById(long id) {
         refreshBeaconIssue(id, null);
         return beaconIssueDao.getById(id);
     }
 
     private boolean shouldSynchronize() {
-        return true;
-//        return (storage.getLastSynchronizationIssues() + synchronizationInterval * 60000L < System.currentTimeMillis());
+        return (storage.getLastSynchronizationIssues() + synchronizationInterval * 60000L < System.currentTimeMillis());
     }
 
-    public void refreshBeaconIssues(Long beaconId, final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeaconIssues(@Nullable Long beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             if (beaconId != null) {
                 AdminApplication.getIssueApi().getListUsingGET3Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
@@ -85,16 +96,10 @@ public class BeaconIssueRepository {
 
                     @Override
                     public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-                        if (done) {
-                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
-                        }
                     }
 
                     @Override
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-                        if (done) {
-                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesRead);
-                        }
                     }
                 });
             }
@@ -129,16 +134,10 @@ public class BeaconIssueRepository {
 
                     @Override
                     public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-                        if (done) {
-                            Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
-                        }
                     }
 
                     @Override
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-                        if (done) {
-                            Log.i(AdminApplication.LOG_TAG, "Bytes read: " + bytesRead);
-                        }
                     }
                 });
             }
@@ -194,12 +193,10 @@ public class BeaconIssueRepository {
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-
                 }
             });
         }

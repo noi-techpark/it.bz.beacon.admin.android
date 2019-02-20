@@ -48,7 +48,6 @@
                 android:layout_marginTop="@dimen/app_default_margin"
                 android:columnCount="2"
                 android:orientation="horizontal"
-                android:useDefaultMargins="true"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/problem">
@@ -59,8 +58,7 @@
                     android:layout_columnWeight="1"
                     android:gravity="center_vertical"
                     android:text="@string/last_seen"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/last_seen"
@@ -78,31 +76,8 @@
                     android:layout_height="24dp"
                     android:layout_columnWeight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/last_updated"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/last_updated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_gravity="end"
-                    android:ellipsize="marquee"
-                    android:gravity="center_vertical|end"
-                    android:singleLine="true"
-                    android:text="-"
-                    android:textColor="@android:color/white"
-                    tools:ignore="HardcodedText"
-                    tools:text="19.02.2019" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="24dp"
-                    android:layout_columnWeight="1"
-                    android:gravity="center_vertical"
                     android:text="@string/details_info_battery"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/battery_status"
@@ -122,8 +97,7 @@
                     android:layout_columnWeight="1"
                     android:gravity="center_vertical"
                     android:text="@string/details_info_devicestatus"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/device_status"
@@ -147,9 +121,8 @@
                 android:gravity="center_vertical"
                 android:text="@string/problem_description"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/overview"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:textStyle="bold" />
+                app:layout_constraintTop_toBottomOf="@id/overview" />
 
             <TextView
                 android:id="@+id/problem_description"
@@ -157,15 +130,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="@dimen/app_default_margin"
-                android:text="@string/problem_description"
                 android:background="@color/backgroundBox"
-                android:textColor="@android:color/white"
                 android:padding="8dp"
+                android:text="@string/problem_description"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@id/problem_title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/problem_title" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -174,12 +147,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.issue.IssueDetailActivity"
-            tools:showIn="@layout/activity_issue_detail" >
+            tools:showIn="@layout/activity_issue_detail">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
 
                 <TextView
@@ -188,17 +161,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/app_default_margin"
-                    android:text="@string/report"
+                    android:text="@string/solution"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/corners"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_top_rounded" />
+            <FrameLayout
+                android:id="@+id/corners"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_top_rounded" />
 
         </FrameLayout>
     </LinearLayout>

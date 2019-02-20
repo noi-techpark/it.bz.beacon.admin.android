@@ -89,16 +89,10 @@ public class BeaconRepository {
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-//                    if (done) {
-//                        Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
-//                    }
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-//                    if (done) {
-//                        Log.i(AdminApplication.LOG_TAG, "Bytes read: " + bytesRead);
-//                    }
                 }
             });
         }
@@ -178,12 +172,10 @@ public class BeaconRepository {
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-
                 }
             });
         }

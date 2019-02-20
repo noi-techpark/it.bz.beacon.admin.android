@@ -28,9 +28,6 @@ public class IssueDetailActivity extends BaseDetailActivity {
     @BindView(R.id.last_seen)
     protected TextView txtLastSeen;
 
-    @BindView(R.id.last_updated)
-    protected TextView txtLastUpdated;
-
     @BindView(R.id.problem_description)
     protected TextView txtProblemDescription;
 
@@ -143,7 +140,6 @@ public class IssueDetailActivity extends BaseDetailActivity {
             txtBeaconName.setText(String.valueOf(beaconIssue.getId()));
             txtProblem.setText(beaconIssue.getProblem());
             txtLastSeen.setText(beaconIssue.getReportDate() != null ? DateFormatter.dateToDateString(new Date(beaconIssue.getReportDate())) : "-");
-            txtLastUpdated.setText(beaconIssue.getResolveDate() != null ? DateFormatter.dateToDateString(new Date(beaconIssue.getResolveDate())) : "-");
             txtProblemDescription.setText(beaconIssue.getProblemDescription());
         }
     }

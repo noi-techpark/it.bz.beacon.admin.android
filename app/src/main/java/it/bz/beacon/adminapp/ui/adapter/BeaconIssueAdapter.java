@@ -19,13 +19,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
 
 public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.BeaconIssueViewHolder> implements Filterable {
 
     private Context context;
-    private List<BeaconIssue> originalValues;
-    private List<BeaconIssue> issues = new ArrayList<>();
+    private List<IssueWithBeacon> originalValues;
+    private List<IssueWithBeacon> issues = new ArrayList<>();
 
     public BeaconIssueAdapter(Context context) {
         this.context = context;
@@ -44,7 +45,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
         holder.setIssue(issues.get(position));
     }
 
-    public void setIssues(List<BeaconIssue> issues) {
+    public void setIssues(List<IssueWithBeacon> issues) {
         this.issues.clear();
         this.issues.addAll(issues);
         notifyDataSetChanged();
@@ -57,7 +58,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
     @Override
     public long getItemId(int position) {
-        return issues.get(position).getId();
+        return issues.get(position).getId();// getBeaconIssue().getId();
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
-                issues = (List<BeaconIssue>) results.values; // has the filtered values
+                issues = (List<IssueWithBeacon>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
             }
 
@@ -87,13 +88,13 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
                 }
                 else {
                     constraint = constraint.toString().toLowerCase();
-                    for (int i = 0; i < originalValues.size(); i++) {
-                        BeaconIssue issue = originalValues.get(i);
-                        if (issue.getProblem().toLowerCase().contains(constraint.toString())
-                                || issue.getProblemDescription().toLowerCase().contains(constraint.toString())) {
-                            filteredIssues.add(issue);
-                        }
-                    }
+//                    for (int i = 0; i < originalValues.size(); i++) {
+//                        IssueWithBeacon issue = originalValues.get(i);
+//                        if (issue.getProblem().toLowerCase().contains(constraint.toString())
+//                                || issue.getProblemDescription().toLowerCase().contains(constraint.toString())) {
+//                            filteredIssues.add(issue);
+//                        }
+//                    }
                     results.count = filteredIssues.size();
                     results.values = filteredIssues;
                 }
@@ -121,10 +122,10 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             ButterKnife.bind(this, itemView);
         }
 
-        private void setIssue(final BeaconIssue issue) {
+        private void setIssue(final IssueWithBeacon issue) {
 
             title.setText(issue.getProblem());
-            description.setText(issue.getProblemDescription());
+            description.setText(issue.getProblemDescription() + issue.getName());
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

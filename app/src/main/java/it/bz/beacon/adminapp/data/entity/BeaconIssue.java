@@ -1,12 +1,13 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import java.util.Date;
-
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.annotation.NonNull;
 
-@Entity
+import static androidx.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = @ForeignKey(entity = Beacon.class, parentColumns = "id", childColumns = "beaconId", onDelete = CASCADE), indices = {@Index("beaconId")})
 public class BeaconIssue {
 
     @PrimaryKey

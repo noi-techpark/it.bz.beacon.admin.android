@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -96,13 +95,13 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
-    protected void setSearchFilter(String filter) {
+    void setSearchFilter(String filter) {
         Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
         searchFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }
 
-    protected void setStatusFilter(String filter) {
+    void setStatusFilter(String filter) {
         Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
         statusFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
@@ -167,7 +166,6 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     private void showAuthenticationFailureDialog() {
         AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                .setTitle(getString(R.string.status_no_signal))
                 .setMessage(getString(R.string.error_authorization))
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override

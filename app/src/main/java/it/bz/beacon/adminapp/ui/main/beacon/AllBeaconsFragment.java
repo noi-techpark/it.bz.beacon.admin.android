@@ -52,7 +52,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     protected void getBeacons(Observer<List<BeaconMinimal>> observer) {
-        beaconViewModel.getAll().observe(this, observer);
+        beaconViewModel.getAll().observe(getViewLifecycleOwner(), observer);
     }
 
     @Subscribe

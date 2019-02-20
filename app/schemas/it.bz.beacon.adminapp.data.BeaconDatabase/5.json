@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "d3debab3bdcba0a40fcfabcd7057977b",
+    "version": 5,
+    "identityHash": "8b7173184382015ccca51473872346b8",
     "entities": [
       {
         "tableName": "Beacon",
@@ -340,9 +340,15 @@
         "foreignKeys": []
       }
     ],
+    "views": [
+      {
+        "viewName": "IssueWithBeacon",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT user.id, user.name, user.departmentId,department.name AS departmentName FROM user INNER JOIN department ON user.departmentId = department.id"
+      }
+    ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d3debab3bdcba0a40fcfabcd7057977b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8b7173184382015ccca51473872346b8\")"
     ]
   }
 }
