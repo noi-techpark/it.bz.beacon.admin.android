@@ -468,6 +468,15 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
     }
 
+    @Override
+    protected void quitEditMode() {
+        isEditing = false;
+        setContentEnabled(isEditing);
+        showData();
+        invalidateOptionsMenu();
+        clearValidationErrors();
+    }
+
     private void configureTabListeners() {
         tabLayoutConfig.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override

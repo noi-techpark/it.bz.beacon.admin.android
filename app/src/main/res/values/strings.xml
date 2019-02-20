@@ -120,7 +120,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
     <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving changes…</string>
-    <string name="creating_issue">Creating issue…</string>
+    <string name="saving_issue">Saving issue…</string>
     <string name="applying">Applying configuration to beacon…</string>
     <string name="deleting">Deleting image…</string>
     <string name="image_saved">Image saved</string>
@@ -155,11 +155,13 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
     <string name="problem_description">Problem description</string>
     <string name="new_issue">New Issue</string>
+    <string name="resolve">Resolve</string>
     <string name="report">Report</string>
     <string name="problem">Problem</string>
     <string name="solution">Solution</string>
+    <string name="solution_description">Solution Description</string>
     <string name="reporter">Reporter</string>
-    <string name="report_date">Report Date</string>
+    <string name="date">Date</string>
     <string name="description_hint">short, clear description</string>
 
 

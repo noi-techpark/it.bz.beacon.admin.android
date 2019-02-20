@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:enabled="false"
-                    android:hint="@string/report_date"
+                    android:hint="@string/date"
                     android:focusable="false"
                     android:inputType="number"
                     android:maxLines="1"

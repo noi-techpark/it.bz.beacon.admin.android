@@ -1,22 +1,41 @@
 package it.bz.beacon.adminapp.ui.issue;
 
-import android.content.res.ColorStateList;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import androidx.core.widget.ImageViewCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.swagger.client.ApiCallback;
+import io.swagger.client.ApiException;
+import io.swagger.client.model.IssueSolution;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
+import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
+import it.bz.beacon.adminapp.eventbus.LogoutEvent;
+import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -42,9 +61,29 @@ public class IssueDetailActivity extends BaseDetailActivity {
     @BindView(R.id.device_status)
     protected TextView txtDeviceStatus;
 
+    @BindView(R.id.issue_solve)
+    protected Button btnResolve;
+
+    @BindView(R.id.resolve_container)
+    protected LinearLayout containerResolver;
+
+    @BindView(R.id.solution_container)
+    protected TextInputLayout containerSolution;
+
+    @BindView(R.id.solution_description_container)
+    protected TextInputLayout containerSolutionDescription;
+
+    @BindView(R.id.date)
+    protected TextInputEditText editDate;
+
+    @BindView(R.id.solution)
+    protected TextInputEditText editSolution;
+
+    @BindView(R.id.solution_description)
+    protected TextInputEditText editSolutionDescription;
+
     private BeaconIssueViewModel beaconIssueViewModel;
 
-    private boolean isEditing = false;
     private long issueId;
     private IssueWithBeacon issue;
 
@@ -58,6 +97,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
             issueId = getIntent().getLongExtra(EXTRA_ISSUE_ID, -1L);
         }
 
+        editDate.setText(DateFormatter.dateToDateString(new Date()));
         beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
         loadIssue();
     }
@@ -68,13 +108,140 @@ public class IssueDetailActivity extends BaseDetailActivity {
     }
 
     @Override
-    protected boolean validate() {
-        return false;
+    protected void quitEditMode() {
+        finish();
     }
 
     @Override
-    protected void save() {
+    protected boolean validate() {
+        boolean valid = true;
+        clearValidationErrors();
 
+        if ((editSolution.getText() == null) || (TextUtils.isEmpty(editSolution.getText().toString()))) {
+            containerSolution.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        if ((editSolutionDescription.getText() == null) || (TextUtils.isEmpty(editSolutionDescription.getText().toString()))) {
+            containerSolutionDescription.setError(getString(R.string.mandatory));
+            valid = false;
+        }
+        return valid;
+    }
+
+
+    protected void save() {
+        final ProgressDialog dialog = new ProgressDialog(IssueDetailActivity.this, R.style.AlertDialogCustom);
+
+        IssueSolution issueSolution = new IssueSolution();
+        issueSolution.setSolution(editSolution.getText().toString());
+        issueSolution.setSolutionDescription(editSolutionDescription.getText().toString());
+
+        dialog.setMessage(getString(R.string.saving_issue));
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.show();
+        try {
+            AdminApplication.getIssueApi().updateUsingPOSTAsync(issueId, issueSolution, new ApiCallback<io.swagger.client.model.BeaconIssue>() {
+                @Override
+                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            if (statusCode == 403) {
+                                Snackbar.make(findViewById(R.id.container), getString(R.string.error_authorization), Snackbar.LENGTH_LONG)
+                                        .show();
+                                PubSub.getInstance().post(new LogoutEvent());
+                            }
+                            else {
+                                showSnackbarWithRetry(getString(R.string.no_internet));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onSuccess(io.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            if (remoteBeaconIssue != null) {
+                                BeaconIssue beaconIssue = new BeaconIssue();
+                                beaconIssue.setId(remoteBeaconIssue.getId());
+                                beaconIssue.setBeaconId(remoteBeaconIssue.getBeacon().getId());
+                                beaconIssue.setProblem(remoteBeaconIssue.getProblem());
+                                beaconIssue.setProblemDescription(remoteBeaconIssue.getProblemDescription());
+                                beaconIssue.setReportDate(remoteBeaconIssue.getReportDate());
+                                beaconIssue.setReporter(remoteBeaconIssue.getReporter());
+                                beaconIssue.setResolved(remoteBeaconIssue.isResolved());
+                                beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
+                                beaconIssue.setSolution(remoteBeaconIssue.getSolution());
+                                beaconIssue.setSolutionDescription(remoteBeaconIssue.getSolutionDescription());
+
+                                beaconIssueViewModel.insert(beaconIssue, new InsertEvent() {
+                                    @Override
+                                    public void onSuccess(long id) {
+                                        if (dialog != null) {
+                                            dialog.dismiss();
+                                        }
+                                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                                    }
+                                });
+                            }
+                            else {
+                                showSnackbarWithRetry(getString(R.string.general_error));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+                }
+            });
+        }
+        catch (ApiException e) {
+            e.printStackTrace();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                    showSnackbarWithRetry(getString(R.string.general_error));
+                }
+            });
+        }
+    }
+
+    private void showSnackbarWithRetry(String message) {
+        Snackbar.make(findViewById(R.id.container), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.retry), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        save();
+                    }
+                })
+                .show();
+    }
+
+    private void showToast(String string, int length) {
+        Toast.makeText(this, string, length).show();
     }
 
     @Override
@@ -106,43 +273,21 @@ public class IssueDetailActivity extends BaseDetailActivity {
 //        progress.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save, menu);
+        return true;
+    }
 
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        switch (id) {
-//            case android.R.id.home:
-//                if (isEditing) {
-//                    showCloseWarning();
-//                }
-//                else {
-//                    finish();
-//                }
-//                break;
-//            case R.id.menu_edit:
-//                showPendingData();
-//                isEditing = true;
-//                if (map != null) {
-//                    map.setOnMapClickListener(this);
-//                }
-//                setContentEnabled(isEditing);
-//                invalidateOptionsMenu();
-//                setUpToolbar();
-//                break;
-//            case R.id.menu_save:
-//                AdminApplication.hideKeyboard(this);
-//                if (validate()) {
-//                    save();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem saveItem = menu.findItem(R.id.menu_save);
+
+        if (saveItem != null) {
+            saveItem.setVisible(isEditing);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     protected void showData() {
         if (issue != null) {
@@ -171,7 +316,16 @@ public class IssueDetailActivity extends BaseDetailActivity {
 
     @Override
     protected void clearValidationErrors() {
-
+        containerSolution.setError(null);
+        containerSolutionDescription.setError(null);
     }
 
+    @OnClick(R.id.issue_solve)
+    public void resolve() {
+        btnResolve.setVisibility(View.GONE);
+        containerResolver.setVisibility(View.VISIBLE);
+        isEditing = true;
+        invalidateOptionsMenu();
+        setUpToolbar(getString(R.string.issue));
+    }
 }

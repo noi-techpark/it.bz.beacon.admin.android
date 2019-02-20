@@ -54,6 +54,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
     }
 
     protected abstract void setContentEnabled(boolean enabled);
+    protected abstract void quitEditMode();
     protected abstract boolean validate();
     protected abstract void save();
     protected abstract void showData();
@@ -95,11 +96,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        isEditing = false;
-                        setContentEnabled(isEditing);
-                        showData();
-                        invalidateOptionsMenu();
-                        clearValidationErrors();
+                        quitEditMode();
                     }
                 }).create();
         dialog.show();

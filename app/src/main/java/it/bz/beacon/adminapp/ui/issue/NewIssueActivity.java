@@ -141,7 +141,7 @@ public class NewIssueActivity extends BaseActivity {
         issueCreation.setProblemDescription(editDescription.getText().toString());
         issueCreation.setReporter(storage.getLoginUserName());
 
-        dialog.setMessage(getString(R.string.creating_issue));
+        dialog.setMessage(getString(R.string.saving_issue));
         dialog.setIndeterminate(true);
         dialog.setCancelable(false);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

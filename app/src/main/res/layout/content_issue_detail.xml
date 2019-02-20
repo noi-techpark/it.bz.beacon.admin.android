@@ -35,11 +35,11 @@
                 android:id="@+id/problem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/tertiaryText"
+                android:textColor="@color/primaryLight"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/beacon_name"
-                tools:text="Beacon 12" />
+                tools:text="@string/network_problems" />
 
             <GridLayout
                 android:id="@+id/overview"
@@ -145,25 +145,103 @@
         <FrameLayout
             android:id="@+id/content_issue_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".ui.issue.IssueDetailActivity"
-            tools:showIn="@layout/activity_issue_detail">
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/issue_solve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@null"
+                android:padding="@dimen/app_default_margin"
+                android:text="@string/resolve"
+                android:textAllCaps="true"
+                android:textColor="@color/primary" />
 
             <LinearLayout
+                android:id="@+id/resolve_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:padding="@dimen/app_default_margin"
                 android:orientation="vertical">
-
 
                 <TextView
                     android:id="@+id/details_config"
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/app_default_margin"
                     android:text="@string/solution"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/solution_container"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/app_default_margin"
+                    app:hintTextAppearance="@style/TextAppearance.Hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/solution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/solution"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/app_default_margin"
+                    app:hintTextAppearance="@style/TextAppearance.Hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/date"
+                        android:inputType="textCapWords"
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@null"
+                        tools:text="10.02.2019" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/solution_description_container"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/app_default_margin"
+                    app:hintTextAppearance="@style/TextAppearance.Hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/solution_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/solution_description"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionDone"
+                        android:maxLines="10"
+                        android:singleLine="false"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
