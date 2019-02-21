@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +47,8 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
 
     private static final int LOCATION_PERMISSION_REQUEST = 1;
+    private static final int MODE_BEACONS = 0;
+    private static final int MODE_ISSUES = 1;
 
     @BindView(R.id.drawer_layout)
     protected DrawerLayout drawer;
@@ -59,6 +62,7 @@ public class MainActivity extends BaseActivity
     private Storage storage;
     private String[] filterItems;
     private String[] filterValues;
+    private int currentMode = MODE_BEACONS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +140,12 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.filter, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -145,7 +155,12 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.menu_list:
                 isMapShowing = false;
-                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                if (currentMode == MODE_BEACONS) {
+                    switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                }
+                else {
+                    switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
+                }
                 break;
             case R.id.menu_filter:
                 showFilterDialog();
@@ -201,10 +216,12 @@ public class MainActivity extends BaseActivity
 
         switch (id) {
             case R.id.navigation_beacons:
+                currentMode = MODE_BEACONS;
                 switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
                 isMapShowing = false;
                 break;
             case R.id.navigation_issues:
+                currentMode = MODE_ISSUES;
                 switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
                 break;
             case R.id.navigation_about:

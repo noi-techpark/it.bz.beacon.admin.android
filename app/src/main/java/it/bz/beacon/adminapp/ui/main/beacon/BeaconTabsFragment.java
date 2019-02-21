@@ -36,7 +36,6 @@ public class BeaconTabsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -56,11 +55,5 @@ public class BeaconTabsFragment extends Fragment {
         });
 
         return tabView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.beacons, menu);
     }
 }

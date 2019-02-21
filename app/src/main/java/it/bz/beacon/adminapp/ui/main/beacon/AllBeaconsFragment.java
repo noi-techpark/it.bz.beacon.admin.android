@@ -63,7 +63,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.search, menu);
+        inflater.inflate(R.menu.list, menu);
         MenuItem search = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) search.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

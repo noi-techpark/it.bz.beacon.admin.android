@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -54,6 +56,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
     }
 
@@ -99,7 +102,21 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.beacons, menu);
+        inflater.inflate(R.menu.list, menu);
+        MenuItem search = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) search.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+//                setSearchFilter(s);
+                return false;
+            }
+        });
     }
 
     private void showLoading() {

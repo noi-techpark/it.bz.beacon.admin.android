@@ -21,14 +21,12 @@ import it.bz.beacon.adminapp.util.BitmapTools;
 public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterItem> {
 
     private Context context;
-    private int clusterColor;
     private final IconGenerator clusterIconGenerator;
 
     public BeaconClusterRenderer(Context context, GoogleMap map, ClusterManager<BeaconClusterItem> clusterManager,
                                  int clusterColor) {
         super(context, map, clusterManager);
         this.context = context;
-        this.clusterColor = clusterColor;
         this.clusterIconGenerator = new IconGenerator(context);
     }
 

@@ -17,6 +17,8 @@ public class IssueWithBeacon {
     private Long lastSeen;
     private String name;
     private String status;
+    private float lat;
+    private float lng;
 
     public long getId() {
         return id;
@@ -128,5 +130,21 @@ public class IssueWithBeacon {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public float getLng() {
+        return lng;
+    }
+
+    public void setLng(float lng) {
+        this.lng = lng;
     }
 }
