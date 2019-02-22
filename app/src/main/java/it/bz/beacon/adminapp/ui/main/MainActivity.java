@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -38,11 +37,12 @@ import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
+import it.bz.beacon.adminapp.ui.issue.map.IssuesMapFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
-import it.bz.beacon.adminapp.ui.main.map.LocationDisabledFragment;
-import it.bz.beacon.adminapp.ui.main.map.MapFragment;
-import it.bz.beacon.adminapp.ui.main.map.OnRetryLoadMapListener;
+import it.bz.beacon.adminapp.ui.map.LocationDisabledFragment;
+import it.bz.beacon.adminapp.ui.main.beacon.map.MapFragment;
+import it.bz.beacon.adminapp.ui.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
@@ -266,10 +266,16 @@ public class MainActivity extends BaseActivity
     }
 
     private void showMapFragment() {
-        if (!isMapShowing && getSupportFragmentManager() != null) {
+        if (getSupportFragmentManager() != null) {
             isMapShowing = true;
-            MapFragment fragment = new MapFragment();
-            switchFragment(getString(R.string.beacons), fragment);
+            if (currentMode == MODE_BEACONS) {
+                MapFragment fragment = new MapFragment();
+                switchFragment(getString(R.string.beacons), fragment);
+            }
+            if (currentMode == MODE_ISSUES) {
+                IssuesMapFragment fragment = new IssuesMapFragment();
+                switchFragment(getString(R.string.issues), fragment);
+            }
             invalidateOptionsMenu();
         }
     }

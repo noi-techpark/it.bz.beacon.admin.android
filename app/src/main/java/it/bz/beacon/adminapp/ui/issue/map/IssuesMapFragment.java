@@ -1,25 +1,12 @@
-package it.bz.beacon.adminapp.ui.main.map;
+package it.bz.beacon.adminapp.ui.issue.map;
 
 import android.Manifest;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +22,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 import com.squareup.otto.Subscribe;
@@ -43,19 +29,33 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
+import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.detail.DetailActivity;
+import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
+import it.bz.beacon.adminapp.ui.map.BaseClusterItem;
+import it.bz.beacon.adminapp.ui.map.BeaconInfoWindowAdapter;
+import it.bz.beacon.adminapp.ui.map.ClusterRenderer;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback,
-        ClusterManager.OnClusterItemInfoWindowClickListener<BeaconClusterItem> {
+public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
+        ClusterManager.OnClusterItemInfoWindowClickListener<BaseClusterItem> {
 
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
@@ -69,17 +69,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     protected ProgressBar progress;
 
     private GoogleMap map;
-    private ClusterManager<BeaconClusterItem> clusterManager;
+    private ClusterManager<BaseClusterItem> clusterManager;
 
-    private BeaconViewModel beaconViewModel;
-    private List<BeaconMinimal> mapBeacons = new ArrayList<>();
+    private BeaconIssueViewModel beaconIssueViewModel;
+    private List<IssueWithBeacon> mapIssues = new ArrayList<>();
     private String statusFilter = Beacon.STATUS_ALL;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
     }
 
     @Override
@@ -104,16 +104,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void loadData() {
-        beaconViewModel.getAll().observe(this, new Observer<List<BeaconMinimal>>() {
+        beaconIssueViewModel.getAllIssuesWithBeacon().observe(this, new Observer<List<IssueWithBeacon>>() {
             @Override
-            public void onChanged(@Nullable List<BeaconMinimal> beacons) {
-                if (beacons != null && beacons.size() > 0) {
-                    mapBeacons.clear();
-                    Log.d(AdminApplication.LOG_TAG, "#2 beacons for map loaded: " + statusFilter);
-                    for (BeaconMinimal beaconMinimal : beacons) {
-                        if ((beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) &&
-                                ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL)))) {
-                            mapBeacons.add(beaconMinimal);
+            public void onChanged(List<IssueWithBeacon> issueWithBeacons) {
+                if (issueWithBeacons != null && issueWithBeacons.size() > 0) {
+                    mapIssues.clear();
+                    Log.d(AdminApplication.LOG_TAG, "#2 issues for map loaded: " + statusFilter);
+                    for (IssueWithBeacon IssueWithBeacon : issueWithBeacons) {
+                        if ((IssueWithBeacon.getLat() != 0 && IssueWithBeacon.getLng() != 0)) {
+                            mapIssues.add(IssueWithBeacon);
                         }
                     }
                     if (map != null) {
@@ -125,7 +124,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Subscribe
-    public void onStatusFilterChanged(StatusFilterEvent event) {
+    public void onRadiusFilterChanged(StatusFilterEvent event) {
         statusFilter = event.getStatus();
         loadData();
     }
@@ -194,19 +193,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             if (clusterManager == null) {
                 clusterManager = new ClusterManager<>(getContext(), map);
             }
-            clusterManager.setAlgorithm(new GridBasedAlgorithm<BeaconClusterItem>());
-            clusterManager.setRenderer(new BeaconClusterRenderer(getContext(), map, clusterManager, getClusterColor()));
+            clusterManager.setAlgorithm(new GridBasedAlgorithm<BaseClusterItem>());
+            clusterManager.setRenderer(new ClusterRenderer(getContext(), map, clusterManager));
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
-//            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<BeaconClusterItem>() {
+//            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<IssueClusterItem>() {
 //                @Override
-//                public boolean onClusterClick(Cluster<BeaconClusterItem> cluster) {
+//                public boolean onClusterClick(Cluster<IssueClusterItem> cluster) {
 //                    map.getUiSettings().setMapToolbarEnabled(false);
 //                    return false;
 //                }
 //            });
-//            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BeaconClusterItem>() {
+//            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<IssueClusterItem>() {
 //                @Override
-//                public boolean onClusterItemClick(BeaconClusterItem poiClusterItem) {
+//                public boolean onClusterItemClick(IssueClusterItem poiClusterItem) {
 //                    map.getUiSettings().setMapToolbarEnabled(true);
 //                    return false;
 //                }
@@ -222,8 +221,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private void addMarkers() {
         clusterManager.clearItems();
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (BeaconMinimal beacon : mapBeacons) {
-            BeaconClusterItem clusterItem = new BeaconClusterItem(beacon);
+        for (IssueWithBeacon beacon : mapIssues) {
+            IssueClusterItem clusterItem = new IssueClusterItem(beacon);
             clusterManager.addItem(clusterItem);
             boundsBuilder.include(clusterItem.getPosition());
         }
@@ -247,18 +246,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         frameProgress.setVisibility(View.GONE);
     }
 
-    public void onClusterItemInfoWindowClick(BeaconClusterItem clusterItem) {
-        showDetail(clusterItem.getBeaconMinimal());
-    }
-
     protected int getClusterColor() {
         return ContextCompat.getColor(getContext(), R.color.primary);
     }
 
-    protected void showDetail(BeaconMinimal beaconMinimal) {
-        Intent intent = new Intent(getContext(), DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
-        intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());
+    protected void showDetail(long id) {
+        Intent intent = new Intent(getContext(), IssueDetailActivity.class);
+        intent.putExtra(IssueDetailActivity.EXTRA_ISSUE_ID, id);
         getContext().startActivity(intent);
     }
 
@@ -304,5 +298,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(BaseClusterItem clusterItem) {
+        showDetail(clusterItem.getId());
     }
 }

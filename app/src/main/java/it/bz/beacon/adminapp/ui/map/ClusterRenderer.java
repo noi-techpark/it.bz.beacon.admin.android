@@ -1,4 +1,4 @@
-package it.bz.beacon.adminapp.ui.main.map;
+package it.bz.beacon.adminapp.ui.map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,28 +18,27 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.util.BitmapTools;
 
-public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterItem> {
+public class ClusterRenderer extends DefaultClusterRenderer<BaseClusterItem> {
 
     private Context context;
     private final IconGenerator clusterIconGenerator;
 
-    public BeaconClusterRenderer(Context context, GoogleMap map, ClusterManager<BeaconClusterItem> clusterManager,
-                                 int clusterColor) {
+    public ClusterRenderer(Context context, GoogleMap map, ClusterManager<BaseClusterItem> clusterManager) {
         super(context, map, clusterManager);
         this.context = context;
         this.clusterIconGenerator = new IconGenerator(context);
     }
 
     @Override
-    protected void onBeforeClusterItemRendered(BeaconClusterItem item, MarkerOptions markerOptions) {
-        final Drawable drawable = ContextCompat.getDrawable(context, Beacon.getMarkerId(item.getBeaconMinimal().getStatus()));
+    protected void onBeforeClusterItemRendered(BaseClusterItem item, MarkerOptions markerOptions) {
+        final Drawable drawable = ContextCompat.getDrawable(context, Beacon.getMarkerId(item.getStatus()));
         Bitmap bitmap = BitmapTools.drawableToBitmap(drawable);
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
         markerOptions.icon(markerDescriptor);
     }
 
     @Override
-    protected void onBeforeClusterRendered(Cluster<BeaconClusterItem> cluster, MarkerOptions markerOptions){
+    protected void onBeforeClusterRendered(Cluster<BaseClusterItem> cluster, MarkerOptions markerOptions){
 
         final Drawable clusterIcon = ContextCompat.getDrawable(context, R.drawable.ic_cluster);
 
@@ -62,7 +61,7 @@ public class BeaconClusterRenderer extends DefaultClusterRenderer<BeaconClusterI
     }
 
     @Override
-    protected boolean shouldRenderAsCluster(Cluster<BeaconClusterItem> cluster) {
+    protected boolean shouldRenderAsCluster(Cluster<BaseClusterItem> cluster) {
         return cluster.getSize() > 1;
     }
 }

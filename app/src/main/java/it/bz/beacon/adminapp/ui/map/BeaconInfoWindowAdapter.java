@@ -6,7 +6,7 @@
  * Copyright (C) 2017 Raiffeisen Online GmbH (Jürgen Sprenger, Aaron Falk) <info@raiffeisen.it>
  */
 
-package it.bz.beacon.adminapp.ui.main.map;
+package it.bz.beacon.adminapp.ui.map;
 
 import android.view.LayoutInflater;
 import android.view.View;
