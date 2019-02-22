@@ -580,8 +580,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
             @Override
             public void onChanged(@Nullable Beacon changedBeacon) {
-                beacon = changedBeacon;
-                showData();
+                if (!isEditing) {
+                    beacon = changedBeacon;
+                    showData();
+                }
             }
         });
     }
@@ -595,11 +597,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
 
             editName.setText(beacon.getName());
-            if (beacon.getBatteryLevel() < 34) {
+            if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_alert_level)) {
                 imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
             }
             else {
-                if (beacon.getBatteryLevel() < 66) {
+                if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_half_level)) {
                     imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
                 }
                 else {

@@ -180,11 +180,11 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
             }
 
-            if (beaconMinimal.getBatteryLevel() < 34) {
+            if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
             }
             else {
-                if (beaconMinimal.getBatteryLevel() < 66) {
+                if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
                 }
                 else {

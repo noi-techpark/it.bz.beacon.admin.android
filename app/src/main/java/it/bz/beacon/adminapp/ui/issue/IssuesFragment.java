@@ -113,7 +113,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public boolean onQueryTextChange(String s) {
-//                setSearchFilter(s);
+                adapter.getFilter().filter(s);
                 return false;
             }
         });

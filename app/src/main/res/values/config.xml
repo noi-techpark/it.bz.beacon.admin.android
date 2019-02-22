@@ -5,6 +5,8 @@
     <!--interval for issues synchronization in minutes-->
     <integer name="synchronization_interval">10</integer>
     <integer name="default_map_zoom_level">15</integer>
+    <integer name="battery_alert_level">34</integer>
+    <integer name="battery_half_level">66</integer>
     <string name="temp_folder">temp</string>
     <string name="image_folder">images</string>
 </resources>

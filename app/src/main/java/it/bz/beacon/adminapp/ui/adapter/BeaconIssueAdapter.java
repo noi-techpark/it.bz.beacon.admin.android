@@ -22,7 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
-import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
 
@@ -72,15 +71,14 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
-                issues = (List<IssueWithBeacon>) results.values; // has the filtered values
-                notifyDataSetChanged();  // notifies the data with new filtered values
+                issues = (List<IssueWithBeacon>) results.values;
+                notifyDataSetChanged();
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                List<BeaconIssue> filteredIssues = new ArrayList<>();
+                List<IssueWithBeacon> filteredIssues = new ArrayList<>();
 
                 if (originalValues == null) {
                     originalValues = new ArrayList<>(issues);
@@ -92,13 +90,14 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
                 }
                 else {
                     constraint = constraint.toString().toLowerCase();
-//                    for (int i = 0; i < originalValues.size(); i++) {
-//                        IssueWithBeacon issue = originalValues.get(i);
-//                        if (issue.getProblem().toLowerCase().contains(constraint.toString())
-//                                || issue.getProblemDescription().toLowerCase().contains(constraint.toString())) {
-//                            filteredIssues.add(issue);
-//                        }
-//                    }
+                    for (int i = 0; i < originalValues.size(); i++) {
+                        IssueWithBeacon issue = originalValues.get(i);
+                        if (issue.getProblem().toLowerCase().contains(constraint.toString())
+                                || issue.getProblemDescription().toLowerCase().contains(constraint.toString())
+                                || issue.getName().toLowerCase().contains(constraint.toString())) {
+                            filteredIssues.add(issue);
+                        }
+                    }
                     results.count = filteredIssues.size();
                     results.values = filteredIssues;
                 }
@@ -144,11 +143,11 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
             }
 
-            if (issue.getBatteryLevel() < 34) {
+            if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
             }
             else {
-                if (issue.getBatteryLevel() < 66) {
+                if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
                 }
                 else {
