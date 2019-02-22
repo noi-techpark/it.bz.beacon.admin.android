@@ -46,8 +46,9 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         // Required empty public constructor
     }
 
-    public static NearbyBeaconsFragment newInstance() {
+    public static NearbyBeaconsFragment newInstance(String statusFilter) {
         NearbyBeaconsFragment fragment = new NearbyBeaconsFragment();
+        fragment.prepareStatusFilter(statusFilter);
         return fragment;
     }
 

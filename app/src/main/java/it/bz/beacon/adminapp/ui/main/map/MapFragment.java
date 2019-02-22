@@ -109,7 +109,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onChanged(@Nullable List<BeaconMinimal> beacons) {
                 if (beacons != null && beacons.size() > 0) {
                     mapBeacons.clear();
-
+                    Log.d(AdminApplication.LOG_TAG, "#2 beacons for map loaded: " + statusFilter);
                     for (BeaconMinimal beaconMinimal : beacons) {
                         if ((beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) &&
                                 ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL)))) {

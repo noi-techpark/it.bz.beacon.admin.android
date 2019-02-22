@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -286,6 +289,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private long beaconId;
     private String beaconName;
     private Beacon beacon;
+    private boolean isBatteryWarningShowing = false;
 
     protected GoogleMap map;
     private FusedLocationProviderClient fusedLocationClient;
@@ -777,6 +781,16 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.getUiSettings().setZoomControlsEnabled(true);
+
+        try {
+            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
+            if (!success) {
+                Log.e(AdminApplication.LOG_TAG, "Style parsing failed.");
+            }
+        }
+        catch (Resources.NotFoundException e) {
+            Log.e(AdminApplication.LOG_TAG, "Can't find style. Error: ", e);
+        }
 
         if ((beacon != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
@@ -1374,7 +1388,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     private void showBatteryWarning() {
-        if (!AdminApplication.getStorage().getDontShowWarningAgain()) {
+        if ((!AdminApplication.getStorage().getDontShowWarningAgain()) && (!isBatteryWarningShowing)) {
             View checkBoxView = View.inflate(this, R.layout.checkbox, null);
             AppCompatCheckBox checkBox = checkBoxView.findViewById(R.id.checkbox);
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1389,8 +1403,15 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             builder.setTitle(getString(R.string.warning));
             builder.setMessage(getString(R.string.battery_warning));
             builder.setView(checkBoxView);
-            builder.setPositiveButton(getString(R.string.ok), null);
+            builder.setCancelable(false);
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    isBatteryWarningShowing = false;
+                }
+            });
             builder.show();
+            isBatteryWarningShowing = true;
         }
     }
 

@@ -15,7 +15,7 @@ public abstract class IssueWithBeaconDao {
     @Query("SELECT bi.id, bi.beaconId, bi.problem, bi.problemDescription, bi.reporter, bi.reportDate," +
             " bi.resolved, bi.resolveDate, bi.solution, bi.solutionDescription, b.batteryLevel," +
             " b.lastSeen, b.name, b.status, b.lat, b.lng FROM BeaconIssue AS bi INNER JOIN Beacon AS b" +
-            " ON bi.beaconId = b.id WHERE bi.resolved = 0 ORDER BY bi.reportDate ASC")
+            " ON bi.beaconId = b.id WHERE bi.resolved = 0 ORDER BY bi.reportDate DESC")
     public abstract LiveData<List<IssueWithBeacon>> getAllIssuesWithBeacon();
 
     @Transaction

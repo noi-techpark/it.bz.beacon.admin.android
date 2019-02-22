@@ -13,18 +13,20 @@ public class BeaconTabsAdapter extends FragmentPagerAdapter {
 
     private static int TAB_COUNT = 2;
     private Context context;
+    private String statusFilter;
 
-    public BeaconTabsAdapter(FragmentManager fm, Context context) {
+    public BeaconTabsAdapter(FragmentManager fm, Context context, String statusFilter) {
         super(fm);
         this.context = context;
+        this.statusFilter = statusFilter;
     }
 
     @Override
     public Fragment getItem(int position)
     {
         switch (position){
-            case 0 : return new AllBeaconsFragment();
-            case 1 : return NearbyBeaconsFragment.newInstance();
+            case 0 : return AllBeaconsFragment.newInstance(statusFilter);
+            case 1 : return NearbyBeaconsFragment.newInstance(statusFilter);
         }
         return null;
     }

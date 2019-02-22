@@ -26,8 +26,9 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
         // Required empty public constructor
     }
 
-    public static AllBeaconsFragment newInstance() {
+    public static AllBeaconsFragment newInstance(String statusFilter) {
         AllBeaconsFragment fragment = new AllBeaconsFragment();
+        fragment.prepareStatusFilter(statusFilter);
         return fragment;
     }
 

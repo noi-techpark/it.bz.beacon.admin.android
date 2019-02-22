@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -86,7 +87,7 @@ public class MainActivity extends BaseActivity
                 Beacon.STATUS_NO_SIGNAL};
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+        switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(""));
     }
 
     @Override
@@ -156,7 +157,7 @@ public class MainActivity extends BaseActivity
             case R.id.menu_list:
                 isMapShowing = false;
                 if (currentMode == MODE_BEACONS) {
-                    switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                    switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(filterValues[filterIndex]));
                 }
                 else {
                     switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
@@ -217,7 +218,7 @@ public class MainActivity extends BaseActivity
         switch (id) {
             case R.id.navigation_beacons:
                 currentMode = MODE_BEACONS;
-                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance());
+                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(filterValues[filterIndex]));
                 isMapShowing = false;
                 break;
             case R.id.navigation_issues:
@@ -324,6 +325,7 @@ public class MainActivity extends BaseActivity
                         @Override
                         public void run() {
                             PubSub.getInstance().post(new StatusFilterEvent(filterValues[filterIndex]));
+                            Log.d(AdminApplication.LOG_TAG, "#1 post statusfilter: " + filterValues[filterIndex]);
                         }
                     })
                     .commit();

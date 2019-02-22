@@ -29,6 +29,7 @@ import io.swagger.client.ApiException;
 import io.swagger.client.model.IssueSolution;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
@@ -84,6 +85,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
 
     private BeaconIssueViewModel beaconIssueViewModel;
 
+    private Storage storage;
     private long issueId;
     private IssueWithBeacon issue;
 
@@ -97,6 +99,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
             issueId = getIntent().getLongExtra(EXTRA_ISSUE_ID, -1L);
         }
 
+        storage = AdminApplication.getStorage();
         editDate.setText(DateFormatter.dateToDateString(new Date()));
         beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
         loadIssue();
@@ -135,6 +138,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
         IssueSolution issueSolution = new IssueSolution();
         issueSolution.setSolution(editSolution.getText().toString());
         issueSolution.setSolutionDescription(editSolutionDescription.getText().toString());
+        issueSolution.setResolver(storage.getLoginUserName());
 
         dialog.setMessage(getString(R.string.saving_issue));
         dialog.setIndeterminate(true);
@@ -257,6 +261,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
             public void onChanged(IssueWithBeacon issueWithBeacon) {
                 issue = issueWithBeacon;
                 showData();
+                resolve();
             }
         });
     }

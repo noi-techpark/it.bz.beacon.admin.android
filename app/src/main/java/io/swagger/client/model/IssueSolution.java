@@ -28,11 +28,32 @@ import java.io.IOException;
  */
 
 public class IssueSolution {
+  @SerializedName("resolver")
+  private String resolver = null;
+
   @SerializedName("solution")
   private String solution = null;
 
   @SerializedName("solutionDescription")
   private String solutionDescription = null;
+
+  public IssueSolution resolver(String resolver) {
+    this.resolver = resolver;
+    return this;
+  }
+
+   /**
+   * Get resolver
+   * @return resolver
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public String getResolver() {
+    return resolver;
+  }
+
+  public void setResolver(String resolver) {
+    this.resolver = resolver;
+  }
 
   public IssueSolution solution(String solution) {
     this.solution = solution;
@@ -80,13 +101,14 @@ public class IssueSolution {
       return false;
     }
     IssueSolution issueSolution = (IssueSolution) o;
-    return Objects.equals(this.solution, issueSolution.solution) &&
+    return Objects.equals(this.resolver, issueSolution.resolver) &&
+        Objects.equals(this.solution, issueSolution.solution) &&
         Objects.equals(this.solutionDescription, issueSolution.solutionDescription);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(solution, solutionDescription);
+    return Objects.hash(resolver, solution, solutionDescription);
   }
 
 
@@ -95,6 +117,7 @@ public class IssueSolution {
     StringBuilder sb = new StringBuilder();
     sb.append("class IssueSolution {\n");
     
+    sb.append("    resolver: ").append(toIndentedString(resolver)).append("\n");
     sb.append("    solution: ").append(toIndentedString(solution)).append("\n");
     sb.append("    solutionDescription: ").append(toIndentedString(solutionDescription)).append("\n");
     sb.append("}");
