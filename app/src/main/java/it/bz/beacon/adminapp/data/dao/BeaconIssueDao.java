@@ -18,10 +18,4 @@ public abstract class BeaconIssueDao implements BaseDao<BeaconIssue> {
     @Transaction
     @Query("SELECT * FROM BeaconIssue WHERE beaconId = :beaconId ORDER BY reportDate DESC")
     public abstract LiveData<List<BeaconIssue>> getAllByBeaconId(long beaconId);
-
-    @Query("DELETE FROM BeaconIssue")
-    abstract void deleteAll();
-
-    @Query("SELECT * FROM BeaconIssue WHERE id = :id")
-    public abstract LiveData<BeaconIssue> getById(long id);
 }

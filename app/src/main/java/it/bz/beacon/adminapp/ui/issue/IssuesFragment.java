@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,6 +71,10 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
         recyclerIssues.setAdapter(adapter);
         recyclerIssues.setHasFixedSize(true);
         recyclerIssues.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerView.ItemAnimator animator = recyclerIssues.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
 
         swipeIssues.setOnRefreshListener(this);
         swipeIssues.setColorSchemeResources(R.color.primary);

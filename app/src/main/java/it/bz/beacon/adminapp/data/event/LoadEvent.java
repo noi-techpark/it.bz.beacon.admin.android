@@ -1,7 +1,10 @@
 package it.bz.beacon.adminapp.data.event;
 
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 
 public interface LoadEvent {
-    void onSuccess(BeaconMinimal beaconMinimal);
+    void onSuccessBeacon(BeaconMinimal beaconMinimal);
+
+    void onSuccessIssue(IssueWithBeacon issueWithBeacon);
 }

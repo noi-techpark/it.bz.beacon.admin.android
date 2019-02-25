@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +31,10 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
@@ -254,11 +255,14 @@ public class IssueDetailActivity extends BaseDetailActivity {
     }
 
     private void loadIssue() {
-        showProgress(getString(R.string.loading));
-
-        beaconIssueViewModel.getIssueWithBeaconById(issueId).observe(this, new Observer<IssueWithBeacon>() {
+        beaconIssueViewModel.getIssueWithBeaconById(issueId, new LoadEvent() {
             @Override
-            public void onChanged(IssueWithBeacon issueWithBeacon) {
+            public void onSuccessBeacon(BeaconMinimal beaconMinimal) {
+
+            }
+
+            @Override
+            public void onSuccessIssue(IssueWithBeacon issueWithBeacon) {
                 issue = issueWithBeacon;
                 showData();
                 resolve();
@@ -270,12 +274,6 @@ public class IssueDetailActivity extends BaseDetailActivity {
     protected void onResume() {
         super.onResume();
         setUpToolbar(getString(R.string.issue));
-    }
-
-    private void showProgress(String text) {
-//        txtProgress.setText(text);
-//        content.setVisibility(View.GONE);
-//        progress.setVisibility(View.VISIBLE);
     }
 
     @Override

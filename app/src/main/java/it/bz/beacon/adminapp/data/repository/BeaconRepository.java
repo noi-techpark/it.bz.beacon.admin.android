@@ -142,7 +142,7 @@ public class BeaconRepository {
         else {
             beacon.setPendingConfiguration(null);
         }
-        beaconDao.insert(beacon);
+        insert(beacon, null);
     }
 
     public void refreshBeacon(long beaconId, final DataUpdateEvent dataUpdateEvent) {
@@ -211,6 +211,7 @@ public class BeaconRepository {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
             }
+            Log.d(AdminApplication.LOG_TAG, "inserted: " + id);
         }
     }
 
@@ -232,7 +233,7 @@ public class BeaconRepository {
         @Override
         protected void onPostExecute(BeaconMinimal beaconMinimal) {
             if ((loadEvent != null) && (beaconMinimal != null)) {
-                loadEvent.onSuccess(beaconMinimal);
+                loadEvent.onSuccessBeacon(beaconMinimal);
             }
         }
     }

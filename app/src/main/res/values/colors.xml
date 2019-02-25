@@ -5,6 +5,7 @@
     <color name="primaryDark">#3cadda</color>
     <!--<color name="primaryDark">#25a8d9</color>-->
     <color name="accent">#f6dd00</color>
+    <color name="primary50">#803cadda</color>
 
     <color name="primaryText">#db000000</color>
     <color name="secondaryText">#80000000</color>

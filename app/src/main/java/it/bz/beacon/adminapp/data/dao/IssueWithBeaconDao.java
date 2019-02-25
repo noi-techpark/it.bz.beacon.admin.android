@@ -23,5 +23,5 @@ public abstract class IssueWithBeaconDao {
             " bi.resolved, bi.resolveDate, bi.solution, bi.solutionDescription, b.batteryLevel," +
             " b.lastSeen, b.name, b.status, b.lat, b.lng FROM BeaconIssue AS bi INNER JOIN Beacon AS b" +
             " ON bi.beaconId = b.id WHERE bi.id = :id")
-    public abstract LiveData<IssueWithBeacon> getIssueWithBeaconById(long id);
+    public abstract IssueWithBeacon getIssueWithBeaconById(long id);
 }

@@ -29,6 +29,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
@@ -205,7 +206,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
             public void onProfileLost(ISecureProfile profile) {
                 beaconViewModel.getByInstanceId(profile.getUniqueId(), new LoadEvent() {
                     @Override
-                    public void onSuccess(BeaconMinimal beaconMinimal) {
+                    public void onSuccessBeacon(BeaconMinimal beaconMinimal) {
                         List<BeaconMinimal> newList;
                         if (nearbyBeacons.getValue() == null) {
                             newList = new ArrayList<>();
@@ -216,6 +217,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         newList = removeBeaconFromList(newList, beaconMinimal);
                         nearbyBeacons.setValue(newList);
                     }
+
+                    @Override
+                    public void onSuccessIssue(IssueWithBeacon issueWithBeacon) {
+
+                    }
                 });
                 super.onProfileLost(profile);
             }
@@ -223,7 +229,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
             private void updateList(final ISecureProfile profile) {
                 beaconViewModel.getByInstanceId(profile.getUniqueId(), new LoadEvent() {
                     @Override
-                    public void onSuccess(BeaconMinimal beaconMinimal) {
+                    public void onSuccessBeacon(BeaconMinimal beaconMinimal) {
                         beaconMinimal.setRssi(profile.getRssi());
                         List<BeaconMinimal> newList;
                         if (nearbyBeacons.getValue() == null) {
@@ -241,6 +247,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                             newList = updateBeaconInList(newList, beaconMinimal);
                             nearbyBeacons.setValue(newList);
                         }
+                    }
+
+                    @Override
+                    public void onSuccessIssue(IssueWithBeacon issueWithBeacon) {
+
                     }
                 });
             }

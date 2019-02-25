@@ -6,10 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.Toolbar;
-import butterknife.BindView;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 
@@ -54,10 +51,15 @@ public abstract class BaseDetailActivity extends BaseActivity {
     }
 
     protected abstract void setContentEnabled(boolean enabled);
+
     protected abstract void quitEditMode();
+
     protected abstract boolean validate();
+
     protected abstract void save();
+
     protected abstract void showData();
+
     protected abstract void clearValidationErrors();
 
     @Override
@@ -100,5 +102,15 @@ public abstract class BaseDetailActivity extends BaseActivity {
                     }
                 }).create();
         dialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isEditing) {
+            showCloseWarning();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 }

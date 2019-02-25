@@ -97,18 +97,18 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     abstract protected void getBeacons(Observer<List<BeaconMinimal>> observer);
 
     void setSearchFilter(String filter) {
-        Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
+        Log.d(AdminApplication.LOG_TAG, "setSearchFilter: " + filter);
         searchFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }
 
     void prepareStatusFilter(String filter) {
-        Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
+        Log.d(AdminApplication.LOG_TAG, "prepareStatusFilter: " + filter);
         statusFilter = filter.replace('#', ' ');
     }
 
     void setStatusFilter(String filter) {
-        Log.d(AdminApplication.LOG_TAG, "filter: " + filter);
+        Log.d(AdminApplication.LOG_TAG, "setStatusFilter: " + filter);
         statusFilter = filter.replace('#', ' ');
         adapter.getFilter().filter(statusFilter + "#" + searchFilter);
     }

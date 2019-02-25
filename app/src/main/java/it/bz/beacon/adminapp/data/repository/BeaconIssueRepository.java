@@ -15,13 +15,15 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
+import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
 import it.bz.beacon.adminapp.data.dao.IssueWithBeaconDao;
-import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadEvent;
 
 public class BeaconIssueRepository {
 
@@ -57,13 +59,8 @@ public class BeaconIssueRepository {
         return issueWithBeaconDao.getAllIssuesWithBeacon();
     }
 
-    public LiveData<IssueWithBeacon> getIssueWithBeaconById(long id) {
-        return issueWithBeaconDao.getIssueWithBeaconById(id);
-    }
-
-    public LiveData<BeaconIssue> getById(long id) {
-        refreshBeaconIssue(id, null);
-        return beaconIssueDao.getById(id);
+    public void getIssueWithBeaconById(long id, LoadEvent loadEvent) {
+        new LoadByIdTask(issueWithBeaconDao, loadEvent).execute(id);
     }
 
     private boolean shouldSynchronize() {
@@ -95,7 +92,6 @@ public class BeaconIssueRepository {
                             if (dataUpdateEvent != null) {
                                 dataUpdateEvent.onSuccess();
                             }
-                            storage.setLastSynchronizationIssues(System.currentTimeMillis());
                         }
                     }
 
@@ -125,7 +121,7 @@ public class BeaconIssueRepository {
 
                     @Override
                     public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
-                        Log.d(AdminApplication.LOG_TAG, "onSuccess: " + statusCode);
+                        Log.d(AdminApplication.LOG_TAG, "onSuccessBeacon: " + statusCode);
                         if (result != null) {
                             for (int i = 0; i < result.size(); i++) {
                                 saveBeaconIssue(result.get(i));
@@ -168,7 +164,7 @@ public class BeaconIssueRepository {
         beaconIssue.setResolveDate(remoteBeaconIssue.getResolveDate());
         beaconIssue.setSolution(remoteBeaconIssue.getSolution());
         beaconIssue.setSolutionDescription(remoteBeaconIssue.getSolutionDescription());
-        beaconIssueDao.insert(beaconIssue);
+        insert(beaconIssue, null);
     }
 
     public void refreshBeaconIssue(long beaconIssueId, final DataUpdateEvent dataUpdateEvent) {
@@ -236,6 +232,30 @@ public class BeaconIssueRepository {
         protected void onPostExecute(Long id) {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
+            }
+            Log.d(AdminApplication.LOG_TAG, "inserted: " + id);
+        }
+    }
+
+    private static class LoadByIdTask extends AsyncTask<Long, Void, IssueWithBeacon> {
+
+        private IssueWithBeaconDao asyncTaskDao;
+        private LoadEvent loadEvent;
+
+        LoadByIdTask(IssueWithBeaconDao dao, LoadEvent event) {
+            asyncTaskDao = dao;
+            loadEvent = event;
+        }
+
+        @Override
+        protected IssueWithBeacon doInBackground(Long... ids) {
+            return asyncTaskDao.getIssueWithBeaconById(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(IssueWithBeacon issueWithBeacon) {
+            if ((loadEvent != null) && (issueWithBeacon != null)) {
+                loadEvent.onSuccessIssue(issueWithBeacon);
             }
         }
     }

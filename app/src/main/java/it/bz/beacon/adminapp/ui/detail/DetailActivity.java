@@ -433,6 +433,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
         if (isEditing) {
             fabAddIssue.hide();
+            rbSignalStrength.setPinColor(ContextCompat.getColor(this, R.color.primary));
+            rbSignalStrength.setConnectingLineColor(ContextCompat.getColor(this, R.color.primary));
             rbSignalStrength.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
                 @Override
                 public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
@@ -460,6 +462,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
         else {
             fabAddIssue.show();
+            rbSignalStrength.setPinColor(ContextCompat.getColor(this, R.color.primary50));
+            rbSignalStrength.setConnectingLineColor(ContextCompat.getColor(this, R.color.primary50));
             rbSignalStrength.setOnRangeBarChangeListener(null);
             editInterval.removeTextChangedListener(this);
             switchTelemetry.setOnCheckedChangeListener(null);
@@ -562,8 +566,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             View child = viewGroup.getChildAt(i);
             if ((child instanceof SwitchCompat) ||
                     (child instanceof TextInputEditText) ||
-                    (child instanceof Button) ||
-                    (child instanceof RangeBar)) {
+                    (child instanceof Button) || (child instanceof RangeBar)) {
                 child.setEnabled(enabled);
             }
             else {
