@@ -4,14 +4,18 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.otto.Subscribe;
 
@@ -31,8 +35,10 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.eventbus.LocationEvent;
 import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
@@ -40,14 +46,15 @@ import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
 import it.bz.beacon.adminapp.ui.issue.map.IssuesMapFragment;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
-import it.bz.beacon.adminapp.ui.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.map.MapFragment;
+import it.bz.beacon.adminapp.ui.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
 
     private static final int LOCATION_PERMISSION_REQUEST = 1;
+    private static final int LOCATION_PERMISSION_REQUEST_FUSED = 2;
     private static final int MODE_BEACONS = 0;
     private static final int MODE_ISSUES = 1;
 
@@ -59,11 +66,16 @@ public class MainActivity extends BaseActivity
 
     protected boolean isMapShowing = false;
     protected boolean isFilterActive = false;
-    protected int filterIndex = 0;
+    private int filterIndex = 0;
     private Storage storage;
-    private String[] filterItems;
-    private String[] filterValues;
+    private String[] statusFilterItems;
+    private String[] statusFilterValues;
+    private String[] radiusFilterItems;
+    private int[] radiusFilterValues;
     private int currentMode = MODE_BEACONS;
+
+    private FusedLocationProviderClient fusedLocationClient;
+    private LatLng currentLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,21 +85,31 @@ public class MainActivity extends BaseActivity
         setSupportActionBar(toolbar);
         setupNavigationDrawer();
 
-        filterItems = new String[]{getString(R.string.status_all),
+        statusFilterItems = new String[]{getString(R.string.status_all),
                 getString(R.string.status_ok),
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
                 getString(R.string.status_issue),
                 getString(R.string.status_no_signal)};
-        filterValues = new String[]{Beacon.STATUS_ALL,
+        statusFilterValues = new String[]{Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
                 Beacon.STATUS_ISSUE,
                 Beacon.STATUS_NO_SIGNAL};
+        radiusFilterItems = new String[]{getString(R.string.status_all),
+                "1 km",
+                "5 km",
+                "10 km"};
+        radiusFilterValues = new int[]{0,
+                1000,
+                5000,
+                10000};
         navigationView.getMenu().getItem(0).setChecked(true);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(""));
+        getMyLocation();
     }
 
     @Override
@@ -157,14 +179,19 @@ public class MainActivity extends BaseActivity
             case R.id.menu_list:
                 isMapShowing = false;
                 if (currentMode == MODE_BEACONS) {
-                    switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(filterValues[filterIndex]));
+                    switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(statusFilterValues[filterIndex]));
                 }
                 else {
-                    switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
+                    switchFragment(getString(R.string.issues), IssuesFragment.newInstance(currentLocation));
                 }
                 break;
             case R.id.menu_filter:
-                showFilterDialog();
+                if ((currentMode == MODE_ISSUES) && (currentLocation == null)) {
+                    showLocationNotAvailableDialog();
+                }
+                else {
+                    showFilterDialog();
+                }
                 break;
             default:
                 break;
@@ -175,23 +202,94 @@ public class MainActivity extends BaseActivity
 
     private void showFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
-        builder.setTitle(getString(R.string.filter_dialog_title));
-        builder.setSingleChoiceItems(filterItems, filterIndex, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                filterIndex = item;
-                isFilterActive = (item != 0);
-            }
-        });
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                PubSub.getInstance().post(new StatusFilterEvent(filterValues[filterIndex]));
-                invalidateOptionsMenu();
-            }
-        });
+        if (currentMode == MODE_BEACONS) {
+            builder.setTitle(getString(R.string.filter_beacons));
+            builder.setSingleChoiceItems(statusFilterItems, filterIndex, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    filterIndex = item;
+                    isFilterActive = (item != 0);
+                }
+            });
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    PubSub.getInstance().post(new StatusFilterEvent(statusFilterValues[filterIndex]));
+                    invalidateOptionsMenu();
+                }
+            });
+        }
+        if (currentMode == MODE_ISSUES) {
+            builder.setTitle(getString(R.string.filter_issues));
+            builder.setSingleChoiceItems(radiusFilterItems, filterIndex, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    filterIndex = item;
+                    isFilterActive = (item != 0);
+                }
+            });
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    PubSub.getInstance().post(new RadiusFilterEvent(radiusFilterValues[filterIndex]));
+                    invalidateOptionsMenu();
+                }
+            });
+        }
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void showLocationNotAvailableDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+        builder.setTitle(getString(R.string.filter_issues));
+        builder.setMessage(getString(R.string.location_not_available));
+        builder.setPositiveButton(getString(R.string.ok), null);
+        builder.show();
+    }
+
+    private void getMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_PERMISSION_REQUEST_FUSED);
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+            else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST_FUSED);
+            }
+        }
+        else {
+            getFusedLocation();
+        }
+    }
+
+    private void getFusedLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                PubSub.getInstance().post(new LocationEvent(currentLocation));
+                            }
+                        }
+                    });
+        }
     }
 
     @Override
@@ -212,18 +310,20 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         navigationView.setCheckedItem(id);
+
+        isFilterActive = false;
+        filterIndex = 0;
+        isMapShowing = false;
 
         switch (id) {
             case R.id.navigation_beacons:
                 currentMode = MODE_BEACONS;
-                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(filterValues[filterIndex]));
-                isMapShowing = false;
+                switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(statusFilterValues[filterIndex]));
                 break;
             case R.id.navigation_issues:
                 currentMode = MODE_ISSUES;
-                switchFragment(getString(R.string.issues), IssuesFragment.newInstance());
+                switchFragment(getString(R.string.issues), IssuesFragment.newInstance(currentLocation));
                 break;
             case R.id.navigation_about:
                 switchFragment(getString(R.string.about), AboutFragment.newInstance());
@@ -307,6 +407,16 @@ public class MainActivity extends BaseActivity
                     showLocationDisabledFragment();
                 }
                 break;
+            case LOCATION_PERMISSION_REQUEST_FUSED:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        getFusedLocation();
+                    }
+                }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
@@ -330,8 +440,7 @@ public class MainActivity extends BaseActivity
                     .runOnCommit(new Runnable() {
                         @Override
                         public void run() {
-                            PubSub.getInstance().post(new StatusFilterEvent(filterValues[filterIndex]));
-                            Log.d(AdminApplication.LOG_TAG, "#1 post statusfilter: " + filterValues[filterIndex]);
+                            PubSub.getInstance().post(new StatusFilterEvent(statusFilterValues[filterIndex]));
                         }
                     })
                     .commit();

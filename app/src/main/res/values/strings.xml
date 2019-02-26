@@ -105,7 +105,9 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="add_image">Add image</string>
     <string name="choose_source">Source for image</string>
     <string name="uploading">Uploading image. Please wait…</string>
-    <string name="filter_dialog_title">Filter Beacons</string>
+    <string name="filter_beacons">Filter Beacons</string>
+    <string name="filter_issues">Filter Issues</string>
+    <string name="location_not_available">The current location is not available. It is needed to filter the issues by distance.</string>
     <string name="status_all">All</string>
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>

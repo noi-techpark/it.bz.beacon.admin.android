@@ -3,6 +3,8 @@ package it.bz.beacon.adminapp.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.location.Location;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +34,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
     private Context context;
     private List<IssueWithBeacon> originalValues;
     private List<IssueWithBeacon> issues = new ArrayList<>();
+    private LatLng currentLocation = null;
 
     public BeaconIssueAdapter(Context context) {
         this.context = context;
@@ -54,6 +59,11 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
         notifyDataSetChanged();
     }
 
+    public void setCurrentLocation(LatLng location) {
+        this.currentLocation = location;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return issues != null ? issues.size() : 0;
@@ -62,6 +72,12 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
     @Override
     public long getItemId(int position) {
         return issues.get(position).getId();
+    }
+
+    private double distanceBetween(LatLng point1, LatLng point2) {
+        float[] results = new float[1];
+        Location.distanceBetween(point1.latitude, point1.longitude, point2.latitude, point2.longitude, results);
+        return results[0];
     }
 
     @Override
@@ -77,6 +93,19 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
+                String searchFilter = "";
+                int radiusFilter = 0;
+
+                if (!TextUtils.isEmpty(constraint.toString())) {
+                    if (constraint.toString().indexOf('#') > 0) {
+                        searchFilter = constraint.toString().substring(0, constraint.toString().indexOf('#'));
+                    }
+
+                    if (constraint.toString().indexOf('#') < constraint.toString().length() - 1) {
+                        radiusFilter = Integer.parseInt(constraint.toString().substring(constraint.toString().indexOf('#') + 1));
+                    }
+                }
+
                 FilterResults results = new FilterResults();
                 List<IssueWithBeacon> filteredIssues = new ArrayList<>();
 
@@ -84,18 +113,51 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
                     originalValues = new ArrayList<>(issues);
                 }
 
-                if (constraint == null || constraint.length() == 0) {
-                    results.count = originalValues.size();
-                    results.values = originalValues;
+                if (searchFilter.length() == 0) {
+                    if (radiusFilter == 0) {
+                        results.count = originalValues.size();
+                        results.values = originalValues;
+                    }
+                    else {
+                        for (int i = 0; i < originalValues.size(); i++) {
+                            IssueWithBeacon issueWithBeacon = originalValues.get(i);
+                            if ((issueWithBeacon.getLat() != 0 && issueWithBeacon.getLng() != 0)) {
+                                if (currentLocation != null) {
+                                    if (distanceBetween(currentLocation, new LatLng(issueWithBeacon.getLat(), issueWithBeacon.getLng())) < radiusFilter) {
+                                        filteredIssues.add(issueWithBeacon);
+                                    }
+                                }
+                                // TODO: decide if issues should be added to filtered list if current location is not available
+//                                else {
+//                                    filteredIssues.add(issueWithBeacon);
+//                                }
+                            }
+                        }
+                        results.count = filteredIssues.size();
+                        results.values = filteredIssues;
+                    }
+
                 }
                 else {
-                    constraint = constraint.toString().toLowerCase();
+                    searchFilter = searchFilter.toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
-                        IssueWithBeacon issue = originalValues.get(i);
-                        if (issue.getProblem().toLowerCase().contains(constraint.toString())
-                                || issue.getProblemDescription().toLowerCase().contains(constraint.toString())
-                                || issue.getName().toLowerCase().contains(constraint.toString())) {
-                            filteredIssues.add(issue);
+                        IssueWithBeacon issueWithBeacon = originalValues.get(i);
+                        if (radiusFilter > 0) {
+                            if (currentLocation != null) {
+                                if ((distanceBetween(currentLocation, new LatLng(issueWithBeacon.getLat(), issueWithBeacon.getLng())) < radiusFilter) &&
+                                        (issueWithBeacon.getProblem().toLowerCase().contains(searchFilter)
+                                                || issueWithBeacon.getProblemDescription().toLowerCase().contains(searchFilter)
+                                                || issueWithBeacon.getName().toLowerCase().contains(searchFilter))) {
+                                    filteredIssues.add(issueWithBeacon);
+                                }
+                            }
+                        }
+                        else {
+                            if (issueWithBeacon.getProblem().toLowerCase().contains(searchFilter)
+                                    || issueWithBeacon.getProblemDescription().toLowerCase().contains(searchFilter)
+                                    || issueWithBeacon.getName().toLowerCase().contains(searchFilter)) {
+                                filteredIssues.add(issueWithBeacon);
+                            }
                         }
                     }
                     results.count = filteredIssues.size();

@@ -233,7 +233,6 @@ public class BeaconIssueRepository {
             if (insertEvent != null) {
                 insertEvent.onSuccess(id);
             }
-            Log.d(AdminApplication.LOG_TAG, "inserted: " + id);
         }
     }
 

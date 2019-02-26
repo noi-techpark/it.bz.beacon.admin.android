@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +17,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 import com.squareup.otto.Subscribe;
@@ -42,13 +47,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
-import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
-import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
-import it.bz.beacon.adminapp.ui.detail.DetailActivity;
+import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
 import it.bz.beacon.adminapp.ui.issue.IssueDetailActivity;
 import it.bz.beacon.adminapp.ui.map.BaseClusterItem;
 import it.bz.beacon.adminapp.ui.map.BeaconInfoWindowAdapter;
@@ -70,16 +72,19 @@ public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
 
     private GoogleMap map;
     private ClusterManager<BaseClusterItem> clusterManager;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LatLng currentLocation = null;
 
     private BeaconIssueViewModel beaconIssueViewModel;
     private List<IssueWithBeacon> mapIssues = new ArrayList<>();
-    private String statusFilter = Beacon.STATUS_ALL;
+    private int radiusFilter = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         beaconIssueViewModel = ViewModelProviders.of(this).get(BeaconIssueViewModel.class);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 
     @Override
@@ -109,10 +114,19 @@ public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
             public void onChanged(List<IssueWithBeacon> issueWithBeacons) {
                 if (issueWithBeacons != null && issueWithBeacons.size() > 0) {
                     mapIssues.clear();
-                    Log.d(AdminApplication.LOG_TAG, "#2 issues for map loaded: " + statusFilter);
-                    for (IssueWithBeacon IssueWithBeacon : issueWithBeacons) {
-                        if ((IssueWithBeacon.getLat() != 0 && IssueWithBeacon.getLng() != 0)) {
-                            mapIssues.add(IssueWithBeacon);
+                    for (IssueWithBeacon issueWithBeacon : issueWithBeacons) {
+                        if ((issueWithBeacon.getLat() != 0 && issueWithBeacon.getLng() != 0)) {
+                            if (radiusFilter > 0) {
+                                if (currentLocation != null) {
+                                    if (distanceBetween(currentLocation, new LatLng(issueWithBeacon.getLat(), issueWithBeacon.getLng())) < radiusFilter) {
+                                        mapIssues.add(issueWithBeacon);
+                                    }
+                                }
+                            }
+                            else {
+                                mapIssues.add(issueWithBeacon);
+                            }
+
                         }
                     }
                     if (map != null) {
@@ -123,9 +137,15 @@ public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
         });
     }
 
+    private double distanceBetween(LatLng point1, LatLng point2) {
+        float[] results = new float[1];
+        Location.distanceBetween(point1.latitude, point1.longitude, point2.latitude, point2.longitude, results);
+        return results[0];
+    }
+
     @Subscribe
-    public void onRadiusFilterChanged(StatusFilterEvent event) {
-        statusFilter = event.getStatus();
+    public void onRadiusFilterChanged(RadiusFilterEvent event) {
+        radiusFilter = event.getRadius();
         loadData();
     }
 
@@ -172,6 +192,15 @@ public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
         }
         else {
             map.setMyLocationEnabled(true);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            }
+                        }
+                    });
         }
     }
 
@@ -196,20 +225,6 @@ public class IssuesMapFragment extends Fragment implements OnMapReadyCallback,
             clusterManager.setAlgorithm(new GridBasedAlgorithm<BaseClusterItem>());
             clusterManager.setRenderer(new ClusterRenderer(getContext(), map, clusterManager));
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
-//            clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<IssueClusterItem>() {
-//                @Override
-//                public boolean onClusterClick(Cluster<IssueClusterItem> cluster) {
-//                    map.getUiSettings().setMapToolbarEnabled(false);
-//                    return false;
-//                }
-//            });
-//            clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<IssueClusterItem>() {
-//                @Override
-//                public boolean onClusterItemClick(IssueClusterItem poiClusterItem) {
-//                    map.getUiSettings().setMapToolbarEnabled(true);
-//                    return false;
-//                }
-//            });
             map.setOnCameraIdleListener(clusterManager);
             map.setOnMarkerClickListener(clusterManager);
             map.setOnInfoWindowClickListener(clusterManager);

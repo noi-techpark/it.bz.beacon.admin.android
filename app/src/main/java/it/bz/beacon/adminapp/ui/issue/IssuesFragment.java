@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.squareup.otto.Subscribe;
+
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
@@ -31,8 +34,10 @@ import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconIssueRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
+import it.bz.beacon.adminapp.eventbus.LocationEvent;
 import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
 import it.bz.beacon.adminapp.ui.adapter.BeaconIssueAdapter;
 
 public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -50,8 +55,18 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private BeaconIssueViewModel beaconIssueViewModel;
 
+    private String searchFilter = "";
+    private int radiusFilter = 0;
+    private LatLng currentLocation = null;
+
     public IssuesFragment() {
         // Required empty public constructor
+    }
+
+    public static IssuesFragment newInstance(LatLng currentLocation) {
+        IssuesFragment fragment = new IssuesFragment();
+        fragment.setCurrentLocation(currentLocation);
+        return fragment;
     }
 
     @Override
@@ -62,12 +77,25 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        PubSub.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PubSub.getInstance().unregister(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_issues, container, false);
         ButterKnife.bind(this, view);
 
         adapter = new BeaconIssueAdapter(getContext());
+        adapter.setCurrentLocation(currentLocation);
         recyclerIssues.setAdapter(adapter);
         recyclerIssues.setHasFixedSize(true);
         recyclerIssues.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -81,6 +109,10 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         loadData();
         return view;
+    }
+
+    private void setCurrentLocation(LatLng currentLocation) {
+        this.currentLocation = currentLocation;
     }
 
     private void loadData() {
@@ -99,9 +131,26 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
         });
     }
 
-    public static IssuesFragment newInstance() {
-        IssuesFragment fragment = new IssuesFragment();
-        return fragment;
+    @Subscribe
+    public void onRadiusFilterChanged(RadiusFilterEvent event) {
+        radiusFilter = event.getRadius();
+        setRadiusFilter(radiusFilter);
+    }
+
+    @Subscribe
+    public void onLocationChanged(LocationEvent event) {
+        currentLocation = event.getLocation();
+        adapter.setCurrentLocation(currentLocation);
+    }
+
+    void setSearchFilter(String filter) {
+        searchFilter = filter.replace('#', ' ');
+        adapter.getFilter().filter(searchFilter + '#' + String.valueOf(radiusFilter));
+    }
+
+    void setRadiusFilter(int filter) {
+        radiusFilter = filter;
+        adapter.getFilter().filter(searchFilter + '#' + String.valueOf(radiusFilter));
     }
 
     @Override
@@ -118,7 +167,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
+                setSearchFilter(s);
                 return false;
             }
         });
