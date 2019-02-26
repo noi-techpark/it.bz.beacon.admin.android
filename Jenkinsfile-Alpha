@@ -80,10 +80,10 @@ pipeline {
     post {
         always {
             sh 'rm -rf keystore.jks'            
-            sh 'rm -rf app/src/release/res/values/google_maps_api.xml'
-            sh 'rm -rf app/src/debug/res/values/google_maps_api.xml'
-            sh 'rm -rf app/src/release/res/values/beacon_suedtirol_api.xml'
-            sh 'rm -rf app/src/debug/res/values/beacon_suedtirol_api.xml'
+            // sh 'rm -rf app/src/release/res/values/google_maps_api.xml'
+            // sh 'rm -rf app/src/debug/res/values/google_maps_api.xml'
+            // sh 'rm -rf app/src/release/res/values/beacon_suedtirol_api.xml'
+            // sh 'rm -rf app/src/debug/res/values/beacon_suedtirol_api.xml'
         }
     }
 }
