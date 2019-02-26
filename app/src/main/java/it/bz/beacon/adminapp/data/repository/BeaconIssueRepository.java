@@ -15,15 +15,13 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
-import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
 import it.bz.beacon.adminapp.data.dao.IssueWithBeaconDao;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
-import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
-import it.bz.beacon.adminapp.data.event.LoadEvent;
+import it.bz.beacon.adminapp.data.event.LoadIssueEvent;
 
 public class BeaconIssueRepository {
 
@@ -59,7 +57,7 @@ public class BeaconIssueRepository {
         return issueWithBeaconDao.getAllIssuesWithBeacon();
     }
 
-    public void getIssueWithBeaconById(long id, LoadEvent loadEvent) {
+    public void getIssueWithBeaconById(long id, LoadIssueEvent loadEvent) {
         new LoadByIdTask(issueWithBeaconDao, loadEvent).execute(id);
     }
 
@@ -121,7 +119,6 @@ public class BeaconIssueRepository {
 
                     @Override
                     public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
-                        Log.d(AdminApplication.LOG_TAG, "onSuccessBeacon: " + statusCode);
                         if (result != null) {
                             for (int i = 0; i < result.size(); i++) {
                                 saveBeaconIssue(result.get(i));
@@ -167,48 +164,6 @@ public class BeaconIssueRepository {
         insert(beaconIssue, null);
     }
 
-    public void refreshBeaconIssue(long beaconIssueId, final DataUpdateEvent dataUpdateEvent) {
-        try {
-            AdminApplication.getIssueApi().getUsingGET1Async(beaconIssueId, new ApiCallback<io.swagger.client.model.BeaconIssue>() {
-                @Override
-                public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (dataUpdateEvent != null) {
-                        if (statusCode == 403) {
-                            dataUpdateEvent.onAuthenticationFailed();
-                        }
-                        else {
-                            dataUpdateEvent.onError();
-                        }
-                    }
-                }
-
-                @Override
-                public void onSuccess(io.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
-                    if (remoteBeaconIssue != null) {
-                        saveBeaconIssue(remoteBeaconIssue);
-                        if (dataUpdateEvent != null) {
-                            dataUpdateEvent.onSuccess();
-                        }
-                    }
-                }
-
-                @Override
-                public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-                }
-
-                @Override
-                public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-                }
-            });
-        }
-        catch (ApiException e) {
-            Log.e(AdminApplication.LOG_TAG, e.getMessage());
-            if (dataUpdateEvent != null) {
-                dataUpdateEvent.onError();
-            }
-        }
-    }
-
     public void insert(BeaconIssue beaconIssue, InsertEvent event) {
         new InsertAsyncTask(beaconIssueDao, event).execute(beaconIssue);
     }
@@ -239,9 +194,9 @@ public class BeaconIssueRepository {
     private static class LoadByIdTask extends AsyncTask<Long, Void, IssueWithBeacon> {
 
         private IssueWithBeaconDao asyncTaskDao;
-        private LoadEvent loadEvent;
+        private LoadIssueEvent loadEvent;
 
-        LoadByIdTask(IssueWithBeaconDao dao, LoadEvent event) {
+        LoadByIdTask(IssueWithBeaconDao dao, LoadIssueEvent event) {
             asyncTaskDao = dao;
             loadEvent = event;
         }
@@ -254,12 +209,11 @@ public class BeaconIssueRepository {
         @Override
         protected void onPostExecute(IssueWithBeacon issueWithBeacon) {
             if ((loadEvent != null) && (issueWithBeacon != null)) {
-                loadEvent.onSuccessIssue(issueWithBeacon);
+                loadEvent.onSuccess(issueWithBeacon);
+            }
+            else {
+                loadEvent.onError();
             }
         }
-    }
-
-    public void deleteBeaconIssue(BeaconIssue beacon) {
-        beaconIssueDao.delete(beacon);
     }
 }

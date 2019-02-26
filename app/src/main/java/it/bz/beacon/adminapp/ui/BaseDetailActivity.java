@@ -62,13 +62,17 @@ public abstract class BaseDetailActivity extends BaseActivity {
 
     protected abstract void clearValidationErrors();
 
+    protected boolean shouldShowCloseWarning() {
+        return isEditing;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
             case android.R.id.home:
-                if (isEditing) {
+                if (shouldShowCloseWarning()) {
                     showCloseWarning();
                 }
                 else {
@@ -106,7 +110,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isEditing) {
+        if (shouldShowCloseWarning()) {
             showCloseWarning();
         }
         else {

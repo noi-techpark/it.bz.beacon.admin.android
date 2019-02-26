@@ -7,7 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,10 +34,9 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
-import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
-import it.bz.beacon.adminapp.data.event.LoadEvent;
+import it.bz.beacon.adminapp.data.event.LoadIssueEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
@@ -44,6 +46,15 @@ import it.bz.beacon.adminapp.util.DateFormatter;
 public class IssueDetailActivity extends BaseDetailActivity {
 
     public static final String EXTRA_ISSUE_ID = "EXTRA_ISSUE_ID";
+
+    @BindView(R.id.progress)
+    protected ConstraintLayout progress;
+
+    @BindView(R.id.progressText)
+    protected TextView txtProgress;
+
+    @BindView(R.id.scrollview)
+    protected ScrollView content;
 
     @BindView(R.id.beacon_name)
     protected TextView txtBeaconName;
@@ -255,17 +266,19 @@ public class IssueDetailActivity extends BaseDetailActivity {
     }
 
     private void loadIssue() {
-        beaconIssueViewModel.getIssueWithBeaconById(issueId, new LoadEvent() {
-            @Override
-            public void onSuccessBeacon(BeaconMinimal beaconMinimal) {
+        showProgress(getString(R.string.loading));
 
-            }
-
+        beaconIssueViewModel.getIssueWithBeaconById(issueId, new LoadIssueEvent() {
             @Override
-            public void onSuccessIssue(IssueWithBeacon issueWithBeacon) {
+            public void onSuccess(IssueWithBeacon issueWithBeacon) {
                 issue = issueWithBeacon;
                 showData();
                 resolve();
+            }
+
+            @Override
+            public void onError() {
+                Toast.makeText(IssueDetailActivity.this, getString(R.string.general_error), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -292,6 +305,12 @@ public class IssueDetailActivity extends BaseDetailActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private void showProgress(String text) {
+        txtProgress.setText(text);
+        content.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
+    }
+
     protected void showData() {
         if (issue != null) {
             txtBeaconName.setText(issue.getName());
@@ -315,6 +334,8 @@ public class IssueDetailActivity extends BaseDetailActivity {
                 txtDeviceStatus.setText(getString(R.string.status_configuration_pending));
             }
         }
+        content.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
     }
 
     @Override
@@ -330,5 +351,18 @@ public class IssueDetailActivity extends BaseDetailActivity {
         isEditing = true;
         invalidateOptionsMenu();
         setUpToolbar(getString(R.string.issue));
+    }
+
+    @Override
+    protected boolean shouldShowCloseWarning() {
+        boolean shouldShow = false;
+
+        if ((editSolution.getText() != null) && (!TextUtils.isEmpty(editSolution.getText().toString()))) {
+            shouldShow = true;
+        }
+        if ((editSolutionDescription.getText() != null) && (!TextUtils.isEmpty(editSolutionDescription.getText().toString()))) {
+            shouldShow = true;
+        }
+        return shouldShow;
     }
 }

@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -98,6 +99,7 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
+import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
@@ -319,8 +321,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        makeMapScrollable();
         // TODO: figure out how to optimize following step (takes much time)
         mapView.onCreate(savedInstanceState);
 
@@ -579,16 +579,24 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private void loadBeacon() {
         showProgress(getString(R.string.loading));
 
-        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
-            @Override
-            public void onChanged(@Nullable Beacon changedBeacon) {
-                if (!isEditing) {
-                    beacon = changedBeacon;
-                    showData();
-                    mapView.getMapAsync(DetailActivity.this);
-                }
-            }
-        });
+        beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
+                    @Override
+                    public void onSuccess(Beacon loadedBeacon) {
+                        if (!isEditing) {
+                            beacon = loadedBeacon;
+                            showData();
+                            mapView.getMapAsync(DetailActivity.this);
+                            fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
+                            makeMapScrollable();
+//                            Debug.stopMethodTracing();
+                        }
+                    }
+
+                    @Override
+                    public void onError() {
+                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                    }
+                });
     }
 
     @Override

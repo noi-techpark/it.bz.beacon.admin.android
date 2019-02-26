@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
-import it.bz.beacon.adminapp.data.event.LoadEvent;
+import it.bz.beacon.adminapp.data.event.LoadIssueEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconIssueRepository;
 
 public class BeaconIssueViewModel extends AndroidViewModel {
@@ -29,7 +29,7 @@ public class BeaconIssueViewModel extends AndroidViewModel {
         return repository.getAllIssuesWithBeacon();
     }
 
-    public void getIssueWithBeaconById(long id, LoadEvent loadEvent) {
+    public void getIssueWithBeaconById(long id, LoadIssueEvent loadEvent) {
         repository.getIssueWithBeaconById(id, loadEvent);
     }
 

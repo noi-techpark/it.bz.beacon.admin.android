@@ -3,7 +3,9 @@ package it.bz.beacon.adminapp.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.os.Debug;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
@@ -203,6 +206,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+//                    Debug.startMethodTracing();
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());

@@ -57,6 +57,7 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
+import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
@@ -144,20 +145,42 @@ public class PendingConfigurationActivity extends BaseActivity {
     private void loadBeacon() {
 //        showProgress(getString(R.string.loading));
 
-        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
+//        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
+//            @Override
+//            public void onChanged(@Nullable Beacon changedBeacon) {
+//                if (changedBeacon != null) {
+//                    beacon = changedBeacon;
+//                    beaconName = changedBeacon.getName();
+//                    setUpToolbar();
+//                    if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
+//                        showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
+//                    }
+//                    else {
+//                        isPendingConfigEmpty = true;
+//                    }
+//                }
+//            }
+//        });
+
+        beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
-            public void onChanged(@Nullable Beacon changedBeacon) {
-                if (changedBeacon != null) {
-                    beacon = changedBeacon;
-                    beaconName = changedBeacon.getName();
+            public void onSuccess(Beacon loadedBeacon) {
+                if (loadedBeacon != null) {
+                    beacon = loadedBeacon;
+                    beaconName = loadedBeacon.getName();
                     setUpToolbar();
-                    if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
-                        showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
+                    if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
+                        showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
                     }
                     else {
                         isPendingConfigEmpty = true;
                     }
                 }
+            }
+
+            @Override
+            public void onError() {
+                showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
             }
         });
     }

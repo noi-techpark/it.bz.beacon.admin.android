@@ -7,7 +7,6 @@ import java.util.List;
 import androidx.lifecycle.AndroidViewModel;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
-import it.bz.beacon.adminapp.data.event.LoadEvent;
 import it.bz.beacon.adminapp.data.repository.PendingSecureConfigRepository;
 
 public class PendingSecureConfigViewModel extends AndroidViewModel {

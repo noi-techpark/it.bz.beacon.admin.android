@@ -1,11 +1,8 @@
 package it.bz.beacon.adminapp.data.entity;
 
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(indices = {@Index("beaconId")})
 public class BeaconIssue {
