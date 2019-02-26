@@ -75,7 +75,6 @@ public abstract class BeaconDatabase extends RoomDatabase {
 ////                @Override
 //                public void onCreate(@NonNull SupportSQLiteDatabase db) {
 //                    super.onCreate(db);
-//                    // TODO: remove this in production
 //                    new PopulateDbTask(INSTANCE).execute();
 //                }
             };
@@ -99,7 +98,7 @@ public abstract class BeaconDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("DROP TABLE IF EXISTS `BeaconIssue`");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `BeaconIssue` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`beaconId`) REFERENCES `Beacon`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BeaconIssue` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT)");
             database.execSQL("CREATE INDEX `index_BeaconIssue_beaconId` ON `BeaconIssue` (`beaconId`)");
         }
     };

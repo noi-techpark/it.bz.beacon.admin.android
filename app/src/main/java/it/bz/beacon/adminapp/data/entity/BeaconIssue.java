@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(entity = Beacon.class, parentColumns = "id", childColumns = "beaconId", onDelete = CASCADE), indices = {@Index("beaconId")})
+@Entity(indices = {@Index("beaconId")})
 public class BeaconIssue {
 
     @PrimaryKey

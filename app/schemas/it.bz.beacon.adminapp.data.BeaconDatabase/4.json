@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "d3debab3bdcba0a40fcfabcd7057977b",
+    "identityHash": "9589535511f28e1f5971b132a15a51ce",
     "entities": [
       {
         "tableName": "Beacon",
@@ -220,7 +220,7 @@
       },
       {
         "tableName": "BeaconIssue",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`beaconId`) REFERENCES `Beacon`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `beaconId` INTEGER NOT NULL, `problem` TEXT, `problemDescription` TEXT, `reporter` TEXT, `reportDate` INTEGER, `resolved` INTEGER NOT NULL, `resolveDate` INTEGER, `solution` TEXT, `solutionDescription` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -299,19 +299,7 @@
             "createSql": "CREATE  INDEX `index_BeaconIssue_beaconId` ON `${TABLE_NAME}` (`beaconId`)"
           }
         ],
-        "foreignKeys": [
-          {
-            "table": "Beacon",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "beaconId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "PendingSecureConfig",
@@ -342,7 +330,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d3debab3bdcba0a40fcfabcd7057977b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9589535511f28e1f5971b132a15a51ce\")"
     ]
   }
 }

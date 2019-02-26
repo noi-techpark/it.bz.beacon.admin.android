@@ -323,7 +323,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         makeMapScrollable();
         // TODO: figure out how to optimize following step (takes much time)
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
 
         images.setHasFixedSize(true);
         images.setItemAnimator(new DefaultItemAnimator());
@@ -586,6 +585,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 if (!isEditing) {
                     beacon = changedBeacon;
                     showData();
+                    mapView.getMapAsync(DetailActivity.this);
                 }
             }
         });

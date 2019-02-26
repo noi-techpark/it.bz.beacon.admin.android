@@ -18,7 +18,4 @@ public abstract class BeaconImageDao implements BaseDao<BeaconImage> {
 
     @Query("SELECT * FROM BeaconImage WHERE id = :id")
     public abstract LiveData<BeaconImage> getById(long id);
-
-    @Query("DELETE FROM BeaconImage")
-    abstract void deleteAll();
 }
