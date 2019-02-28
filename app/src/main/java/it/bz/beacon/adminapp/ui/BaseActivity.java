@@ -1,10 +1,9 @@
 package it.bz.beacon.adminapp.ui;
 
 import android.os.Bundle;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import butterknife.BindView;
 import it.bz.beacon.adminapp.R;
 
