@@ -1,0 +1,89 @@
+pipeline {
+    agent {
+        node {
+            label 'mac'
+        }
+    }
+
+    parameters {
+        string(name: 'VERSION_NAME', defaultValue: '1.0.0', description: 'App Version Name')
+    }
+
+    environment {
+        GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
+        BEACON_SUEDTIROL_API_URL = "https://api.beacon.bz.it"
+        KONTAKT_IO_API_KEY = credentials('beacon-admin-android-kontakt-io-api-key')
+        KEYSTORE_FILE = credentials('beacon-admin-android-keystore-file')
+        KEYSTORE_PASSWORD = credentials('beacon-admin-android-keystore-password')
+        KEYSTORE_ALIAS = credentials('beacon-admin-android-keystore-alias')
+        KEYSTORE_ALIAS_PASSWORD = credentials('beacon-admin-android-keystore-alias-password')
+        SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
+        GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
+    }
+
+    stages {
+        stage('Configure') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'cp config/google_maps_api.xml app/src/release/res/values/google_maps_api.xml'
+                    sh 'cp config/google_maps_api.xml app/src/debug/res/values/google_maps_api.xml'
+                    sh 'sed -i "" "s%GOOGLE_MAPS_API_KEY%${GOOGLE_MAPS_API_KEY}%" app/src/release/res/values/google_maps_api.xml'
+                    sh 'sed -i "" "s%GOOGLE_MAPS_API_KEY%${GOOGLE_MAPS_API_KEY}%" app/src/debug/res/values/google_maps_api.xml'
+
+                    sh 'cp config/beacon_suedtirol_api.xml app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'cp config/beacon_suedtirol_api.xml app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%BEACON_SUEDTIROL_API_URL%${BEACON_SUEDTIROL_API_URL}%" app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%BEACON_SUEDTIROL_API_URL%${BEACON_SUEDTIROL_API_URL}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
+
+                    sh 'cat "${KEYSTORE_FILE}" > keystore.jks'
+                }
+            }
+        }
+        stage('Dependencies') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'bundle install --path=vendor/bundle'
+                    sh 'bundle update'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'bundle exec fastlane test'
+                }
+            }
+        }
+        stage('Build & Deploy') {
+            steps {
+                ansiColor('xterm') {
+                    sh 'bundle exec fastlane alpha'
+                }
+            }
+        }
+        stage('Version Bump') {
+            steps {
+                ansiColor('xterm') {
+                    sshagent (credentials: ['jenkins_github_ssh_key']) {
+                        sh 'git remote set-url origin ${GIT_REPOSITORY}'
+                        sh 'git add app/build.gradle'
+                        sh 'git commit -m "Version increment"'
+                        sh 'git push origin HEAD:master'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'rm -rf keystore.jks'            
+            sh 'rm -rf app/src/release/res/values/google_maps_api.xml'
+            sh 'rm -rf app/src/debug/res/values/google_maps_api.xml'
+            sh 'rm -rf app/src/release/res/values/beacon_suedtirol_api.xml'
+            sh 'rm -rf app/src/debug/res/values/beacon_suedtirol_api.xml'
+        }
+    }
+}
