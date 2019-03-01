@@ -41,13 +41,11 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,6 +84,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private String beaconName;
     private Beacon beacon;
     private boolean isPendingConfigEmpty = true;
+    private boolean isPendingConfigNull = true;
 
     private BeaconViewModel beaconViewModel;
     private PendingSecureConfigViewModel pendingSecureConfigViewModel;
@@ -143,25 +142,6 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void loadBeacon() {
-//        showProgress(getString(R.string.loading));
-
-//        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
-//            @Override
-//            public void onChanged(@Nullable Beacon changedBeacon) {
-//                if (changedBeacon != null) {
-//                    beacon = changedBeacon;
-//                    beaconName = changedBeacon.getName();
-//                    setUpToolbar();
-//                    if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
-//                        showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
-//                    }
-//                    else {
-//                        isPendingConfigEmpty = true;
-//                    }
-//                }
-//            }
-//        });
-
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
             public void onSuccess(Beacon loadedBeacon) {
@@ -173,7 +153,12 @@ public class PendingConfigurationActivity extends BaseActivity {
                         showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
                     }
                     else {
-                        isPendingConfigEmpty = true;
+                        if (loadedBeacon.getPendingConfiguration() == null) {
+                            isPendingConfigNull = true;
+                        }
+                        else {
+                            isPendingConfigEmpty = true;
+                        }
                     }
                 }
             }
@@ -217,6 +202,10 @@ public class PendingConfigurationActivity extends BaseActivity {
             section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
             section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
             addSection(section, getString(R.string.details_eddystone));
+            isPendingConfigNull = false;
+        }
+        else {
+            isPendingConfigNull = true;
         }
     }
 
@@ -304,7 +293,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             private void updateBeaconNearby(ISecureProfile profile) {
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = profile;
-                    if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigEmpty) {
+                    if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigNull) {
                         btnApplyNow.setEnabled(true);
                     }
                 }
@@ -355,6 +344,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             dialog.dismiss();
                         }
                         isPendingConfigEmpty = true;
+                        isPendingConfigNull = true;
                         txtEmpty.setText(getString(R.string.applied_successfully));
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);
@@ -369,6 +359,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             dialog.dismiss();
                         }
                         isPendingConfigEmpty = true;
+                        isPendingConfigNull = true;
                         txtEmpty.setText(error.getMessage());
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);

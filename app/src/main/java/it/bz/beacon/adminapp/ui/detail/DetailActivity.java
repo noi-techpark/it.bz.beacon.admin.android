@@ -331,7 +331,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
 
-        loadBeacon();
+
         initializeKontakt();
     }
 
@@ -391,6 +391,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     protected void onResume() {
         super.onResume();
+        loadBeacon();
         startScanningIfLocationPermissionGranted();
         mapView.onResume();
         setUpToolbar(beaconName);
@@ -1197,6 +1198,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                             dialog.dismiss();
                         }
                         showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                        loadBeacon();
                     }
 
                     @Override
