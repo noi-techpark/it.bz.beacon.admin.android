@@ -8,6 +8,7 @@
     <string name="network_problems">Network Problems</string>
     <string name="disturbances">Disturbances</string>
     <string name="issues">Issues</string>
+    <string name="issue">Issue</string>
     <string name="ok">OK</string>
     <string name="cancel" tools:override="true">Cancel</string>
     <string name="about">About</string>
@@ -57,6 +58,8 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="details_last_seen">Last seen: %s</string>
+    <string name="last_seen">Last seen</string>
+    <string name="last_updated">Last updated</string>
     <string name="percent">%d %%</string>
     <string name="rssi">Signal strength: %d dB</string>
     <string name="degree">%d °C</string>
@@ -102,7 +105,9 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="add_image">Add image</string>
     <string name="choose_source">Source for image</string>
     <string name="uploading">Uploading image. Please wait…</string>
-    <string name="filter_dialog_title">Filter Beacons</string>
+    <string name="filter_beacons">Filter Beacons</string>
+    <string name="filter_issues">Filter Issues</string>
+    <string name="location_not_available">The current location is not available. It is needed to filter the issues by distance.</string>
     <string name="status_all">All</string>
     <string name="status_ok">OK</string>
     <string name="status_battery_low">Battery low</string>
@@ -117,11 +122,12 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
     <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving changes…</string>
+    <string name="saving_issue">Saving issue…</string>
     <string name="applying">Applying configuration to beacon…</string>
     <string name="deleting">Deleting image…</string>
     <string name="image_saved">Image saved</string>
     <string name="image_error">Image could not be saved</string>
-    <string name="close_warning">Do you want to quit editing without saving?</string>
+    <string name="close_warning">Do you want to quit without saving?</string>
     <string name="delete_warning">Do you really want to delete this image?</string>
     <string name="warning">Warning</string>
     <string name="battery_warning">Modifying this parameter can negatively affect the duration of the battery!</string>
@@ -149,6 +155,16 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="invalid_major_minor">Value must be between 0 and 65535</string>
     <string name="invalid_uuid">Invalid value for an UUID</string>
     <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
+    <string name="problem_description">Problem description</string>
+    <string name="new_issue">New Issue</string>
+    <string name="resolve">Resolve</string>
+    <string name="report">Report</string>
+    <string name="problem">Problem</string>
+    <string name="solution">Solution</string>
+    <string name="solution_description">Solution Description</string>
+    <string name="reporter">Reporter</string>
+    <string name="date">Date</string>
+    <string name="description_hint">short, clear description</string>
 
 
 </resources>

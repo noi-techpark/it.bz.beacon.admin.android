@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -42,28 +44,11 @@ public class AboutFragment extends Fragment {
         return view;
     }
 
-//    private void loadData() {
-//        showLoading();
-//        final LiveData<List<IncidentHistory>> liveData = viewModel.getAllByMatriculationNumber(matriculationNumber);
-//        liveData.observe(this, new Observer<List<IncidentHistory>>() {
-//            @Override
-//            public void onChanged(@Nullable List<IncidentHistory> incidentHistories) {
-//                liveData.removeObserver(this);
-//                if (incidentHistories != null) {
-//                    adapter.setIncidentHistorys(incidentHistories);
-//                    if (incidentHistories.size() > 0) {
-//                        showList();
-//                    }
-//                    else {
-//                        showNoData();
-//                    }
-//                }
-//                else {
-//                    showNoData();
-//                }
-//            }
-//        });
-//    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
+    }
 
     private void showLoading() {
         txtEmpty.setVisibility(View.GONE);

@@ -18,6 +18,7 @@ public class BeaconTabsFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String statusFilter;
 
     public BeaconTabsFragment() {
         // Required empty public constructor
@@ -26,17 +27,19 @@ public class BeaconTabsFragment extends Fragment {
     /**
      * @return A new instance of fragment BeaconTabsFragment.
      */
-    public static BeaconTabsFragment newInstance() {
+    public static BeaconTabsFragment newInstance(String statusFilter) {
         BeaconTabsFragment fragment = new BeaconTabsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        fragment.setStatusFilter(statusFilter);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+    }
+
+    private void setStatusFilter(String statusFilter) {
+        this.statusFilter = statusFilter;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class BeaconTabsFragment extends Fragment {
         View tabView = inflater.inflate(R.layout.fragment_beacon_tabs, container, false);
         tabLayout = tabView.findViewById(R.id.tabs);
         viewPager = tabView.findViewById(R.id.viewpager);
-        viewPager.setAdapter(new BeaconTabsAdapter(getChildFragmentManager(), getActivity()));
+        viewPager.setAdapter(new BeaconTabsAdapter(getChildFragmentManager(), getActivity(), statusFilter));
 
         tabLayout.post(new Runnable() {
             @Override
@@ -56,11 +59,5 @@ public class BeaconTabsFragment extends Fragment {
         });
 
         return tabView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.beacons, menu);
     }
 }

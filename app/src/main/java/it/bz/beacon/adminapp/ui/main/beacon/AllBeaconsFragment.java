@@ -1,9 +1,6 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.appcompat.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +9,9 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
+import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
@@ -26,8 +26,9 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
         // Required empty public constructor
     }
 
-    public static AllBeaconsFragment newInstance() {
+    public static AllBeaconsFragment newInstance(String statusFilter) {
         AllBeaconsFragment fragment = new AllBeaconsFragment();
+        fragment.prepareStatusFilter(statusFilter);
         return fragment;
     }
 
@@ -52,7 +53,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     protected void getBeacons(Observer<List<BeaconMinimal>> observer) {
-        beaconViewModel.getAll().observe(this, observer);
+        beaconViewModel.getAll().observe(getViewLifecycleOwner(), observer);
     }
 
     @Subscribe
@@ -63,7 +64,7 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.search, menu);
+        inflater.inflate(R.menu.list, menu);
         MenuItem search = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) search.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

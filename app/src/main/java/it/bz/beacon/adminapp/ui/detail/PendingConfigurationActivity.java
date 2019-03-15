@@ -41,13 +41,11 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +55,7 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
+import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
@@ -85,6 +84,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private String beaconName;
     private Beacon beacon;
     private boolean isPendingConfigEmpty = true;
+    private boolean isPendingConfigNull = true;
 
     private BeaconViewModel beaconViewModel;
     private PendingSecureConfigViewModel pendingSecureConfigViewModel;
@@ -142,22 +142,30 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void loadBeacon() {
-//        showProgress(getString(R.string.loading));
-
-        beaconViewModel.getById(beaconId).observe(this, new Observer<Beacon>() {
+        beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
-            public void onChanged(@Nullable Beacon changedBeacon) {
-                if (changedBeacon != null) {
-                    beacon = changedBeacon;
-                    beaconName = changedBeacon.getName();
+            public void onSuccess(Beacon loadedBeacon) {
+                if (loadedBeacon != null) {
+                    beacon = loadedBeacon;
+                    beaconName = loadedBeacon.getName();
                     setUpToolbar();
-                    if (!TextUtils.isEmpty(changedBeacon.getPendingConfiguration())) {
-                        showDifferences(changedBeacon, (new Gson()).fromJson(changedBeacon.getPendingConfiguration(), PendingConfiguration.class));
+                    if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
+                        showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
                     }
                     else {
-                        isPendingConfigEmpty = true;
+                        if (loadedBeacon.getPendingConfiguration() == null) {
+                            isPendingConfigNull = true;
+                        }
+                        else {
+                            isPendingConfigEmpty = true;
+                        }
                     }
                 }
+            }
+
+            @Override
+            public void onError() {
+                showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
             }
         });
     }
@@ -194,6 +202,10 @@ public class PendingConfigurationActivity extends BaseActivity {
             section = addBooleanDifference(beacon.isEddystoneEtlm(), pendingConfiguration.isEddystoneEtlm(), getString(R.string.details_eddystone_etlm), section);
             section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
             addSection(section, getString(R.string.details_eddystone));
+            isPendingConfigNull = false;
+        }
+        else {
+            isPendingConfigNull = true;
         }
     }
 
@@ -281,7 +293,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             private void updateBeaconNearby(ISecureProfile profile) {
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = profile;
-                    if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigEmpty) {
+                    if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigNull) {
                         btnApplyNow.setEnabled(true);
                     }
                 }
@@ -332,6 +344,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             dialog.dismiss();
                         }
                         isPendingConfigEmpty = true;
+                        isPendingConfigNull = true;
                         txtEmpty.setText(getString(R.string.applied_successfully));
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);
@@ -346,6 +359,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             dialog.dismiss();
                         }
                         isPendingConfigEmpty = true;
+                        isPendingConfigNull = true;
                         txtEmpty.setText(error.getMessage());
                         showDifferences(beacon, null);
                         btnApplyNow.setEnabled(false);

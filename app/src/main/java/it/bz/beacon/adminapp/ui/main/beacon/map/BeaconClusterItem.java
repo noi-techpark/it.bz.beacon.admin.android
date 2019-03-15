@@ -1,32 +1,22 @@
-package it.bz.beacon.adminapp.ui.main.map;
+package it.bz.beacon.adminapp.ui.main.beacon.map;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
 
-import it.bz.beacon.adminapp.AdminApplication;
-import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.ui.map.BaseClusterItem;
 
-public class BeaconClusterItem implements ClusterItem {
+public class BeaconClusterItem extends BaseClusterItem {
 
-    private LatLng position;
     private BeaconMinimal beaconMinimal;
 
     public BeaconClusterItem(BeaconMinimal beaconMinimal) {
         this.beaconMinimal = beaconMinimal;
+        this.beaconId = beaconMinimal.getId();
+        this.name = beaconMinimal.getName();
+        this.status = beaconMinimal.getStatus();
         if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
             this.position = new LatLng(beaconMinimal.getLat(), beaconMinimal.getLng());
         }
-    }
-
-    @Override
-    public LatLng getPosition() {
-        return position;
-    }
-
-    @Override
-    public String getTitle() {
-        return beaconMinimal.getName();
     }
 
     @Override
@@ -36,9 +26,5 @@ public class BeaconClusterItem implements ClusterItem {
 
         String manufacturerId = beaconMinimal.getManufacturerId();
         return manufacturerId + System.getProperty("line.separator") + "Major: " + major + System.getProperty("line.separator") + "Minor: " + minor;
-    }
-
-    public BeaconMinimal getBeaconMinimal() {
-        return beaconMinimal;
     }
 }

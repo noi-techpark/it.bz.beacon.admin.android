@@ -11,12 +11,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.gms.maps.MapsInitializer;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.AuthControllerApi;
 import io.swagger.client.api.BeaconControllerApi;
 import io.swagger.client.api.ImageControllerApi;
+import io.swagger.client.api.IssueControllerApi;
 import it.bz.beacon.adminapp.data.Storage;
 
 public class AdminApplication extends Application {
@@ -24,6 +26,7 @@ public class AdminApplication extends Application {
     private static AuthControllerApi authControllerApi;
     private static BeaconControllerApi beaconControllerApi;
     private static ImageControllerApi imageControllerApi;
+    private static IssueControllerApi issueControllerApi;
     private static Storage storage;
     public static final String LOG_TAG = "BeaconAdmin";
 
@@ -45,12 +48,14 @@ public class AdminApplication extends Application {
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
         imageControllerApi = new ImageControllerApi();
+        issueControllerApi = new IssueControllerApi();
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
             setBearerToken(storage.getLoginUserToken());
         }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkStateReceiver(), intentFilter);
+        MapsInitializer.initialize(this);
     }
 
     public static void setBearerToken(String bearerToken) {
@@ -60,7 +65,7 @@ public class AdminApplication extends Application {
 
     public static boolean isOnline(Context context) {
         ConnectivityManager connectivityManager =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (connectivityManager != null) {
             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
@@ -70,12 +75,14 @@ public class AdminApplication extends Application {
     }
 
     public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View view = activity.getCurrentFocus();
         if (view == null) {
             view = new View(activity);
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -102,5 +109,9 @@ public class AdminApplication extends Application {
 
     public static ImageControllerApi getImageApi() {
         return imageControllerApi;
+    }
+
+    public static IssueControllerApi getIssueApi() {
+        return issueControllerApi;
     }
 }

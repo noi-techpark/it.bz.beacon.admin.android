@@ -1,4 +1,4 @@
-package it.bz.beacon.adminapp.ui.main.map;
+package it.bz.beacon.adminapp.ui.map;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;

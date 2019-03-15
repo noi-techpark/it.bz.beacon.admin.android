@@ -21,7 +21,8 @@ import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
-import it.bz.beacon.adminapp.data.event.LoadEvent;
+import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
+import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
 
 public class BeaconRepository {
 
@@ -45,12 +46,16 @@ public class BeaconRepository {
         return beacons;
     }
 
-    public LiveData<Beacon> getById(long id) {
+    public LiveData<Beacon> getByIdLive(long id) {
         refreshBeacon(id, null);
-        return beaconDao.getById(id);
+        return beaconDao.getByIdLive(id);
     }
 
-    public void getByInstanceId(String instanceId, LoadEvent loadEvent) {
+    public void getById(long id, LoadBeaconEvent loadEvent) {
+        new LoadByIdTask(beaconDao, loadEvent).execute(id);
+    }
+
+    public void getByInstanceId(String instanceId, LoadBeaconMinimalEvent loadEvent) {
         new LoadByInstanceIdTask(beaconDao, loadEvent).execute(instanceId);
     }
 
@@ -89,16 +94,10 @@ public class BeaconRepository {
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-                    if (done) {
-                        Log.i(AdminApplication.LOG_TAG, "Bytes written: " + bytesWritten);
-                    }
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-                    if (done) {
-                        Log.i(AdminApplication.LOG_TAG, "Bytes read: " + bytesRead);
-                    }
                 }
             });
         }
@@ -148,7 +147,7 @@ public class BeaconRepository {
         else {
             beacon.setPendingConfiguration(null);
         }
-        beaconDao.insert(beacon);
+        insert(beacon, null);
     }
 
     public void refreshBeacon(long beaconId, final DataUpdateEvent dataUpdateEvent) {
@@ -178,12 +177,10 @@ public class BeaconRepository {
 
                 @Override
                 public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-
                 }
 
                 @Override
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-
                 }
             });
         }
@@ -222,12 +219,38 @@ public class BeaconRepository {
         }
     }
 
+    private static class LoadByIdTask extends AsyncTask<Long, Void, Beacon> {
+
+        private BeaconDao asyncTaskDao;
+        private LoadBeaconEvent loadEvent;
+
+        LoadByIdTask(BeaconDao dao, LoadBeaconEvent event) {
+            asyncTaskDao = dao;
+            loadEvent = event;
+        }
+
+        @Override
+        protected Beacon doInBackground(Long... ids) {
+            return asyncTaskDao.getById(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Beacon beacon) {
+            if ((loadEvent != null) && (beacon != null)) {
+                loadEvent.onSuccess(beacon);
+            }
+            else {
+                loadEvent.onError();
+            }
+        }
+    }
+
     private static class LoadByInstanceIdTask extends AsyncTask<String, Void, BeaconMinimal> {
 
         private BeaconDao asyncTaskDao;
-        private LoadEvent loadEvent;
+        private LoadBeaconMinimalEvent loadEvent;
 
-        LoadByInstanceIdTask(BeaconDao dao, LoadEvent event) {
+        LoadByInstanceIdTask(BeaconDao dao, LoadBeaconMinimalEvent event) {
             asyncTaskDao = dao;
             loadEvent = event;
         }
@@ -243,9 +266,5 @@ public class BeaconRepository {
                 loadEvent.onSuccess(beaconMinimal);
             }
         }
-    }
-
-    public void deleteBeacon(Beacon beacon) {
-        beaconDao.delete(beacon);
     }
 }

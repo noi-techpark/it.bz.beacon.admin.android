@@ -3,7 +3,9 @@ package it.bz.beacon.adminapp.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.os.Debug;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
@@ -80,7 +83,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 String searchFilter = "";
                 String statusFilter = Beacon.STATUS_ALL;
 
-                if (!TextUtils.isEmpty(constraint)) {
+                if (!TextUtils.isEmpty(constraint.toString())) {
                     if (constraint.toString().indexOf('#') > 0) {
                         statusFilter = constraint.toString().substring(0, constraint.toString().indexOf('#'));
                     }
@@ -119,8 +122,8 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
                         if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL))) &&
-                                (beaconMinimal.getName().toLowerCase().contains(searchFilter.toString())
-                                        || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter.toString()))) {
+                                (beaconMinimal.getName().toLowerCase().contains(searchFilter)
+                                        || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter))) {
                             filteredBeacons.add(beaconMinimal);
                         }
                     }
@@ -180,11 +183,11 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
             }
 
-            if (beaconMinimal.getBatteryLevel() < 34) {
+            if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
             }
             else {
-                if (beaconMinimal.getBatteryLevel() < 66) {
+                if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
                 }
                 else {
@@ -203,6 +206,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+//                    Debug.startMethodTracing();
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(DetailActivity.EXTRA_BEACON_ID, beaconMinimal.getId());
                     intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, beaconMinimal.getName());

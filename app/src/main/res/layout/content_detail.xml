@@ -118,9 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_config"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:text="@string/details_section_config" />
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/config_tablayout"
