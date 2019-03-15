@@ -34,7 +34,7 @@ public class Beacon {
 
     @NonNull
     @PrimaryKey
-    private long id;
+    private String id;
     private Integer batteryLevel;
     private String description;
     private Boolean eddystoneEid;
@@ -87,11 +87,11 @@ public class Beacon {
     }
 
     @NonNull
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(@NonNull long id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 

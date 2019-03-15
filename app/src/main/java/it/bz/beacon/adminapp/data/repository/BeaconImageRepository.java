@@ -25,7 +25,7 @@ public class BeaconImageRepository {
         beaconImageDao = db.beaconImageDao();
     }
 
-    public LiveData<List<BeaconImage>> getAllByBeaconId(long beaconId) {
+    public LiveData<List<BeaconImage>> getAllByBeaconId(String beaconId) {
         refreshBeaconImages(beaconId, null);
         return beaconImageDao.getAllByBeaconId(beaconId);
     }
@@ -34,7 +34,7 @@ public class BeaconImageRepository {
         return beaconImageDao.getById(id);
     }
 
-    public void refreshBeaconImages(final long beaconId, final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeaconImages(final String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             AdminApplication.getImageApi().getListUsingGET1Async(beaconId, new ApiCallback<List<io.swagger.client.model.BeaconImage>>() {
                 @Override

@@ -72,6 +72,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="saved">Saved successfully</string>
     <string name="details_delete">Delete</string>
     <string name="details_section_config">Beacon Config</string>
+    <string name="details_section_address">Address</string>
     <string name="details_section_location">Location</string>
     <string name="details_section_images">Images</string>
     <string name="images_empty">No images found</string>

@@ -64,6 +64,8 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -107,6 +109,7 @@ import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
+import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
 
@@ -173,9 +176,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @BindView(R.id.gps_content)
     protected LinearLayout contentGPS;
-
-    @BindView(R.id.details_config_layout)
-    protected LinearLayout configLayout;
 
     @BindView(R.id.description_content)
     protected ConstraintLayout contentDescription;
@@ -255,6 +255,18 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.eddystone_switch_url)
     protected SwitchCompat switchUrl;
 
+    @BindView(R.id.address_name)
+    protected TextView txtAddressName;
+
+    @BindView(R.id.address_address)
+    protected TextView txtAddress;
+
+    @BindView(R.id.address_latitude)
+    protected TextView txtAddressLatitude;
+
+    @BindView(R.id.address_longitude)
+    protected TextView txtAddressLongitude;
+
     @BindView(R.id.details_location_subtitle)
     protected TextView txtLocation;
 
@@ -288,7 +300,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.show_pending_config)
     protected Button btnShowPendingConfig;
 
-    private long beaconId;
+    private String beaconId;
     private String beaconName;
     private Beacon beacon;
     private boolean isBatteryWarningShowing = false;
@@ -313,7 +325,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
-            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+            beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
         configureTabListeners();
         isEditing = false;
@@ -321,7 +333,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
 
-        // TODO: figure out how to optimize following step (takes much time)
         mapView.onCreate(savedInstanceState);
 
         images.setHasFixedSize(true);
@@ -330,7 +341,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
-
 
         initializeKontakt();
     }
@@ -391,7 +401,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     protected void onResume() {
         super.onResume();
-        loadBeacon();
+        if (!isEditing) {
+            loadBeacon();
+            loadInfo(beaconId);
+        }
         startScanningIfLocationPermissionGranted();
         mapView.onResume();
         setUpToolbar(beaconName);
@@ -583,14 +596,13 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
                     @Override
                     public void onSuccess(Beacon loadedBeacon) {
-                        if (!isEditing) {
+
                             beacon = loadedBeacon;
                             showData();
                             mapView.getMapAsync(DetailActivity.this);
                             fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
                             makeMapScrollable();
 //                            Debug.stopMethodTracing();
-                        }
                     }
 
                     @Override
@@ -598,6 +610,37 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
+    }
+
+    private void loadInfo(String beaconId) {
+        NearbyBeaconManager manager = new NearbyBeaconManager(this);
+        manager.getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
+            @Override
+            public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beacon) {
+                txtAddressName.setText(beacon.getName());
+                String address = "";
+                if (!TextUtils.isEmpty(beacon.getAddress())) {
+                    address = beacon.getAddress();
+                }
+                if (!TextUtils.isEmpty(address) || !TextUtils.isEmpty(beacon.getCap()) || !TextUtils.isEmpty(beacon.getLocation())) {
+                    address = address.concat(", ");
+                }
+                if (!TextUtils.isEmpty(beacon.getCap())) {
+                    address = address.concat(beacon.getCap()).concat(" ");
+                }
+                if (!TextUtils.isEmpty(beacon.getLocation())) {
+                    address = address.concat(beacon.getLocation());
+                }
+                txtAddress.setText(address);
+                txtAddressLatitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLatitude()));
+                txtAddressLongitude.setText(String.format(Locale.getDefault(), "%.6f", beacon.getLongitude()));
+            }
+
+            @Override
+            public void onError() {
+                Log.e(AdminApplication.LOG_TAG, "error");
+            }
+        });
     }
 
     @Override

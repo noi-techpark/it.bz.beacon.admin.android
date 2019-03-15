@@ -9,7 +9,7 @@ public class BeaconIssue {
 
     @PrimaryKey
     private long id;
-    private long beaconId;
+    private String beaconId;
     private String problem;
     private String problemDescription;
     private String reporter;
@@ -30,11 +30,11 @@ public class BeaconIssue {
         this.id = id;
     }
 
-    public long getBeaconId() {
+    public String getBeaconId() {
         return beaconId;
     }
 
-    public void setBeaconId(long beaconId) {
+    public void setBeaconId(String beaconId) {
         this.beaconId = beaconId;
     }
 

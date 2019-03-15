@@ -29,11 +29,11 @@ public class BeaconViewModel extends AndroidViewModel {
         return beacons;
     }
 
-    public LiveData<Beacon> getByIdLive(long id) {
+    public LiveData<Beacon> getByIdLive(String id) {
         return repository.getByIdLive(id);
     }
 
-    public void getById(long id, LoadBeaconEvent loadEvent) {
+    public void getById(String id, LoadBeaconEvent loadEvent) {
         repository.getById(id, loadEvent);
     }
 

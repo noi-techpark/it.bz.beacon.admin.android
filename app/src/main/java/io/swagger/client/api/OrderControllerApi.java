@@ -27,9 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 
 
-import io.swagger.client.model.Beacon;
-import io.swagger.client.model.BeaconUpdate;
-import io.swagger.client.model.ManufacturerOrder;
+import io.swagger.client.model.BeaconOrder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -37,14 +35,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BeaconControllerApi {
+public class OrderControllerApi {
     private ApiClient apiClient;
 
-    public BeaconControllerApi() {
+    public OrderControllerApi() {
         this(Configuration.getDefaultApiClient());
     }
 
-    public BeaconControllerApi(ApiClient apiClient) {
+    public OrderControllerApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -57,18 +55,17 @@ public class BeaconControllerApi {
     }
 
     /**
-     * Build call for createUsingPOST
-     * @param order order (required)
+     * Build call for createUsingPOST3
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOSTCall(ManufacturerOrder order, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = order;
+    public com.squareup.okhttp.Call createUsingPOST3Call(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons/createByOrder";
+        String localVarPath = "/v1/admin/orders";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -106,53 +103,45 @@ public class BeaconControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createUsingPOSTValidateBeforeCall(ManufacturerOrder order, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'order' is set
-        if (order == null) {
-            throw new ApiException("Missing the required parameter 'order' when calling createUsingPOST(Async)");
-        }
+    private com.squareup.okhttp.Call createUsingPOST3ValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
 
-        com.squareup.okhttp.Call call = createUsingPOSTCall(order, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUsingPOST3Call(progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Create a beacon
+     * Create an order for all unordered beacons
      * 
-     * @param order order (required)
-     * @return List&lt;Beacon&gt;
+     * @return BeaconOrder
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<Beacon> createUsingPOST(ManufacturerOrder order) throws ApiException {
-        ApiResponse<List<Beacon>> resp = createUsingPOSTWithHttpInfo(order);
+    public BeaconOrder createUsingPOST3() throws ApiException {
+        ApiResponse<BeaconOrder> resp = createUsingPOST3WithHttpInfo();
         return resp.getData();
     }
 
     /**
-     * Create a beacon
+     * Create an order for all unordered beacons
      * 
-     * @param order order (required)
-     * @return ApiResponse&lt;List&lt;Beacon&gt;&gt;
+     * @return ApiResponse&lt;BeaconOrder&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<Beacon>> createUsingPOSTWithHttpInfo(ManufacturerOrder order) throws ApiException {
-        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(order, null, null);
-        Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
+    public ApiResponse<BeaconOrder> createUsingPOST3WithHttpInfo() throws ApiException {
+        com.squareup.okhttp.Call call = createUsingPOST3ValidateBeforeCall(null, null);
+        Type localVarReturnType = new TypeToken<BeaconOrder>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Create a beacon (asynchronously)
+     * Create an order for all unordered beacons (asynchronously)
      * 
-     * @param order order (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOSTAsync(ManufacturerOrder order, final ApiCallback<List<Beacon>> callback) throws ApiException {
+    public com.squareup.okhttp.Call createUsingPOST3Async(final ApiCallback<BeaconOrder> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -173,23 +162,23 @@ public class BeaconControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createUsingPOSTValidateBeforeCall(order, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
+        com.squareup.okhttp.Call call = createUsingPOST3ValidateBeforeCall(progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<BeaconOrder>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
     /**
-     * Build call for getListUsingGET
+     * Build call for getListUsingGET5
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGETCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getListUsingGET5Call(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons";
+        String localVarPath = "/v1/admin/orders";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -227,45 +216,45 @@ public class BeaconControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getListUsingGETValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getListUsingGET5ValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
 
-        com.squareup.okhttp.Call call = getListUsingGETCall(progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getListUsingGET5Call(progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * View a list of available beacons
+     * View a list of all orders
      * 
-     * @return List&lt;Beacon&gt;
+     * @return List&lt;BeaconOrder&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<Beacon> getListUsingGET() throws ApiException {
-        ApiResponse<List<Beacon>> resp = getListUsingGETWithHttpInfo();
+    public List<BeaconOrder> getListUsingGET5() throws ApiException {
+        ApiResponse<List<BeaconOrder>> resp = getListUsingGET5WithHttpInfo();
         return resp.getData();
     }
 
     /**
-     * View a list of available beacons
+     * View a list of all orders
      * 
-     * @return ApiResponse&lt;List&lt;Beacon&gt;&gt;
+     * @return ApiResponse&lt;List&lt;BeaconOrder&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<Beacon>> getListUsingGETWithHttpInfo() throws ApiException {
-        com.squareup.okhttp.Call call = getListUsingGETValidateBeforeCall(null, null);
-        Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
+    public ApiResponse<List<BeaconOrder>> getListUsingGET5WithHttpInfo() throws ApiException {
+        com.squareup.okhttp.Call call = getListUsingGET5ValidateBeforeCall(null, null);
+        Type localVarReturnType = new TypeToken<List<BeaconOrder>>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * View a list of available beacons (asynchronously)
+     * View a list of all orders (asynchronously)
      * 
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGETAsync(final ApiCallback<List<Beacon>> callback) throws ApiException {
+    public com.squareup.okhttp.Call getListUsingGET5Async(final ApiCallback<List<BeaconOrder>> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -286,25 +275,25 @@ public class BeaconControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getListUsingGETValidateBeforeCall(progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<Beacon>>(){}.getType();
+        com.squareup.okhttp.Call call = getListUsingGET5ValidateBeforeCall(progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<List<BeaconOrder>>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
     /**
-     * Build call for getUsingGET
-     * @param id id (required)
+     * Build call for getUsingGET3
+     * @param orderSymbol orderSymbol (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getUsingGETCall(String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET3Call(String orderSymbol, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{id}"
-            .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
+        String localVarPath = "/v1/admin/orders/{orderSymbol}"
+            .replaceAll("\\{" + "orderSymbol" + "\\}", apiClient.escapeString(orderSymbol.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -342,53 +331,53 @@ public class BeaconControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getUsingGETValidateBeforeCall(String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getUsingGET3ValidateBeforeCall(String orderSymbol, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        // verify the required parameter 'id' is set
-        if (id == null) {
-            throw new ApiException("Missing the required parameter 'id' when calling getUsingGET(Async)");
+        // verify the required parameter 'orderSymbol' is set
+        if (orderSymbol == null) {
+            throw new ApiException("Missing the required parameter 'orderSymbol' when calling getUsingGET3(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = getUsingGETCall(id, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getUsingGET3Call(orderSymbol, progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Search a beacon with an ID
+     * Search a order by order symbol
      * 
-     * @param id id (required)
-     * @return Beacon
+     * @param orderSymbol orderSymbol (required)
+     * @return BeaconOrder
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public Beacon getUsingGET(String id) throws ApiException {
-        ApiResponse<Beacon> resp = getUsingGETWithHttpInfo(id);
+    public BeaconOrder getUsingGET3(String orderSymbol) throws ApiException {
+        ApiResponse<BeaconOrder> resp = getUsingGET3WithHttpInfo(orderSymbol);
         return resp.getData();
     }
 
     /**
-     * Search a beacon with an ID
+     * Search a order by order symbol
      * 
-     * @param id id (required)
-     * @return ApiResponse&lt;Beacon&gt;
+     * @param orderSymbol orderSymbol (required)
+     * @return ApiResponse&lt;BeaconOrder&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<Beacon> getUsingGETWithHttpInfo(String id) throws ApiException {
-        com.squareup.okhttp.Call call = getUsingGETValidateBeforeCall(id, null, null);
-        Type localVarReturnType = new TypeToken<Beacon>(){}.getType();
+    public ApiResponse<BeaconOrder> getUsingGET3WithHttpInfo(String orderSymbol) throws ApiException {
+        com.squareup.okhttp.Call call = getUsingGET3ValidateBeforeCall(orderSymbol, null, null);
+        Type localVarReturnType = new TypeToken<BeaconOrder>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Search a beacon with an ID (asynchronously)
+     * Search a order by order symbol (asynchronously)
      * 
-     * @param id id (required)
+     * @param orderSymbol orderSymbol (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getUsingGETAsync(String id, final ApiCallback<Beacon> callback) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET3Async(String orderSymbol, final ApiCallback<BeaconOrder> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -409,140 +398,8 @@ public class BeaconControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getUsingGETValidateBeforeCall(id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<Beacon>(){}.getType();
-        apiClient.executeAsync(call, localVarReturnType, callback);
-        return call;
-    }
-    /**
-     * Build call for updateUsingPATCH
-     * @param beaconUpdate beaconUpdate (required)
-     * @param id id (required)
-     * @param progressListener Progress listener
-     * @param progressRequestListener Progress request listener
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     */
-    public com.squareup.okhttp.Call updateUsingPATCHCall(BeaconUpdate beaconUpdate, String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = beaconUpdate;
-
-        // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{id}"
-            .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
-                @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
-                    return originalResponse.newBuilder()
-                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                    .build();
-                }
-            });
-        }
-
-        String[] localVarAuthNames = new String[] { "JWT" };
-        return apiClient.buildCall(localVarPath, "PATCH", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateUsingPATCHValidateBeforeCall(BeaconUpdate beaconUpdate, String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'beaconUpdate' is set
-        if (beaconUpdate == null) {
-            throw new ApiException("Missing the required parameter 'beaconUpdate' when calling updateUsingPATCH(Async)");
-        }
-        
-        // verify the required parameter 'id' is set
-        if (id == null) {
-            throw new ApiException("Missing the required parameter 'id' when calling updateUsingPATCH(Async)");
-        }
-        
-
-        com.squareup.okhttp.Call call = updateUsingPATCHCall(beaconUpdate, id, progressListener, progressRequestListener);
-        return call;
-
-    }
-
-    /**
-     * Update a beacon
-     * 
-     * @param beaconUpdate beaconUpdate (required)
-     * @param id id (required)
-     * @return Beacon
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public Beacon updateUsingPATCH(BeaconUpdate beaconUpdate, String id) throws ApiException {
-        ApiResponse<Beacon> resp = updateUsingPATCHWithHttpInfo(beaconUpdate, id);
-        return resp.getData();
-    }
-
-    /**
-     * Update a beacon
-     * 
-     * @param beaconUpdate beaconUpdate (required)
-     * @param id id (required)
-     * @return ApiResponse&lt;Beacon&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<Beacon> updateUsingPATCHWithHttpInfo(BeaconUpdate beaconUpdate, String id) throws ApiException {
-        com.squareup.okhttp.Call call = updateUsingPATCHValidateBeforeCall(beaconUpdate, id, null, null);
-        Type localVarReturnType = new TypeToken<Beacon>(){}.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
-     * Update a beacon (asynchronously)
-     * 
-     * @param beaconUpdate beaconUpdate (required)
-     * @param id id (required)
-     * @param callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     */
-    public com.squareup.okhttp.Call updateUsingPATCHAsync(BeaconUpdate beaconUpdate, String id, final ApiCallback<Beacon> callback) throws ApiException {
-
-        ProgressResponseBody.ProgressListener progressListener = null;
-        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
-
-        if (callback != null) {
-            progressListener = new ProgressResponseBody.ProgressListener() {
-                @Override
-                public void update(long bytesRead, long contentLength, boolean done) {
-                    callback.onDownloadProgress(bytesRead, contentLength, done);
-                }
-            };
-
-            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
-                @Override
-                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
-                    callback.onUploadProgress(bytesWritten, contentLength, done);
-                }
-            };
-        }
-
-        com.squareup.okhttp.Call call = updateUsingPATCHValidateBeforeCall(beaconUpdate, id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<Beacon>(){}.getType();
+        com.squareup.okhttp.Call call = getUsingGET3ValidateBeforeCall(orderSymbol, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<BeaconOrder>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }

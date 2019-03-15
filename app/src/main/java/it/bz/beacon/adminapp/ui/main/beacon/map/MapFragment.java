@@ -235,7 +235,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return ContextCompat.getColor(getContext(), R.color.primary);
     }
 
-    protected void showDetail(long id, String name) {
+    protected void showDetail(String id, String name) {
         Intent intent = new Intent(getContext(), DetailActivity.class);
         intent.putExtra(DetailActivity.EXTRA_BEACON_ID, id);
         intent.putExtra(DetailActivity.EXTRA_BEACON_NAME, name);

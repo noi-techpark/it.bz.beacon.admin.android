@@ -10,7 +10,7 @@ public class BeaconImage {
     @NonNull
     @PrimaryKey
     private long id;
-    private long beaconId;
+    private String beaconId;
     private String fileName;
 
     public BeaconImage() {
@@ -25,11 +25,11 @@ public class BeaconImage {
         this.id = id;
     }
 
-    public long getBeaconId() {
+    public String getBeaconId() {
         return beaconId;
     }
 
-    public void setBeaconId(long beaconId) {
+    public void setBeaconId(String beaconId) {
         this.beaconId = beaconId;
     }
 

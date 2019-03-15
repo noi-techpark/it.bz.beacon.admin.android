@@ -124,7 +124,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     private boolean isBeaconInList(@NonNull List<BeaconMinimal> list, @NonNull BeaconMinimal beacon) {
         for (BeaconMinimal beaconMinimal : list) {
-            if (beaconMinimal.getId() == beacon.getId()) {
+            if (beaconMinimal.getId().equals(beacon.getId())) {
                 return true;
             }
         }
@@ -133,7 +133,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     private List<BeaconMinimal> updateBeaconInList(List<BeaconMinimal> list, BeaconMinimal freshBeacon) {
         for (BeaconMinimal beacon : list) {
-            if (freshBeacon.getId() == beacon.getId()) {
+            if (freshBeacon.getId().equals(beacon.getId())) {
                 beacon.setManufacturerId(freshBeacon.getManufacturerId());
                 beacon.setName(freshBeacon.getName());
                 beacon.setMajor(freshBeacon.getMajor());
@@ -176,7 +176,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     private List<BeaconMinimal> removeBeaconFromList(List<BeaconMinimal> list, BeaconMinimal beacon) {
         if ((list != null) && (list.size() > 0)) {
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getId() == beacon.getId()) {
+                if (list.get(i).getId().equals(beacon.getId())) {
                     list.remove(i);
                     break;
                 }

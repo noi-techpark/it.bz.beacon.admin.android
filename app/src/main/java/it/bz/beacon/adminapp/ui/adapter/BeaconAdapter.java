@@ -64,7 +64,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     @Override
     public long getItemId(int position) {
-        return beacons.get(position).getId();
+        return beacons.get(position).getMajor() * 100000L + beacons.get(position).getMinor();
     }
 
     @Override
@@ -168,7 +168,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             name.setText(beaconMinimal.getName());
             major.setText(context.getString(R.string.major_format, beaconMinimal.getMajor()));
             minor.setText(context.getString(R.string.minor_format, beaconMinimal.getMinor()));
-            manufacturerId.setText(beaconMinimal.getManufacturerId());
+            manufacturerId.setText(beaconMinimal.getId());
 
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));

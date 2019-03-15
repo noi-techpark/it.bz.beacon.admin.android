@@ -46,12 +46,12 @@ public class BeaconRepository {
         return beacons;
     }
 
-    public LiveData<Beacon> getByIdLive(long id) {
+    public LiveData<Beacon> getByIdLive(String id) {
         refreshBeacon(id, null);
         return beaconDao.getByIdLive(id);
     }
 
-    public void getById(long id, LoadBeaconEvent loadEvent) {
+    public void getById(String id, LoadBeaconEvent loadEvent) {
         new LoadByIdTask(beaconDao, loadEvent).execute(id);
     }
 
@@ -150,7 +150,7 @@ public class BeaconRepository {
         insert(beacon, null);
     }
 
-    public void refreshBeacon(long beaconId, final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeacon(String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<io.swagger.client.model.Beacon>() {
                 @Override
@@ -219,7 +219,7 @@ public class BeaconRepository {
         }
     }
 
-    private static class LoadByIdTask extends AsyncTask<Long, Void, Beacon> {
+    private static class LoadByIdTask extends AsyncTask<String, Void, Beacon> {
 
         private BeaconDao asyncTaskDao;
         private LoadBeaconEvent loadEvent;
@@ -230,7 +230,7 @@ public class BeaconRepository {
         }
 
         @Override
-        protected Beacon doInBackground(Long... ids) {
+        protected Beacon doInBackground(String... ids) {
             return asyncTaskDao.getById(ids[0]);
         }
 
