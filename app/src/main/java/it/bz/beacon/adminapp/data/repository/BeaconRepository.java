@@ -110,6 +110,10 @@ public class BeaconRepository {
     }
 
     private void saveBeacon(io.swagger.client.model.Beacon remoteBeacon) {
+        // indicates that something went wrong when the server tried to get infos from Kontakt.io
+        if (remoteBeacon.getUuid() == null) {
+            return;
+        }
         Beacon beacon;
         beacon = new Beacon();
         beacon.setId(remoteBeacon.getId());

@@ -1,12 +1,7 @@
 package it.bz.beacon.adminapp.data;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
-import java.util.Random;
-import java.util.UUID;
-
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -52,7 +47,6 @@ public abstract class BeaconDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             BeaconDatabase.class, DB_NAME)
-                            .addCallback(roomDatabaseCallback)
                             .addMigrations(MIGRATION_1_2)
                             .addMigrations(MIGRATION_2_3)
                             .addMigrations(MIGRATION_3_4)
@@ -63,15 +57,6 @@ public abstract class BeaconDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-    private static RoomDatabase.Callback roomDatabaseCallback =
-            new RoomDatabase.Callback() {
-
-                @Override
-                public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                    super.onOpen(db);
-                }
-            };
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override

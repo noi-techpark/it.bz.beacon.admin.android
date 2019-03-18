@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.main.beacon.map;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.ui.map.BaseClusterItem;
 
@@ -13,7 +14,12 @@ public class BeaconClusterItem extends BaseClusterItem {
         this.beaconMinimal = beaconMinimal;
         this.beaconId = beaconMinimal.getId();
         this.name = beaconMinimal.getName();
-        this.status = beaconMinimal.getStatus();
+        if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
+            this.status = Beacon.STATUS_NOT_INSTALLED;
+        }
+        else {
+            this.status = beaconMinimal.getStatus();
+        }
         if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
             this.position = new LatLng(beaconMinimal.getLat(), beaconMinimal.getLng());
         }

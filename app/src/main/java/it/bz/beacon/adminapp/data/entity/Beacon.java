@@ -23,6 +23,7 @@ public class Beacon {
     public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
     public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
+    public static final String STATUS_NOT_INSTALLED = "NOT_INSTALLED";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({LOCATION_OUTDOOR, LOCATION_INDOOR})
@@ -78,6 +79,9 @@ public class Beacon {
                 break;
             case Beacon.STATUS_NO_SIGNAL:
                 drawableId = R.drawable.marker_nosignal;
+                break;
+            case Beacon.STATUS_NOT_INSTALLED:
+                drawableId = R.drawable.marker_provisional;
                 break;
             default:
                 drawableId = R.drawable.marker_ok;

@@ -100,6 +100,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="details_map">Map</string>
     <string name="details_gps">GPS</string>
     <string name="current_position">Use current position</string>
+    <string name="provisional_position">Use provisional position</string>
     <string name="position_not_available">The current position is not available. Please verify your settings and try again!</string>
     <string name="details_description">Description</string>
     <string name="details_floor">Floor</string>
@@ -115,6 +116,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="status_configuration_pending">Configuration pending</string>
     <string name="status_no_signal">No signal</string>
     <string name="status_issue">Issue(s) reported</string>
+    <string name="status_not_installed">Not installed</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>
     <string name="error_invalid_password">Password is too short</string>
