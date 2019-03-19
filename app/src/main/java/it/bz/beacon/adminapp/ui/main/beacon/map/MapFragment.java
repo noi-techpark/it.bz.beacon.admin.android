@@ -257,8 +257,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 }
             }
             BeaconClusterItem clusterItem = new BeaconClusterItem(beacon);
-            clusterManager.addItem(clusterItem);
-            boundsBuilder.include(clusterItem.getPosition());
+            if (clusterItem.getPosition() != null) {
+                clusterManager.addItem(clusterItem);
+                boundsBuilder.include(clusterItem.getPosition());
+            }
         }
         clusterManager.cluster();
 
