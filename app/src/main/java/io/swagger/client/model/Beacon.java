@@ -55,10 +55,13 @@ public class Beacon {
   private Boolean iBeacon = null;
 
   @SerializedName("id")
-  private Long id = null;
+  private String id = null;
 
   @SerializedName("instanceId")
   private String instanceId = null;
+
+  @SerializedName("internalName")
+  private String internalName = null;
 
   @SerializedName("interval")
   private Integer interval = null;
@@ -403,7 +406,7 @@ public class Beacon {
     this.iBeacon = iBeacon;
   }
 
-  public Beacon id(Long id) {
+  public Beacon id(String id) {
     this.id = id;
     return this;
   }
@@ -413,11 +416,11 @@ public class Beacon {
    * @return id
   **/
   @ApiModelProperty(value = "")
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -437,6 +440,24 @@ public class Beacon {
 
   public void setInstanceId(String instanceId) {
     this.instanceId = instanceId;
+  }
+
+  public Beacon internalName(String internalName) {
+    this.internalName = internalName;
+    return this;
+  }
+
+   /**
+   * Get internalName
+   * @return internalName
+  **/
+  @ApiModelProperty(value = "")
+  public String getInternalName() {
+    return internalName;
+  }
+
+  public void setInternalName(String internalName) {
+    this.internalName = internalName;
   }
 
   public Beacon interval(Integer interval) {
@@ -783,6 +804,7 @@ public class Beacon {
         Objects.equals(this.iBeacon, beacon.iBeacon) &&
         Objects.equals(this.id, beacon.id) &&
         Objects.equals(this.instanceId, beacon.instanceId) &&
+        Objects.equals(this.internalName, beacon.internalName) &&
         Objects.equals(this.interval, beacon.interval) &&
         Objects.equals(this.lastSeen, beacon.lastSeen) &&
         Objects.equals(this.lat, beacon.lat) &&
@@ -805,7 +827,7 @@ public class Beacon {
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, pendingConfiguration, status, telemetry, txPower, url, uuid);
+    return Objects.hash(batteryLevel, description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, iBeacon, id, instanceId, internalName, interval, lastSeen, lat, lng, locationDescription, locationType, major, manufacturer, manufacturerId, minor, name, namespace, pendingConfiguration, status, telemetry, txPower, url, uuid);
   }
 
 
@@ -824,6 +846,7 @@ public class Beacon {
     sb.append("    iBeacon: ").append(toIndentedString(iBeacon)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    instanceId: ").append(toIndentedString(instanceId)).append("\n");
+    sb.append("    internalName: ").append(toIndentedString(internalName)).append("\n");
     sb.append("    interval: ").append(toIndentedString(interval)).append("\n");
     sb.append("    lastSeen: ").append(toIndentedString(lastSeen)).append("\n");
     sb.append("    lat: ").append(toIndentedString(lat)).append("\n");

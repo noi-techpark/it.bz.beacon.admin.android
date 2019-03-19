@@ -38,7 +38,7 @@ public class BeaconIssueRepository {
         synchronizationInterval = context.getResources().getInteger(R.integer.synchronization_interval);
     }
 
-    public LiveData<List<BeaconIssue>> getAll(Long beaconId) {
+    public LiveData<List<BeaconIssue>> getAll(String beaconId) {
         if (shouldSynchronize()) {
             refreshBeaconIssues(beaconId, null);
         }
@@ -57,7 +57,7 @@ public class BeaconIssueRepository {
         return issueWithBeaconDao.getAllIssuesWithBeacon();
     }
 
-    public void getIssueWithBeaconById(long id, LoadIssueEvent loadEvent) {
+    public void getIssueWithBeaconById(Long id, LoadIssueEvent loadEvent) {
         new LoadByIdTask(issueWithBeaconDao, loadEvent).execute(id);
     }
 
@@ -65,10 +65,10 @@ public class BeaconIssueRepository {
         return (storage.getLastSynchronizationIssues() + synchronizationInterval * 60000L < System.currentTimeMillis());
     }
 
-    public void refreshBeaconIssues(@Nullable Long beaconId, final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeaconIssues(@Nullable String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             if (beaconId != null) {
-                AdminApplication.getIssueApi().getListUsingGET2Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
+                AdminApplication.getIssueApi().getListUsingGET4Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (dataUpdateEvent != null) {

@@ -53,6 +53,9 @@ public class BeaconIssue {
   @SerializedName("resolved")
   private Boolean resolved = null;
 
+  @SerializedName("resolver")
+  private String resolver = null;
+
   @SerializedName("solution")
   private String solution = null;
 
@@ -203,6 +206,24 @@ public class BeaconIssue {
     this.resolved = resolved;
   }
 
+  public BeaconIssue resolver(String resolver) {
+    this.resolver = resolver;
+    return this;
+  }
+
+   /**
+   * Get resolver
+   * @return resolver
+  **/
+  @ApiModelProperty(value = "")
+  public String getResolver() {
+    return resolver;
+  }
+
+  public void setResolver(String resolver) {
+    this.resolver = resolver;
+  }
+
   public BeaconIssue solution(String solution) {
     this.solution = solution;
     return this;
@@ -257,13 +278,14 @@ public class BeaconIssue {
         Objects.equals(this.reporter, beaconIssue.reporter) &&
         Objects.equals(this.resolveDate, beaconIssue.resolveDate) &&
         Objects.equals(this.resolved, beaconIssue.resolved) &&
+        Objects.equals(this.resolver, beaconIssue.resolver) &&
         Objects.equals(this.solution, beaconIssue.solution) &&
         Objects.equals(this.solutionDescription, beaconIssue.solutionDescription);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(beacon, id, problem, problemDescription, reportDate, reporter, resolveDate, resolved, solution, solutionDescription);
+    return Objects.hash(beacon, id, problem, problemDescription, reportDate, reporter, resolveDate, resolved, resolver, solution, solutionDescription);
   }
 
 
@@ -280,6 +302,7 @@ public class BeaconIssue {
     sb.append("    reporter: ").append(toIndentedString(reporter)).append("\n");
     sb.append("    resolveDate: ").append(toIndentedString(resolveDate)).append("\n");
     sb.append("    resolved: ").append(toIndentedString(resolved)).append("\n");
+    sb.append("    resolver: ").append(toIndentedString(resolver)).append("\n");
     sb.append("    solution: ").append(toIndentedString(solution)).append("\n");
     sb.append("    solutionDescription: ").append(toIndentedString(solutionDescription)).append("\n");
     sb.append("}");

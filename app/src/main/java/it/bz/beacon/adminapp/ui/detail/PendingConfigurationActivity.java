@@ -80,7 +80,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     @BindView(R.id.empty)
     protected TextView txtEmpty;
 
-    private long beaconId;
+    private String beaconId;
     private String beaconName;
     private Beacon beacon;
     private boolean isPendingConfigEmpty = true;
@@ -106,7 +106,7 @@ public class PendingConfigurationActivity extends BaseActivity {
 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
-            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+            beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         pendingSecureConfigViewModel = ViewModelProviders.of(this).get(PendingSecureConfigViewModel.class);

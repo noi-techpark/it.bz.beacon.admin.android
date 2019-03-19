@@ -58,14 +58,14 @@ public class UserControllerApi {
     }
 
     /**
-     * Build call for createUsingPOST3
+     * Build call for createUsingPOST4
      * @param userCreation userCreation (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOST3Call(UserCreation userCreation, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call createUsingPOST4Call(UserCreation userCreation, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = userCreation;
 
         // create path and map variables
@@ -107,15 +107,15 @@ public class UserControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createUsingPOST3ValidateBeforeCall(UserCreation userCreation, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call createUsingPOST4ValidateBeforeCall(UserCreation userCreation, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'userCreation' is set
         if (userCreation == null) {
-            throw new ApiException("Missing the required parameter 'userCreation' when calling createUsingPOST3(Async)");
+            throw new ApiException("Missing the required parameter 'userCreation' when calling createUsingPOST4(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = createUsingPOST3Call(userCreation, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUsingPOST4Call(userCreation, progressListener, progressRequestListener);
         return call;
 
     }
@@ -127,8 +127,8 @@ public class UserControllerApi {
      * @return User
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public User createUsingPOST3(UserCreation userCreation) throws ApiException {
-        ApiResponse<User> resp = createUsingPOST3WithHttpInfo(userCreation);
+    public User createUsingPOST4(UserCreation userCreation) throws ApiException {
+        ApiResponse<User> resp = createUsingPOST4WithHttpInfo(userCreation);
         return resp.getData();
     }
 
@@ -139,8 +139,8 @@ public class UserControllerApi {
      * @return ApiResponse&lt;User&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<User> createUsingPOST3WithHttpInfo(UserCreation userCreation) throws ApiException {
-        com.squareup.okhttp.Call call = createUsingPOST3ValidateBeforeCall(userCreation, null, null);
+    public ApiResponse<User> createUsingPOST4WithHttpInfo(UserCreation userCreation) throws ApiException {
+        com.squareup.okhttp.Call call = createUsingPOST4ValidateBeforeCall(userCreation, null, null);
         Type localVarReturnType = new TypeToken<User>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -153,7 +153,7 @@ public class UserControllerApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOST3Async(UserCreation userCreation, final ApiCallback<User> callback) throws ApiException {
+    public com.squareup.okhttp.Call createUsingPOST4Async(UserCreation userCreation, final ApiCallback<User> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -174,7 +174,7 @@ public class UserControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createUsingPOST3ValidateBeforeCall(userCreation, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUsingPOST4ValidateBeforeCall(userCreation, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<User>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -303,13 +303,13 @@ public class UserControllerApi {
         return call;
     }
     /**
-     * Build call for getListUsingGET4
+     * Build call for getListUsingGET6
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGET4Call(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getListUsingGET6Call(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -351,10 +351,10 @@ public class UserControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getListUsingGET4ValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getListUsingGET6ValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
 
-        com.squareup.okhttp.Call call = getListUsingGET4Call(progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getListUsingGET6Call(progressListener, progressRequestListener);
         return call;
 
     }
@@ -365,8 +365,8 @@ public class UserControllerApi {
      * @return List&lt;User&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<User> getListUsingGET4() throws ApiException {
-        ApiResponse<List<User>> resp = getListUsingGET4WithHttpInfo();
+    public List<User> getListUsingGET6() throws ApiException {
+        ApiResponse<List<User>> resp = getListUsingGET6WithHttpInfo();
         return resp.getData();
     }
 
@@ -376,8 +376,8 @@ public class UserControllerApi {
      * @return ApiResponse&lt;List&lt;User&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<User>> getListUsingGET4WithHttpInfo() throws ApiException {
-        com.squareup.okhttp.Call call = getListUsingGET4ValidateBeforeCall(null, null);
+    public ApiResponse<List<User>> getListUsingGET6WithHttpInfo() throws ApiException {
+        com.squareup.okhttp.Call call = getListUsingGET6ValidateBeforeCall(null, null);
         Type localVarReturnType = new TypeToken<List<User>>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -389,7 +389,7 @@ public class UserControllerApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGET4Async(final ApiCallback<List<User>> callback) throws ApiException {
+    public com.squareup.okhttp.Call getListUsingGET6Async(final ApiCallback<List<User>> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -410,20 +410,20 @@ public class UserControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getListUsingGET4ValidateBeforeCall(progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getListUsingGET6ValidateBeforeCall(progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<List<User>>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
     /**
-     * Build call for getUsingGET2
+     * Build call for getUsingGET4
      * @param id id (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getUsingGET2Call(Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET4Call(Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -466,15 +466,15 @@ public class UserControllerApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getUsingGET2ValidateBeforeCall(Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getUsingGET4ValidateBeforeCall(Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'id' is set
         if (id == null) {
-            throw new ApiException("Missing the required parameter 'id' when calling getUsingGET2(Async)");
+            throw new ApiException("Missing the required parameter 'id' when calling getUsingGET4(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = getUsingGET2Call(id, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getUsingGET4Call(id, progressListener, progressRequestListener);
         return call;
 
     }
@@ -486,8 +486,8 @@ public class UserControllerApi {
      * @return User
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public User getUsingGET2(Long id) throws ApiException {
-        ApiResponse<User> resp = getUsingGET2WithHttpInfo(id);
+    public User getUsingGET4(Long id) throws ApiException {
+        ApiResponse<User> resp = getUsingGET4WithHttpInfo(id);
         return resp.getData();
     }
 
@@ -498,8 +498,8 @@ public class UserControllerApi {
      * @return ApiResponse&lt;User&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<User> getUsingGET2WithHttpInfo(Long id) throws ApiException {
-        com.squareup.okhttp.Call call = getUsingGET2ValidateBeforeCall(id, null, null);
+    public ApiResponse<User> getUsingGET4WithHttpInfo(Long id) throws ApiException {
+        com.squareup.okhttp.Call call = getUsingGET4ValidateBeforeCall(id, null, null);
         Type localVarReturnType = new TypeToken<User>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -512,7 +512,7 @@ public class UserControllerApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getUsingGET2Async(Long id, final ApiCallback<User> callback) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET4Async(Long id, final ApiCallback<User> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -533,7 +533,7 @@ public class UserControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getUsingGET2ValidateBeforeCall(id, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getUsingGET4ValidateBeforeCall(id, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<User>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;

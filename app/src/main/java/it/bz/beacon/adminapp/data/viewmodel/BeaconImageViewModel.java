@@ -19,7 +19,7 @@ public class BeaconImageViewModel extends AndroidViewModel {
         repository = new BeaconImageRepository(application);
     }
 
-    public LiveData<List<BeaconImage>> getAllByBeaconId(long beaconId) {
+    public LiveData<List<BeaconImage>> getAllByBeaconId(String beaconId) {
         return repository.getAllByBeaconId(beaconId);
     }
 

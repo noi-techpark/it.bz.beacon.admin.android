@@ -3,7 +3,7 @@ package it.bz.beacon.adminapp.data.entity;
 public class IssueWithBeacon {
 
     private long id;
-    private long beaconId;
+    private String beaconId;
     private String problem;
     private String problemDescription;
     private String reporter;
@@ -28,11 +28,11 @@ public class IssueWithBeacon {
         this.id = id;
     }
 
-    public long getBeaconId() {
+    public String getBeaconId() {
         return beaconId;
     }
 
-    public void setBeaconId(long beaconId) {
+    public void setBeaconId(String beaconId) {
         this.beaconId = beaconId;
     }
 

@@ -22,8 +22,16 @@
       "description": "Image Controller"
     },
     {
+      "name": "info-controller",
+      "description": "Info Controller"
+    },
+    {
       "name": "issue-controller",
       "description": "Issue Controller"
+    },
+    {
+      "name": "order-controller",
+      "description": "Order Controller"
     },
     {
       "name": "swagger-controller",
@@ -312,7 +320,7 @@
             "description": "order",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Order"
+              "$ref": "#/definitions/ManufacturerOrder"
             }
           }
         ],
@@ -363,8 +371,7 @@
             "in": "path",
             "description": "beaconId",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         ],
         "responses": {
@@ -412,8 +419,7 @@
             "in": "path",
             "description": "beaconId",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "file",
@@ -467,8 +473,7 @@
             "in": "path",
             "description": "beaconId",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "id",
@@ -518,8 +523,7 @@
             "in": "path",
             "description": "beaconId",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "id",
@@ -561,7 +565,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues for the specified beacon ID",
-        "operationId": "getListUsingGET_2",
+        "operationId": "getListUsingGET_4",
         "produces": [
           "application/json"
         ],
@@ -571,8 +575,7 @@
             "in": "path",
             "description": "beaconId",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "onlyUnresolved",
@@ -627,8 +630,7 @@
             "in": "path",
             "description": "id",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         ],
         "responses": {
@@ -682,8 +684,7 @@
             "in": "path",
             "description": "id",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         ],
         "responses": {
@@ -815,7 +816,7 @@
           "issue-controller"
         ],
         "summary": "Search a issue with an ID",
-        "operationId": "getUsingGET_1",
+        "operationId": "getUsingGET_2",
         "produces": [
           "application/json"
         ],
@@ -914,13 +915,134 @@
         "deprecated": false
       }
     },
+    "/v1/admin/orders": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "summary": "View a list of all orders",
+        "operationId": "getListUsingGET_5",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BeaconOrder"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "order-controller"
+        ],
+        "summary": "Create an order for all unordered beacons",
+        "operationId": "createUsingPOST_3",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BeaconOrder"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/v1/admin/orders/{orderSymbol}": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "summary": "Search a order by order symbol",
+        "operationId": "getUsingGET_3",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "orderSymbol",
+            "in": "path",
+            "description": "orderSymbol",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BeaconOrder"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
     "/v1/admin/users": {
       "get": {
         "tags": [
           "user-controller"
         ],
         "summary": "View a list of available users",
-        "operationId": "getListUsingGET_4",
+        "operationId": "getListUsingGET_6",
         "produces": [
           "application/json"
         ],
@@ -956,7 +1078,7 @@
           "user-controller"
         ],
         "summary": "Create a user",
-        "operationId": "createUsingPOST_3",
+        "operationId": "createUsingPOST_4",
         "consumes": [
           "application/json"
         ],
@@ -1008,7 +1130,7 @@
           "user-controller"
         ],
         "summary": "Search a user with an ID",
-        "operationId": "getUsingGET_2",
+        "operationId": "getUsingGET_4",
         "produces": [
           "application/json"
         ],
@@ -1192,6 +1314,165 @@
         "deprecated": false
       }
     },
+    "/v1/infos": {
+      "get": {
+        "tags": [
+          "info-controller"
+        ],
+        "summary": "View a list of all infos",
+        "operationId": "getListUsingGET_2",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Info"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/v1/infos/eddystone/{instanceId}": {
+      "get": {
+        "tags": [
+          "info-controller"
+        ],
+        "summary": "Search a info with an Eddystone instanceId value",
+        "operationId": "getEddyStoneUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "description": "instanceId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/v1/infos/ibeacon/{major}/{minor}": {
+      "get": {
+        "tags": [
+          "info-controller"
+        ],
+        "summary": "Search a info with an iBeacon major and minor value",
+        "operationId": "getiBeaconUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "major",
+            "in": "path",
+            "description": "major",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "minor",
+            "in": "path",
+            "description": "minor",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/v1/infos/{id}": {
+      "get": {
+        "tags": [
+          "info-controller"
+        ],
+        "summary": "Search a info with an ID",
+        "operationId": "getUsingGET_1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/v1/signin": {
       "post": {
         "tags": [
@@ -1335,10 +1616,12 @@
           "type": "boolean"
         },
         "id": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "instanceId": {
+          "type": "string"
+        },
+        "internalName": {
           "type": "string"
         },
         "interval": {
@@ -1463,6 +1746,9 @@
         "resolved": {
           "type": "boolean"
         },
+        "resolver": {
+          "type": "string"
+        },
         "solution": {
           "type": "string"
         },
@@ -1471,6 +1757,48 @@
         }
       },
       "title": "BeaconIssue"
+    },
+    "BeaconOrder": {
+      "type": "object",
+      "properties": {
+        "beacons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BeaconOrderData"
+          }
+        },
+        "orderSymbol": {
+          "type": "string"
+        }
+      },
+      "title": "BeaconOrder"
+    },
+    "BeaconOrderData": {
+      "type": "object",
+      "properties": {
+        "beaconId": {
+          "type": "string"
+        },
+        "instanceId": {
+          "type": "string"
+        },
+        "major": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "minor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "title": "BeaconOrderData"
     },
     "BeaconUpdate": {
       "type": "object",
@@ -1653,6 +1981,59 @@
       },
       "title": "File"
     },
+    "Info": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "cap": {
+          "type": "string"
+        },
+        "floor": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "instanceId": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "location": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "major": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "minor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "website": {
+          "type": "string"
+        }
+      },
+      "title": "Info"
+    },
     "InputStream": {
       "type": "object",
       "title": "InputStream"
@@ -1666,10 +2047,7 @@
       ],
       "properties": {
         "beaconId": {
-          "type": "integer",
-          "format": "int64",
-          "minimum": 1,
-          "exclusiveMinimum": false
+          "type": "string"
         },
         "problem": {
           "type": "string"
@@ -1702,7 +2080,7 @@
       },
       "title": "IssueSolution"
     },
-    "Order": {
+    "ManufacturerOrder": {
       "type": "object",
       "required": [
         "id"
@@ -1712,7 +2090,7 @@
           "type": "string"
         }
       },
-      "title": "Order"
+      "title": "ManufacturerOrder"
     },
     "PendingConfiguration": {
       "type": "object",

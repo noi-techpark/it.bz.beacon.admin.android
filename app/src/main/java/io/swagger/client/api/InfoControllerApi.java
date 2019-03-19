@@ -27,10 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 
 
-import io.swagger.client.model.BaseMessage;
-import io.swagger.client.model.BeaconImage;
-import java.io.File;
-import io.swagger.client.model.Resource;
+import io.swagger.client.model.Info;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -38,14 +35,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ImageControllerApi {
+public class InfoControllerApi {
     private ApiClient apiClient;
 
-    public ImageControllerApi() {
+    public InfoControllerApi() {
         this(Configuration.getDefaultApiClient());
     }
 
-    public ImageControllerApi(ApiClient apiClient) {
+    public InfoControllerApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -58,20 +55,19 @@ public class ImageControllerApi {
     }
 
     /**
-     * Build call for createUsingPOST1
-     * @param beaconId beaconId (required)
-     * @param file file (required)
+     * Build call for getEddyStoneUsingGET
+     * @param instanceId instanceId (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOST1Call(String beaconId, File file, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getEddyStoneUsingGETCall(String instanceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{beaconId}/images"
-            .replaceAll("\\{" + "beaconId" + "\\}", apiClient.escapeString(beaconId.toString()));
+        String localVarPath = "/v1/infos/eddystone/{instanceId}"
+            .replaceAll("\\{" + "instanceId" + "\\}", apiClient.escapeString(instanceId.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -79,8 +75,6 @@ public class ImageControllerApi {
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-        if (file != null)
-        localVarFormParams.put("file", file);
 
         final String[] localVarAccepts = {
             "application/json"
@@ -89,7 +83,7 @@ public class ImageControllerApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            "multipart/form-data"
+            
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -106,66 +100,58 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] { "JWT" };
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
+        String[] localVarAuthNames = new String[] {  };
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createUsingPOST1ValidateBeforeCall(String beaconId, File file, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getEddyStoneUsingGETValidateBeforeCall(String instanceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        // verify the required parameter 'beaconId' is set
-        if (beaconId == null) {
-            throw new ApiException("Missing the required parameter 'beaconId' when calling createUsingPOST1(Async)");
-        }
-        
-        // verify the required parameter 'file' is set
-        if (file == null) {
-            throw new ApiException("Missing the required parameter 'file' when calling createUsingPOST1(Async)");
+        // verify the required parameter 'instanceId' is set
+        if (instanceId == null) {
+            throw new ApiException("Missing the required parameter 'instanceId' when calling getEddyStoneUsingGET(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = createUsingPOST1Call(beaconId, file, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getEddyStoneUsingGETCall(instanceId, progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Create an image for a beacon
+     * Search a info with an Eddystone instanceId value
      * 
-     * @param beaconId beaconId (required)
-     * @param file file (required)
-     * @return BeaconImage
+     * @param instanceId instanceId (required)
+     * @return Info
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public BeaconImage createUsingPOST1(String beaconId, File file) throws ApiException {
-        ApiResponse<BeaconImage> resp = createUsingPOST1WithHttpInfo(beaconId, file);
+    public Info getEddyStoneUsingGET(String instanceId) throws ApiException {
+        ApiResponse<Info> resp = getEddyStoneUsingGETWithHttpInfo(instanceId);
         return resp.getData();
     }
 
     /**
-     * Create an image for a beacon
+     * Search a info with an Eddystone instanceId value
      * 
-     * @param beaconId beaconId (required)
-     * @param file file (required)
-     * @return ApiResponse&lt;BeaconImage&gt;
+     * @param instanceId instanceId (required)
+     * @return ApiResponse&lt;Info&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<BeaconImage> createUsingPOST1WithHttpInfo(String beaconId, File file) throws ApiException {
-        com.squareup.okhttp.Call call = createUsingPOST1ValidateBeforeCall(beaconId, file, null, null);
-        Type localVarReturnType = new TypeToken<BeaconImage>(){}.getType();
+    public ApiResponse<Info> getEddyStoneUsingGETWithHttpInfo(String instanceId) throws ApiException {
+        com.squareup.okhttp.Call call = getEddyStoneUsingGETValidateBeforeCall(instanceId, null, null);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Create an image for a beacon (asynchronously)
+     * Search a info with an Eddystone instanceId value (asynchronously)
      * 
-     * @param beaconId beaconId (required)
-     * @param file file (required)
+     * @param instanceId instanceId (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call createUsingPOST1Async(String beaconId, File file, final ApiCallback<BeaconImage> callback) throws ApiException {
+    public com.squareup.okhttp.Call getEddyStoneUsingGETAsync(String instanceId, final ApiCallback<Info> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -186,26 +172,137 @@ public class ImageControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createUsingPOST1ValidateBeforeCall(beaconId, file, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<BeaconImage>(){}.getType();
+        com.squareup.okhttp.Call call = getEddyStoneUsingGETValidateBeforeCall(instanceId, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
     /**
-     * Build call for deleteUsingDELETE
-     * @param beaconId beaconId (required)
+     * Build call for getListUsingGET2
+     * @param progressListener Progress listener
+     * @param progressRequestListener Progress request listener
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     */
+    public com.squareup.okhttp.Call getListUsingGET2Call(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = null;
+
+        // create path and map variables
+        String localVarPath = "/v1/infos";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = {
+            "application/json"
+        };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = {
+            
+        };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if(progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+                @Override
+                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                    return originalResponse.newBuilder()
+                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                    .build();
+                }
+            });
+        }
+
+        String[] localVarAuthNames = new String[] {  };
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call getListUsingGET2ValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        
+
+        com.squareup.okhttp.Call call = getListUsingGET2Call(progressListener, progressRequestListener);
+        return call;
+
+    }
+
+    /**
+     * View a list of all infos
+     * 
+     * @return List&lt;Info&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     */
+    public List<Info> getListUsingGET2() throws ApiException {
+        ApiResponse<List<Info>> resp = getListUsingGET2WithHttpInfo();
+        return resp.getData();
+    }
+
+    /**
+     * View a list of all infos
+     * 
+     * @return ApiResponse&lt;List&lt;Info&gt;&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     */
+    public ApiResponse<List<Info>> getListUsingGET2WithHttpInfo() throws ApiException {
+        com.squareup.okhttp.Call call = getListUsingGET2ValidateBeforeCall(null, null);
+        Type localVarReturnType = new TypeToken<List<Info>>(){}.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * View a list of all infos (asynchronously)
+     * 
+     * @param callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call getListUsingGET2Async(final ApiCallback<List<Info>> callback) throws ApiException {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener() {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done) {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = getListUsingGET2ValidateBeforeCall(progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<List<Info>>(){}.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+    /**
+     * Build call for getUsingGET1
      * @param id id (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call deleteUsingDELETECall(String beaconId, Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET1Call(String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{beaconId}/images/{id}"
-            .replaceAll("\\{" + "beaconId" + "\\}", apiClient.escapeString(beaconId.toString()))
+        String localVarPath = "/v1/infos/{id}"
             .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
@@ -239,66 +336,58 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] { "JWT" };
-        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
+        String[] localVarAuthNames = new String[] {  };
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call deleteUsingDELETEValidateBeforeCall(String beaconId, Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'beaconId' is set
-        if (beaconId == null) {
-            throw new ApiException("Missing the required parameter 'beaconId' when calling deleteUsingDELETE(Async)");
-        }
+    private com.squareup.okhttp.Call getUsingGET1ValidateBeforeCall(String id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'id' is set
         if (id == null) {
-            throw new ApiException("Missing the required parameter 'id' when calling deleteUsingDELETE(Async)");
+            throw new ApiException("Missing the required parameter 'id' when calling getUsingGET1(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = deleteUsingDELETECall(beaconId, id, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getUsingGET1Call(id, progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Delete an image
+     * Search a info with an ID
      * 
-     * @param beaconId beaconId (required)
      * @param id id (required)
-     * @return BaseMessage
+     * @return Info
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public BaseMessage deleteUsingDELETE(String beaconId, Long id) throws ApiException {
-        ApiResponse<BaseMessage> resp = deleteUsingDELETEWithHttpInfo(beaconId, id);
+    public Info getUsingGET1(String id) throws ApiException {
+        ApiResponse<Info> resp = getUsingGET1WithHttpInfo(id);
         return resp.getData();
     }
 
     /**
-     * Delete an image
+     * Search a info with an ID
      * 
-     * @param beaconId beaconId (required)
      * @param id id (required)
-     * @return ApiResponse&lt;BaseMessage&gt;
+     * @return ApiResponse&lt;Info&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<BaseMessage> deleteUsingDELETEWithHttpInfo(String beaconId, Long id) throws ApiException {
-        com.squareup.okhttp.Call call = deleteUsingDELETEValidateBeforeCall(beaconId, id, null, null);
-        Type localVarReturnType = new TypeToken<BaseMessage>(){}.getType();
+    public ApiResponse<Info> getUsingGET1WithHttpInfo(String id) throws ApiException {
+        com.squareup.okhttp.Call call = getUsingGET1ValidateBeforeCall(id, null, null);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Delete an image (asynchronously)
+     * Search a info with an ID (asynchronously)
      * 
-     * @param beaconId beaconId (required)
      * @param id id (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call deleteUsingDELETEAsync(String beaconId, Long id, final ApiCallback<BaseMessage> callback) throws ApiException {
+    public com.squareup.okhttp.Call getUsingGET1Async(String id, final ApiCallback<Info> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -319,25 +408,27 @@ public class ImageControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = deleteUsingDELETEValidateBeforeCall(beaconId, id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<BaseMessage>(){}.getType();
+        com.squareup.okhttp.Call call = getUsingGET1ValidateBeforeCall(id, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
     /**
-     * Build call for getListUsingGET1
-     * @param beaconId beaconId (required)
+     * Build call for getiBeaconUsingGET
+     * @param major major (required)
+     * @param minor minor (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGET1Call(String beaconId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call getiBeaconUsingGETCall(Integer major, Integer minor, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{beaconId}/images"
-            .replaceAll("\\{" + "beaconId" + "\\}", apiClient.escapeString(beaconId.toString()));
+        String localVarPath = "/v1/infos/ibeacon/{major}/{minor}"
+            .replaceAll("\\{" + "major" + "\\}", apiClient.escapeString(major.toString()))
+            .replaceAll("\\{" + "minor" + "\\}", apiClient.escapeString(minor.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -370,58 +461,66 @@ public class ImageControllerApi {
             });
         }
 
-        String[] localVarAuthNames = new String[] { "JWT" };
+        String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getListUsingGET1ValidateBeforeCall(String beaconId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call getiBeaconUsingGETValidateBeforeCall(Integer major, Integer minor, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        // verify the required parameter 'beaconId' is set
-        if (beaconId == null) {
-            throw new ApiException("Missing the required parameter 'beaconId' when calling getListUsingGET1(Async)");
+        // verify the required parameter 'major' is set
+        if (major == null) {
+            throw new ApiException("Missing the required parameter 'major' when calling getiBeaconUsingGET(Async)");
+        }
+        
+        // verify the required parameter 'minor' is set
+        if (minor == null) {
+            throw new ApiException("Missing the required parameter 'minor' when calling getiBeaconUsingGET(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = getListUsingGET1Call(beaconId, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = getiBeaconUsingGETCall(major, minor, progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * View a list of available images for a beacon
+     * Search a info with an iBeacon major and minor value
      * 
-     * @param beaconId beaconId (required)
-     * @return List&lt;BeaconImage&gt;
+     * @param major major (required)
+     * @param minor minor (required)
+     * @return Info
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<BeaconImage> getListUsingGET1(String beaconId) throws ApiException {
-        ApiResponse<List<BeaconImage>> resp = getListUsingGET1WithHttpInfo(beaconId);
+    public Info getiBeaconUsingGET(Integer major, Integer minor) throws ApiException {
+        ApiResponse<Info> resp = getiBeaconUsingGETWithHttpInfo(major, minor);
         return resp.getData();
     }
 
     /**
-     * View a list of available images for a beacon
+     * Search a info with an iBeacon major and minor value
      * 
-     * @param beaconId beaconId (required)
-     * @return ApiResponse&lt;List&lt;BeaconImage&gt;&gt;
+     * @param major major (required)
+     * @param minor minor (required)
+     * @return ApiResponse&lt;Info&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<BeaconImage>> getListUsingGET1WithHttpInfo(String beaconId) throws ApiException {
-        com.squareup.okhttp.Call call = getListUsingGET1ValidateBeforeCall(beaconId, null, null);
-        Type localVarReturnType = new TypeToken<List<BeaconImage>>(){}.getType();
+    public ApiResponse<Info> getiBeaconUsingGETWithHttpInfo(Integer major, Integer minor) throws ApiException {
+        com.squareup.okhttp.Call call = getiBeaconUsingGETValidateBeforeCall(major, minor, null, null);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * View a list of available images for a beacon (asynchronously)
+     * Search a info with an iBeacon major and minor value (asynchronously)
      * 
-     * @param beaconId beaconId (required)
+     * @param major major (required)
+     * @param minor minor (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getListUsingGET1Async(String beaconId, final ApiCallback<List<BeaconImage>> callback) throws ApiException {
+    public com.squareup.okhttp.Call getiBeaconUsingGETAsync(Integer major, Integer minor, final ApiCallback<Info> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -442,141 +541,8 @@ public class ImageControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getListUsingGET1ValidateBeforeCall(beaconId, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<BeaconImage>>(){}.getType();
-        apiClient.executeAsync(call, localVarReturnType, callback);
-        return call;
-    }
-    /**
-     * Build call for serveFileUsingGET
-     * @param beaconId beaconId (required)
-     * @param id id (required)
-     * @param progressListener Progress listener
-     * @param progressRequestListener Progress request listener
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     */
-    public com.squareup.okhttp.Call serveFileUsingGETCall(String beaconId, Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = null;
-
-        // create path and map variables
-        String localVarPath = "/v1/admin/beacons/{beaconId}/images/{id}"
-            .replaceAll("\\{" + "beaconId" + "\\}", apiClient.escapeString(beaconId.toString()))
-            .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "image/_*"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-            
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
-                @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
-                    return originalResponse.newBuilder()
-                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                    .build();
-                }
-            });
-        }
-
-        String[] localVarAuthNames = new String[] { "JWT" };
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call serveFileUsingGETValidateBeforeCall(String beaconId, Long id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'beaconId' is set
-        if (beaconId == null) {
-            throw new ApiException("Missing the required parameter 'beaconId' when calling serveFileUsingGET(Async)");
-        }
-        
-        // verify the required parameter 'id' is set
-        if (id == null) {
-            throw new ApiException("Missing the required parameter 'id' when calling serveFileUsingGET(Async)");
-        }
-        
-
-        com.squareup.okhttp.Call call = serveFileUsingGETCall(beaconId, id, progressListener, progressRequestListener);
-        return call;
-
-    }
-
-    /**
-     * Get an image for a beacon
-     * 
-     * @param beaconId beaconId (required)
-     * @param id id (required)
-     * @return Resource
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public Resource serveFileUsingGET(String beaconId, Long id) throws ApiException {
-        ApiResponse<Resource> resp = serveFileUsingGETWithHttpInfo(beaconId, id);
-        return resp.getData();
-    }
-
-    /**
-     * Get an image for a beacon
-     * 
-     * @param beaconId beaconId (required)
-     * @param id id (required)
-     * @return ApiResponse&lt;Resource&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<Resource> serveFileUsingGETWithHttpInfo(String beaconId, Long id) throws ApiException {
-        com.squareup.okhttp.Call call = serveFileUsingGETValidateBeforeCall(beaconId, id, null, null);
-        Type localVarReturnType = new TypeToken<Resource>(){}.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
-     * Get an image for a beacon (asynchronously)
-     * 
-     * @param beaconId beaconId (required)
-     * @param id id (required)
-     * @param callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     */
-    public com.squareup.okhttp.Call serveFileUsingGETAsync(String beaconId, Long id, final ApiCallback<Resource> callback) throws ApiException {
-
-        ProgressResponseBody.ProgressListener progressListener = null;
-        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
-
-        if (callback != null) {
-            progressListener = new ProgressResponseBody.ProgressListener() {
-                @Override
-                public void update(long bytesRead, long contentLength, boolean done) {
-                    callback.onDownloadProgress(bytesRead, contentLength, done);
-                }
-            };
-
-            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
-                @Override
-                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
-                    callback.onUploadProgress(bytesWritten, contentLength, done);
-                }
-            };
-        }
-
-        com.squareup.okhttp.Call call = serveFileUsingGETValidateBeforeCall(beaconId, id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<Resource>(){}.getType();
+        com.squareup.okhttp.Call call = getiBeaconUsingGETValidateBeforeCall(major, minor, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<Info>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }

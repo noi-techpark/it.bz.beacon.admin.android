@@ -59,7 +59,7 @@ public class NewIssueActivity extends BaseActivity {
     protected TextInputEditText editReportDate;
 
     private Storage storage;
-    private long beaconId;
+    private String beaconId;
     private BeaconIssueViewModel beaconIssueViewModel;
 
     @Override
@@ -70,7 +70,7 @@ public class NewIssueActivity extends BaseActivity {
         setUpToolbar();
 
         if (getIntent() != null) {
-            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+            beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
 
         storage = AdminApplication.getStorage();

@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -107,6 +106,7 @@ import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
+import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
 
@@ -173,9 +173,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @BindView(R.id.gps_content)
     protected LinearLayout contentGPS;
-
-    @BindView(R.id.details_config_layout)
-    protected LinearLayout configLayout;
 
     @BindView(R.id.description_content)
     protected ConstraintLayout contentDescription;
@@ -255,6 +252,18 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.eddystone_switch_url)
     protected SwitchCompat switchUrl;
 
+    @BindView(R.id.address_name)
+    protected TextView txtAddressName;
+
+    @BindView(R.id.address_address)
+    protected TextView txtAddress;
+
+    @BindView(R.id.address_latitude)
+    protected TextView txtAddressLatitude;
+
+    @BindView(R.id.address_longitude)
+    protected TextView txtAddressLongitude;
+
     @BindView(R.id.details_location_subtitle)
     protected TextView txtLocation;
 
@@ -285,12 +294,16 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.gps_current_position)
     protected Button btnCurrentPosition;
 
+    @BindView(R.id.gps_provisional_position)
+    protected Button btnProvisionalPosition;
+
     @BindView(R.id.show_pending_config)
     protected Button btnShowPendingConfig;
 
-    private long beaconId;
+    private String beaconId;
     private String beaconName;
     private Beacon beacon;
+    private it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo;
     private boolean isBatteryWarningShowing = false;
 
     protected GoogleMap map;
@@ -313,7 +326,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         if (getIntent() != null) {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
-            beaconId = getIntent().getLongExtra(EXTRA_BEACON_ID, -1L);
+            beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
         configureTabListeners();
         isEditing = false;
@@ -321,7 +334,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
 
-        // TODO: figure out how to optimize following step (takes much time)
         mapView.onCreate(savedInstanceState);
 
         images.setHasFixedSize(true);
@@ -330,7 +342,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
-
 
         initializeKontakt();
     }
@@ -391,7 +402,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     protected void onResume() {
         super.onResume();
-        loadBeacon();
+        if (!isEditing) {
+            loadBeacon();
+            loadInfo(beaconId);
+        }
         startScanningIfLocationPermissionGranted();
         mapView.onResume();
         setUpToolbar(beaconName);
@@ -455,6 +469,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 }
             });
             btnCurrentPosition.setVisibility(View.VISIBLE);
+            btnProvisionalPosition.setVisibility(View.VISIBLE);
             if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 pendingInfo.setVisibility(View.VISIBLE);
             }
@@ -469,6 +484,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             switchTelemetry.setOnCheckedChangeListener(null);
             switchUid.setOnCheckedChangeListener(null);
             btnCurrentPosition.setVisibility(View.GONE);
+            btnProvisionalPosition.setVisibility(View.GONE);
             if (map != null) {
                 map.setOnMapClickListener(null);
             }
@@ -581,23 +597,58 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         showProgress(getString(R.string.loading));
 
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
-                    @Override
-                    public void onSuccess(Beacon loadedBeacon) {
-                        if (!isEditing) {
-                            beacon = loadedBeacon;
-                            showData();
-                            mapView.getMapAsync(DetailActivity.this);
-                            fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
-                            makeMapScrollable();
-//                            Debug.stopMethodTracing();
-                        }
-                    }
+            @Override
+            public void onSuccess(Beacon loadedBeacon) {
 
-                    @Override
-                    public void onError() {
-                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
-                    }
-                });
+                beacon = loadedBeacon;
+                showData();
+                mapView.getMapAsync(DetailActivity.this);
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
+                makeMapScrollable();
+//                            Debug.stopMethodTracing();
+            }
+
+            @Override
+            public void onError() {
+                showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+            }
+        });
+    }
+
+    private void loadInfo(String beaconId) {
+        NearbyBeaconManager manager = new NearbyBeaconManager(this);
+        manager.getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
+            @Override
+            public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo) {
+                txtAddressName.setText(beaconInfo.getName());
+                String address = "";
+                if (!TextUtils.isEmpty(beaconInfo.getAddress())) {
+                    address = beaconInfo.getAddress();
+                }
+                if (!TextUtils.isEmpty(address) || !TextUtils.isEmpty(beaconInfo.getCap()) || !TextUtils.isEmpty(beaconInfo.getLocation())) {
+                    address = address.concat(", ");
+                }
+                if (!TextUtils.isEmpty(beaconInfo.getCap())) {
+                    address = address.concat(beaconInfo.getCap()).concat(" ");
+                }
+                if (!TextUtils.isEmpty(beaconInfo.getLocation())) {
+                    address = address.concat(beaconInfo.getLocation());
+                }
+                txtAddress.setText(address);
+                txtAddressLatitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLatitude()));
+                txtAddressLongitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLongitude()));
+                DetailActivity.this.beaconInfo = beaconInfo;
+                if ((map != null) && (beacon != null) && (beacon.getLat() == 0) && (beacon.getLng() == 0)) {
+                    LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
+                    setMarker(latlng);
+                }
+            }
+
+            @Override
+            public void onError() {
+                Log.e(AdminApplication.LOG_TAG, "error");
+            }
+        });
     }
 
     @Override
@@ -811,7 +862,13 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             setMarker(latlng);
         }
         else {
-            showMyLocation();
+            if ((beaconInfo != null) && (beaconInfo.getLatitude() != 0) && (beaconInfo.getLongitude() != 0)) {
+                LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
+                setMarker(latlng);
+            }
+            else {
+                showMyLocation();
+            }
         }
 
         if (isEditing) {
@@ -820,10 +877,14 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     private void setMarker(LatLng latLng) {
+        String status = beacon.getStatus();
+        if (beacon.getLat() == 0 && beacon.getLng() == 0) {
+            status = Beacon.STATUS_NOT_INSTALLED;
+        }
         map.clear();
         map.addMarker(new MarkerOptions()
                 .position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(beacon.getStatus()))));
+                .icon(BitmapDescriptorFactory.fromResource(Beacon.getMarkerId(status))));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
     }
 
@@ -1280,6 +1341,17 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         if (currentLocation != null) {
             setLatLngEditFields(currentLocation.latitude, currentLocation.longitude);
             setMarker(currentLocation);
+        }
+        else {
+            showDialog(getString(R.string.position_not_available));
+        }
+    }
+
+    @OnClick(R.id.gps_provisional_position)
+    public void useProvisionalPosition(View view) {
+        if (beaconInfo != null) {
+            setLatLngEditFields(beaconInfo.getLatitude(), beaconInfo.getLongitude());
+            setMarker(new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude()));
         }
         else {
             showDialog(getString(R.string.position_not_available));

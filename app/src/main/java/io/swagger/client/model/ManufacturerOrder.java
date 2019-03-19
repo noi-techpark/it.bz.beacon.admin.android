@@ -24,14 +24,14 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * Order
+ * ManufacturerOrder
  */
 
-public class Order {
+public class ManufacturerOrder {
   @SerializedName("id")
   private String id = null;
 
-  public Order id(String id) {
+  public ManufacturerOrder id(String id) {
     this.id = id;
     return this;
   }
@@ -58,8 +58,8 @@ public class Order {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Order order = (Order) o;
-    return Objects.equals(this.id, order.id);
+    ManufacturerOrder manufacturerOrder = (ManufacturerOrder) o;
+    return Objects.equals(this.id, manufacturerOrder.id);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class Order {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Order {\n");
+    sb.append("class ManufacturerOrder {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("}");

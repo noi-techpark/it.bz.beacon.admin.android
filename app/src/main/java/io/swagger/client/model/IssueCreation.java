@@ -29,7 +29,7 @@ import java.io.IOException;
 
 public class IssueCreation {
   @SerializedName("beaconId")
-  private Long beaconId = null;
+  private String beaconId = null;
 
   @SerializedName("problem")
   private String problem = null;
@@ -40,22 +40,21 @@ public class IssueCreation {
   @SerializedName("reporter")
   private String reporter = null;
 
-  public IssueCreation beaconId(Long beaconId) {
+  public IssueCreation beaconId(String beaconId) {
     this.beaconId = beaconId;
     return this;
   }
 
    /**
    * Get beaconId
-   * minimum: 1
    * @return beaconId
   **/
   @ApiModelProperty(required = true, value = "")
-  public Long getBeaconId() {
+  public String getBeaconId() {
     return beaconId;
   }
 
-  public void setBeaconId(Long beaconId) {
+  public void setBeaconId(String beaconId) {
     this.beaconId = beaconId;
   }
 

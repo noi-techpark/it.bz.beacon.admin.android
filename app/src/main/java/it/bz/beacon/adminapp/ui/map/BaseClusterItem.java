@@ -9,7 +9,7 @@ public abstract class BaseClusterItem implements ClusterItem {
 
     protected LatLng position;
     protected long id;
-    protected long beaconId;
+    protected String beaconId;
     protected String name;
     protected String status;
 
@@ -27,7 +27,7 @@ public abstract class BaseClusterItem implements ClusterItem {
         return id;
     }
 
-    public long getBeaconId() {
+    public String getBeaconId() {
         return beaconId;
     }
 

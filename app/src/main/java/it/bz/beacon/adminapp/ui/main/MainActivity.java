@@ -49,6 +49,7 @@ import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.map.MapFragment;
 import it.bz.beacon.adminapp.ui.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.map.OnRetryLoadMapListener;
+import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
@@ -90,13 +91,15 @@ public class MainActivity extends BaseActivity
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
                 getString(R.string.status_issue),
-                getString(R.string.status_no_signal)};
+                getString(R.string.status_no_signal),
+                getString(R.string.status_not_installed)};
         statusFilterValues = new String[]{Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
                 Beacon.STATUS_ISSUE,
-                Beacon.STATUS_NO_SIGNAL};
+                Beacon.STATUS_NO_SIGNAL,
+                Beacon.STATUS_NOT_INSTALLED};
         radiusFilterItems = new String[]{getString(R.string.status_all),
                 "1 km",
                 "5 km",
@@ -110,6 +113,7 @@ public class MainActivity extends BaseActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(""));
         getMyLocation();
+        NearbyBeaconManager manager = new NearbyBeaconManager(this);
     }
 
     @Override

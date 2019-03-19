@@ -23,6 +23,7 @@ public class Beacon {
     public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
     public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
+    public static final String STATUS_NOT_INSTALLED = "NOT_INSTALLED";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({LOCATION_OUTDOOR, LOCATION_INDOOR})
@@ -34,7 +35,7 @@ public class Beacon {
 
     @NonNull
     @PrimaryKey
-    private long id;
+    private String id;
     private Integer batteryLevel;
     private String description;
     private Boolean eddystoneEid;
@@ -79,6 +80,9 @@ public class Beacon {
             case Beacon.STATUS_NO_SIGNAL:
                 drawableId = R.drawable.marker_nosignal;
                 break;
+            case Beacon.STATUS_NOT_INSTALLED:
+                drawableId = R.drawable.marker_provisional;
+                break;
             default:
                 drawableId = R.drawable.marker_ok;
                 break;
@@ -87,11 +91,11 @@ public class Beacon {
     }
 
     @NonNull
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(@NonNull long id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 

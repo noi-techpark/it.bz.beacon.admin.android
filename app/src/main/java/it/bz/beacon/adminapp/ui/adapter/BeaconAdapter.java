@@ -64,7 +64,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
     @Override
     public long getItemId(int position) {
-        return beacons.get(position).getId();
+        return beacons.get(position).getMajor() * 100000L + beacons.get(position).getMinor();
     }
 
     @Override
@@ -108,8 +108,15 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     else {
                         for (int i = 0; i < originalValues.size(); i++) {
                             BeaconMinimal beaconMinimal = originalValues.get(i);
-                            if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
-                                filteredBeacons.add(beaconMinimal);
+                            if (statusFilter.equals(Beacon.STATUS_NOT_INSTALLED)) {
+                                if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
+                                    filteredBeacons.add(beaconMinimal);
+                                }
+                            }
+                            else {
+                                if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
+                                    filteredBeacons.add(beaconMinimal);
+                                }
                             }
                         }
                         results.count = filteredBeacons.size();
@@ -168,7 +175,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             name.setText(beaconMinimal.getName());
             major.setText(context.getString(R.string.major_format, beaconMinimal.getMajor()));
             minor.setText(context.getString(R.string.minor_format, beaconMinimal.getMinor()));
-            manufacturerId.setText(beaconMinimal.getManufacturerId());
+            manufacturerId.setText(beaconMinimal.getId());
 
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_OK)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_ok)));
