@@ -22,9 +22,9 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
-import io.swagger.client.model.IssueCreation;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.model.IssueCreation;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
@@ -147,7 +147,7 @@ public class NewIssueActivity extends BaseActivity {
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
         try {
-            AdminApplication.getIssueApi().createUsingPOST2Async(issueCreation, new ApiCallback<io.swagger.client.model.BeaconIssue>() {
+            AdminApplication.getIssueApi().createUsingPOST2Async(issueCreation, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {
@@ -168,7 +168,7 @@ public class NewIssueActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onSuccess(io.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
+                public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (dialog != null) {

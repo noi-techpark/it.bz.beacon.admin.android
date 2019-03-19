@@ -9,8 +9,8 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
@@ -68,7 +68,7 @@ public class BeaconIssueRepository {
     public void refreshBeaconIssues(@Nullable String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             if (beaconId != null) {
-                AdminApplication.getIssueApi().getListUsingGET4Async(beaconId, false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
+                AdminApplication.getIssueApi().getListUsingGET4Async(beaconId, false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (dataUpdateEvent != null) {
@@ -82,7 +82,7 @@ public class BeaconIssueRepository {
                     }
 
                     @Override
-                    public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (result != null) {
                             for (int i = 0; i < result.size(); i++) {
                                 saveBeaconIssue(result.get(i));
@@ -103,7 +103,7 @@ public class BeaconIssueRepository {
                 });
             }
             else {
-                AdminApplication.getIssueApi().getListUsingGET3Async(false, new ApiCallback<List<io.swagger.client.model.BeaconIssue>>() {
+                AdminApplication.getIssueApi().getListUsingGET3Async(false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         Log.e(AdminApplication.LOG_TAG, "onFailure: " + e.getMessage());
@@ -118,7 +118,7 @@ public class BeaconIssueRepository {
                     }
 
                     @Override
-                    public void onSuccess(List<io.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue> result, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (result != null) {
                             for (int i = 0; i < result.size(); i++) {
                                 saveBeaconIssue(result.get(i));
@@ -148,7 +148,7 @@ public class BeaconIssueRepository {
         }
     }
 
-    private void saveBeaconIssue(io.swagger.client.model.BeaconIssue remoteBeaconIssue) {
+    private void saveBeaconIssue(it.bz.beacon.adminapp.swagger.client.model.BeaconIssue remoteBeaconIssue) {
         BeaconIssue beaconIssue;
         beaconIssue = new BeaconIssue();
         beaconIssue.setId(remoteBeaconIssue.getId());
