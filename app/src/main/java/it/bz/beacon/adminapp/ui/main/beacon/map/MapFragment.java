@@ -27,7 +27,11 @@ import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,6 +55,8 @@ import it.bz.beacon.adminapp.ui.detail.DetailActivity;
 import it.bz.beacon.adminapp.ui.map.BaseClusterItem;
 import it.bz.beacon.adminapp.ui.map.BeaconInfoWindowAdapter;
 import it.bz.beacon.adminapp.ui.map.ClusterRenderer;
+import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
+import it.bz.beacon.beaconsuedtirolsdk.data.event.LoadAllBeaconsEvent;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager.OnClusterItemInfoWindowClickListener<BaseClusterItem> {
@@ -70,6 +76,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private ClusterManager<BaseClusterItem> clusterManager;
 
     private BeaconViewModel beaconViewModel;
+    private Map<String, it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon> infos = new HashMap<>();
     private List<BeaconMinimal> mapBeacons = new ArrayList<>();
     private String statusFilter = Beacon.STATUS_ALL;
 
@@ -102,24 +109,59 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void loadData() {
-        beaconViewModel.getAll().observe(this, new Observer<List<BeaconMinimal>>() {
-            @Override
-            public void onChanged(@Nullable List<BeaconMinimal> beacons) {
-                if (beacons != null && beacons.size() > 0) {
-                    mapBeacons.clear();
-                    Log.d(AdminApplication.LOG_TAG, "#2 beacons for map loaded: " + statusFilter);
-                    for (BeaconMinimal beaconMinimal : beacons) {
-                        if ((beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) &&
-                                ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL)))) {
-                            mapBeacons.add(beaconMinimal);
-                        }
+        infos.clear();
+        if (getContext() != null) {
+            final NearbyBeaconManager manager = new NearbyBeaconManager(getContext());
+            manager.getAllBeacons(new LoadAllBeaconsEvent() {
+                @Override
+                public void onSuccess(List<it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon> list) {
+                    if (list == null) {
+                        loadBeaconData();
+                        return;
                     }
-                    if (map != null) {
-                        setUpClusterer();
-                    }
+
+                    MapFragment.this.infos =
+                            list.stream().collect(Collectors.toMap(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon::getId, Function.identity()));
+
+                    loadBeaconData();
                 }
-            }
-        });
+
+                @Override
+                public void onError() {
+                    loadBeaconData();
+                }
+            });
+        }
+    }
+
+    private void loadBeaconData() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    beaconViewModel.getAll().observe(MapFragment.this, new Observer<List<BeaconMinimal>>() {
+                        @Override
+                        public void onChanged(@Nullable List<BeaconMinimal> beacons) {
+                            if (beacons != null && beacons.size() > 0) {
+                                mapBeacons.clear();
+                                for (BeaconMinimal beaconMinimal : beacons) {
+                                    if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
+                                        beaconMinimal.setStatus(Beacon.STATUS_NOT_INSTALLED);
+                                    }
+
+                                    if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
+                                        mapBeacons.add(beaconMinimal);
+                                    }
+                                }
+                                if (map != null) {
+                                    setUpClusterer();
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Subscribe
@@ -207,6 +249,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         clusterManager.clearItems();
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         for (BeaconMinimal beacon : mapBeacons) {
+            if (beacon.getStatus().equalsIgnoreCase(Beacon.STATUS_NOT_INSTALLED)) {
+                it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon info = infos.get(beacon.getId());
+                if (info != null) {
+                    beacon.setLat(info.getLatitude().floatValue());
+                    beacon.setLng(info.getLongitude().floatValue());
+                }
+            }
             BeaconClusterItem clusterItem = new BeaconClusterItem(beacon);
             clusterManager.addItem(clusterItem);
             boundsBuilder.include(clusterItem.getPosition());
