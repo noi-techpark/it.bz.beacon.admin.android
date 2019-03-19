@@ -8,8 +8,8 @@ import android.util.Log;
 import java.util.List;
 import java.util.Map;
 
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
@@ -36,7 +36,7 @@ public class BeaconImageRepository {
 
     public void refreshBeaconImages(final String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getImageApi().getListUsingGET1Async(beaconId, new ApiCallback<List<io.swagger.client.model.BeaconImage>>() {
+            AdminApplication.getImageApi().getListUsingGET1Async(beaconId, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
@@ -49,10 +49,10 @@ public class BeaconImageRepository {
                 }
 
                 @Override
-                public void onSuccess(List<io.swagger.client.model.BeaconImage> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.BeaconImage> result, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (result != null) {
                         BeaconImage beaconImage;
-                        io.swagger.client.model.BeaconImage remoteBeaconImage;
+                        it.bz.beacon.adminapp.swagger.client.model.BeaconImage remoteBeaconImage;
                         for (int i = 0; i < result.size(); i++) {
                             remoteBeaconImage = result.get(i);
                             beaconImage = new BeaconImage();

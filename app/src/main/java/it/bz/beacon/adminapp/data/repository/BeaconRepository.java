@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.lifecycle.LiveData;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
@@ -65,7 +65,7 @@ public class BeaconRepository {
 
     public void refreshBeacons(final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getBeaconApi().getListUsingGETAsync(new ApiCallback<List<io.swagger.client.model.Beacon>>() {
+            AdminApplication.getBeaconApi().getListUsingGETAsync(new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.Beacon>>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
@@ -79,7 +79,7 @@ public class BeaconRepository {
                 }
 
                 @Override
-                public void onSuccess(List<io.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
+                public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
 
                     if (result != null) {
                         for (int i = 0; i < result.size(); i++) {
@@ -109,7 +109,7 @@ public class BeaconRepository {
         }
     }
 
-    private void saveBeacon(io.swagger.client.model.Beacon remoteBeacon) {
+    private void saveBeacon(it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon) {
         // indicates that something went wrong when the server tried to get infos from Kontakt.io
         if (remoteBeacon.getUuid() == null) {
             return;
@@ -156,7 +156,7 @@ public class BeaconRepository {
 
     public void refreshBeacon(String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<io.swagger.client.model.Beacon>() {
+            AdminApplication.getBeaconApi().getUsingGETAsync(beaconId, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
@@ -170,7 +170,7 @@ public class BeaconRepository {
                 }
 
                 @Override
-                public void onSuccess(io.swagger.client.model.Beacon remoteBeacon, int statusCode, Map<String, List<String>> responseHeaders) {
+                public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (remoteBeacon != null) {
                         saveBeacon(remoteBeacon);
                         if (dataUpdateEvent != null) {

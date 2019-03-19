@@ -14,11 +14,11 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.android.gms.maps.MapsInitializer;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
-import io.swagger.client.ApiClient;
-import io.swagger.client.api.AuthControllerApi;
-import io.swagger.client.api.BeaconControllerApi;
-import io.swagger.client.api.ImageControllerApi;
-import io.swagger.client.api.IssueControllerApi;
+import it.bz.beacon.adminapp.swagger.client.ApiClient;
+import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
 import it.bz.beacon.adminapp.data.Storage;
 
 public class AdminApplication extends Application {
@@ -44,7 +44,7 @@ public class AdminApplication extends Application {
         interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         apiClient.getHttpClient().networkInterceptors().add(interceptor);
 
-        io.swagger.client.Configuration.setDefaultApiClient(apiClient);
+        it.bz.beacon.adminapp.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
         imageControllerApi = new ImageControllerApi();

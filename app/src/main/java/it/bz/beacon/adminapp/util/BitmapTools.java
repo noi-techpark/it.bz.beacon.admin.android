@@ -8,36 +8,19 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
-import io.swagger.client.model.Resource;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
-import it.bz.beacon.adminapp.ui.detail.DetailActivity;
-
-import static android.view.View.X;
-import static io.swagger.client.auth.OAuthFlow.application;
 
 public class BitmapTools {
 

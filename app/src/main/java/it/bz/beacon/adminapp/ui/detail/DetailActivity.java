@@ -88,11 +88,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
-import io.swagger.client.model.BaseMessage;
-import io.swagger.client.model.BeaconUpdate;
-import io.swagger.client.model.PendingConfiguration;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -1183,7 +1183,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         saveTask.execute(beaconUpdate);
     }
 
-    private class SaveTask extends AsyncTask<BeaconUpdate, Void, io.swagger.client.model.Beacon> {
+    private class SaveTask extends AsyncTask<BeaconUpdate, Void, it.bz.beacon.adminapp.swagger.client.model.Beacon> {
 
         private ProgressDialog dialog = new ProgressDialog(DetailActivity.this, R.style.AlertDialogCustom);
 
@@ -1198,7 +1198,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
 
         @Override
-        protected io.swagger.client.model.Beacon doInBackground(BeaconUpdate... beaconUpdates) {
+        protected it.bz.beacon.adminapp.swagger.client.model.Beacon doInBackground(BeaconUpdate... beaconUpdates) {
             try {
                 return AdminApplication.getBeaconApi().updateUsingPATCH(beaconUpdates[0], beaconId);
             }
@@ -1212,7 +1212,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
 
         @Override
-        protected void onPostExecute(io.swagger.client.model.Beacon result) {
+        protected void onPostExecute(it.bz.beacon.adminapp.swagger.client.model.Beacon result) {
             if (result != null) {
                 Beacon updatedBeacon = new Beacon();
                 updatedBeacon.setId(result.getId());
@@ -1418,14 +1418,14 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             dialog.show();
 
             try {
-                AdminApplication.getImageApi().createUsingPOST1Async(beaconId, file, new ApiCallback<io.swagger.client.model.BeaconImage>() {
+                AdminApplication.getImageApi().createUsingPOST1Async(beaconId, file, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         dialog.dismiss();
                     }
 
                     @Override
-                    public void onSuccess(io.swagger.client.model.BeaconImage result, int statusCode, Map<String, List<String>> responseHeaders) {
+                    public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.BeaconImage result, int statusCode, Map<String, List<String>> responseHeaders) {
                         ContextWrapper contextWrapper = new ContextWrapper(DetailActivity.this);
                         File directory = contextWrapper.getDir(getString(R.string.image_folder), Context.MODE_PRIVATE);
                         File newFile = new File(directory, result.getFileName());

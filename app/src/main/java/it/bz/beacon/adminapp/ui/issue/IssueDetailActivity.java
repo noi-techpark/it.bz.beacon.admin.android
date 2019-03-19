@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -26,9 +25,9 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.swagger.client.ApiCallback;
-import io.swagger.client.ApiException;
-import io.swagger.client.model.IssueSolution;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.model.IssueSolution;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
@@ -158,7 +157,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
         try {
-            AdminApplication.getIssueApi().updateUsingPOSTAsync(issueId, issueSolution, new ApiCallback<io.swagger.client.model.BeaconIssue>() {
+            AdminApplication.getIssueApi().updateUsingPOSTAsync(issueId, issueSolution, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {
@@ -179,7 +178,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
                 }
 
                 @Override
-                public void onSuccess(io.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
+                public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.BeaconIssue remoteBeaconIssue, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (dialog != null) {
