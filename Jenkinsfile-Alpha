@@ -37,7 +37,7 @@ pipeline {
                     sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/release/res/values/beacon_suedtirol_api.xml'
                     sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
 
-                    sh 'cat "${KEYSTORE_FILE}" > keystore.jks'
+                    sh 'cat "${KEYSTORE_FILE}" > app/keystore.jks'
                 }
             }
         }
@@ -79,7 +79,7 @@ pipeline {
 
     post {
         always {
-            sh 'rm -rf keystore.jks'            
+            sh 'rm -rf app/keystore.jks'            
             sh 'rm -rf app/src/release/res/values/google_maps_api.xml'
             sh 'rm -rf app/src/debug/res/values/google_maps_api.xml'
             sh 'rm -rf app/src/release/res/values/beacon_suedtirol_api.xml'
