@@ -115,13 +115,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             manager.getAllBeacons(new LoadAllBeaconsEvent() {
                 @Override
                 public void onSuccess(List<it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon> list) {
-                    if (list == null) {
-                        loadBeaconData();
-                        return;
+                    if (list != null) {
+                        MapFragment.this.infos =
+                                list.stream().collect(Collectors.toMap(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon::getId, Function.identity()));
                     }
-
-                    MapFragment.this.infos =
-                            list.stream().collect(Collectors.toMap(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon::getId, Function.identity()));
 
                     loadBeaconData();
                 }

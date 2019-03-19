@@ -62,6 +62,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<BaseClusterItem> {
 
     @Override
     protected boolean shouldRenderAsCluster(Cluster<BaseClusterItem> cluster) {
-        return cluster.getSize() > 1;
+        return cluster.getSize() > 10;
     }
 }
