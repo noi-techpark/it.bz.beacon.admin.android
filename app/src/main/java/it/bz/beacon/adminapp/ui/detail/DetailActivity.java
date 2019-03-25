@@ -1100,34 +1100,34 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             }
         }
 
-        float latitude = 0f;
-        if ((editLatitude.getText() != null) && (editLatitude.getText().toString().length() > 0)) {
-            latitude = Float.parseFloat(editLatitude.getText().toString().replace(',', '.'));
-            if ((latitude < 46.2f) || (latitude > 47.1f)) {
-                containerLatitude.setError(getString(R.string.invalid_coordinate));
-                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
-                valid = false;
-            }
-        }
-        float longitude = 0f;
-        if ((editLongitude.getText() != null) && (editLongitude.getText().toString().length() > 0)) {
-            longitude = Float.parseFloat(editLongitude.getText().toString().replace(',', '.'));
-            if ((longitude < 10.3f) || (longitude > 12.5f)) {
-                containerLongitude.setError(getString(R.string.invalid_coordinate));
-                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
-                valid = false;
-            }
-        }
-        if ((latitude == 0f) && (longitude > 0f)) {
-            containerLatitude.setError(getString(R.string.invalid_coordinate));
-            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
-            valid = false;
-        }
-        if ((latitude > 0f) && (longitude == 0f)) {
-            containerLongitude.setError(getString(R.string.invalid_coordinate));
-            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
-            valid = false;
-        }
+//        float latitude = 0f;
+//        if ((editLatitude.getText() != null) && (editLatitude.getText().toString().length() > 0)) {
+//            latitude = Float.parseFloat(editLatitude.getText().toString().replace(',', '.'));
+//            if ((latitude < 46.2f) || (latitude > 47.1f)) {
+//                containerLatitude.setError(getString(R.string.invalid_coordinate));
+//                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
+//                valid = false;
+//            }
+//        }
+//        float longitude = 0f;
+//        if ((editLongitude.getText() != null) && (editLongitude.getText().toString().length() > 0)) {
+//            longitude = Float.parseFloat(editLongitude.getText().toString().replace(',', '.'));
+//            if ((longitude < 10.3f) || (longitude > 12.5f)) {
+//                containerLongitude.setError(getString(R.string.invalid_coordinate));
+//                tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
+//                valid = false;
+//            }
+//        }
+//        if ((latitude == 0f) && (longitude > 0f)) {
+//            containerLatitude.setError(getString(R.string.invalid_coordinate));
+//            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
+//            valid = false;
+//        }
+//        if ((latitude > 0f) && (longitude == 0f)) {
+//            containerLongitude.setError(getString(R.string.invalid_coordinate));
+//            tabLayoutLocation.getTabAt(1).setIcon(R.drawable.ic_error);
+//            valid = false;
+//        }
         return valid;
     }
 

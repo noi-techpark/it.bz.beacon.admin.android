@@ -340,9 +340,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             Log.d(AdminApplication.LOG_TAG, "Response from sendToCloud: " + response.toString());
                         }
                         Log.d(AdminApplication.LOG_TAG, "sendToCloud successful");
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
+                        hideProgressDialog();
                         isPendingConfigEmpty = true;
                         isPendingConfigNull = true;
                         txtEmpty.setText(getString(R.string.applied_successfully));
@@ -355,9 +353,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                     @Override
                     public void onError(CloudError error) {
                         Log.e(AdminApplication.LOG_TAG, "sendToCloud failed: " + error.getMessage());
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
+                        hideProgressDialog();
                         isPendingConfigEmpty = true;
                         isPendingConfigNull = true;
                         txtEmpty.setText(error.getMessage());
@@ -392,6 +388,12 @@ public class PendingConfigurationActivity extends BaseActivity {
         dialog.setCancelable(false);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
     }
 
     private void sendToBeacon(final ISecureProfile profile) {
@@ -438,9 +440,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                         @Override
                         public void onErrorOccured(int errorCode) {
                             Log.d(AdminApplication.LOG_TAG, "Connection failure");
-                            if (dialog != null) {
-                                dialog.dismiss();
-                            }
+                            hideProgressDialog();
                             Snackbar.make(scrollView, getString(R.string.error_connecting_to_beacon), Snackbar.LENGTH_INDEFINITE)
                                     .setAction(getString(R.string.retry), new View.OnClickListener() {
                                         @Override
@@ -462,9 +462,7 @@ public class PendingConfigurationActivity extends BaseActivity {
 
             @Override
             public void onError(CloudError error) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+                hideProgressDialog();
             }
         });
     }
