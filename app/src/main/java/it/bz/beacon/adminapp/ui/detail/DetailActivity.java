@@ -80,6 +80,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -104,8 +105,10 @@ import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
+import it.bz.beacon.adminapp.ui.main.MainActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
+import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
@@ -113,6 +116,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
     private static final int LOCATION_PERMISSION_REQUEST = 1;
+
+    @BindView(R.id.scrollview)
+    protected NestedScrollView scrollView;
 
     @BindView(R.id.progress)
     protected ConstraintLayout progress;
@@ -317,6 +323,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     private ProximityManager proximityManager;
 
+    private boolean loadingImages = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -399,6 +407,22 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         };
     }
 
+    private class ImageCounter {
+        private int counter = 0;
+        private int goal;
+
+        public ImageCounter(int goal) {
+            this.goal = goal;
+        }
+
+        void count() {
+            counter++;
+            if (counter == goal) {
+                loadingImages = false;
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -414,26 +438,42 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconImageViewModel.getAllByBeaconId(beaconId).observe(this, new Observer<List<BeaconImage>>() {
             @Override
             public void onChanged(@Nullable List<BeaconImage> beaconImages) {
-                if (beaconImages != null) {
-                    refreshImages(beaconImages);
-                    if (beaconImages.size() > 0) {
-                        galleryAdapter.setBeaconImages(beaconImages);
-                        images.setVisibility(View.VISIBLE);
-                        txtImagesEmpty.setVisibility(View.GONE);
-                    }
-                    else {
-                        images.setVisibility(View.GONE);
-                        txtImagesEmpty.setVisibility(View.VISIBLE);
+                if (!loadingImages) {
+                    loadingImages = true;
+
+                    images.setVisibility(View.GONE);
+                    txtImagesEmpty.setVisibility(View.VISIBLE);
+                    galleryAdapter.clear();
+
+                    if (beaconImages != null) {
+                        final ImageCounter counter = new ImageCounter(beaconImages.size());
+                        for (BeaconImage beaconImage : beaconImages) {
+                            BitmapTools.downloadImage(DetailActivity.this, beaconImage, new OnImagesDownloadedCallback() {
+                                @Override
+                                public void onSuccess(BeaconImage beaconImage) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            galleryAdapter.addBeaconImage(beaconImage);
+                                            images.setVisibility(View.VISIBLE);
+                                            txtImagesEmpty.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    counter.count();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    counter.count();
+                                }
+                            });
+                        }
+                    } else {
+                        loadingImages = false;
                     }
                 }
             }
         });
-    }
-
-    private void refreshImages(List<BeaconImage> beaconImages) {
-        for (BeaconImage beaconImage : beaconImages) {
-            BitmapTools.downloadImage(this, beaconImage);
-        }
     }
 
     protected void setContentEnabled(boolean enabled) {
@@ -941,7 +981,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     // workaround to make a map inside a ScrollView scrollable and zoomable
     @SuppressLint("ClickableViewAccessibility")
     private void makeMapScrollable() {
-        final ScrollView mainScrollView = findViewById(R.id.scrollview);
         ImageView transparentImageView = findViewById(R.id.transparent_image);
 
         transparentImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -952,17 +991,17 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         // Disallow ScrollView to intercept touch events.
-                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        scrollView.requestDisallowInterceptTouchEvent(true);
                         // Disable touch on transparent view
                         return false;
 
                     case MotionEvent.ACTION_UP:
                         // Allow ScrollView to intercept touch events.
-                        mainScrollView.requestDisallowInterceptTouchEvent(false);
+                        scrollView.requestDisallowInterceptTouchEvent(false);
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        scrollView.requestDisallowInterceptTouchEvent(true);
                         return false;
 
                     default:

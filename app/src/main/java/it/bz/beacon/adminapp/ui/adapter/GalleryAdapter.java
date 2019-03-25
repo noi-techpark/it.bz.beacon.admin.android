@@ -49,9 +49,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
         holder.setImage(images.get(position));
     }
 
-    public void setBeaconImages(List<BeaconImage> images) {
+    public void clear() {
         this.images.clear();
-        this.images.addAll(images);
+        notifyDataSetChanged();
+    }
+
+    public void addBeaconImage(BeaconImage image) {
+        this.images.add(image);
         notifyDataSetChanged();
     }
 
