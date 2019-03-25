@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
@@ -22,6 +25,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
@@ -54,11 +58,12 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         KontaktSDK.initialize(getString(R.string.apiKey));
         proximityManager = ProximityManagerFactory.create(getContext());
         proximityManager.setSecureProfileListener(createSecureProfileListener());
-        super.onCreate(savedInstanceState);
     }
 
     private void startScanningIfLocationPermissionGranted() {
@@ -118,6 +123,26 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
             @Override
             public void onServiceReady() {
                 proximityManager.startScanning();
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.list, menu);
+        MenuItem search = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) search.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                setSearchFilter(s);
+                return false;
             }
         });
     }

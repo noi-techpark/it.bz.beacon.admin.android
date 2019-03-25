@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
             AuthenticationRequest request = new AuthenticationRequest();
             request.setUsername(username);
             request.setPassword(password);
+            showProgress(true);
 
             authControllerApi.signinUsingPOSTAsync(request, new ApiCallback<AuthenticationToken>() {
 
