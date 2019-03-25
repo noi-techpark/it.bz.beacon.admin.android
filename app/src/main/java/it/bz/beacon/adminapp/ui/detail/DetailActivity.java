@@ -35,6 +35,9 @@ import android.widget.Toast;
 
 import com.appyvet.materialrangebar.RangeBar;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -72,6 +75,7 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -111,7 +115,8 @@ import it.bz.beacon.adminapp.util.DateFormatter;
 import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
-public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
+public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
+        GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
@@ -350,6 +355,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
 
         initializeKontakt();
     }
@@ -426,6 +432,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     protected void onResume() {
         super.onResume();
+        startLocating();
         if (!isEditing) {
             loadBeacon();
             loadInfo(beaconId);
@@ -643,7 +650,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 beacon = loadedBeacon;
                 showData();
                 mapView.getMapAsync(DetailActivity.this);
-                fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
                 makeMapScrollable();
 //                            Debug.stopMethodTracing();
             }
@@ -886,6 +892,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.getUiSettings().setZoomControlsEnabled(true);
+        stopLocating();
+        startLocating();
 
         try {
             boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
@@ -907,7 +915,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 setMarker(latlng);
             }
             else {
-                showMyLocation();
+                goToMyLocation();
             }
         }
 
@@ -936,9 +944,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
-    private void showMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+    private LocationRequest locationRequest = new LocationRequest();
+    private LocationCallback locationCallback = new MyLocationCallback();
+
+    private void startLocating() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
@@ -947,34 +957,47 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        LOCATION_PERMISSION_REQUEST);
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
                             }
                         })
                         .create();
                 dialog.show();
             }
             else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
+        } else {
+            doStartLocating();
         }
-        else {
+    }
+
+    @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
+    private void doStartLocating() {
+        if (map != null) {
             map.getUiSettings().setMyLocationButtonEnabled(true);
             map.setMyLocationEnabled(true);
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if ((location != null) && (currentLocation == null)) {
-                                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                if ((beacon == null) || (beacon.getLat() == 0) || (beacon.getLng() == 0)) {
-                                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
-                                }
-                                currentLocation = latLng;
-                            }
-                        }
-                    });
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
+    private void stopLocating() {
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+        map.setMyLocationEnabled(false);
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+
+    private void goToMyLocation() {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, getZoomLevel()));
+    }
+
+    private class MyLocationCallback extends LocationCallback {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
         }
     }
 
@@ -1020,7 +1043,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showMyLocation();
+                    startLocating();
                     startScanning();
                 }
                 break;
@@ -1417,6 +1440,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     public void onPause() {
         super.onPause();
+        stopLocating();
         proximityManager.stopScanning();
         proximityManager.disconnect();
         mapView.onPause();
