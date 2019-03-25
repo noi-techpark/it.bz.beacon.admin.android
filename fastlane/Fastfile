@@ -28,7 +28,7 @@ platform :android do
         gradle_file_path: "app/build.gradle"
     )
     
-    #gradle(task: "clean")
+    gradle(task: "clean")
 
     gradle(
         task: "assemble",
