@@ -428,7 +428,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         void count() {
             counter++;
-            if (counter == goal) {
+            if (counter >= goal) {
                 loadingImages = false;
             }
         }
@@ -1570,8 +1570,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                     }
                 });
-            }
-            catch (ApiException e) {
+            } catch (ApiException e) {
                 e.printStackTrace();
             }
 
