@@ -34,7 +34,6 @@ public class BeaconClusterItem extends BaseClusterItem {
         int major = beaconMinimal.getMajor();
         int minor = beaconMinimal.getMinor();
 
-        String manufacturerId = beaconMinimal.getManufacturerId();
-        return manufacturerId + System.getProperty("line.separator") + "Major: " + major + System.getProperty("line.separator") + "Minor: " + minor;
+        return "Major: " + major + System.getProperty("line.separator") + "Minor: " + minor;
     }
 }
