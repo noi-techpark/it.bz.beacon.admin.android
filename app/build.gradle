@@ -63,4 +63,5 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
     implementation "androidx.work:work-runtime:2.0.0-rc01"
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 }

@@ -971,6 +971,30 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
     }
 
+    private void stopLocating() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+            else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+            }
+        } else {
+            doStopLocating();
+        }
+    }
+
     @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
     private void doStartLocating() {
         if (map != null) {
@@ -981,9 +1005,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
-    private void stopLocating() {
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.setMyLocationEnabled(false);
+    private void doStopLocating() {
+        if (map != null) {
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.setMyLocationEnabled(false);
+        }
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
