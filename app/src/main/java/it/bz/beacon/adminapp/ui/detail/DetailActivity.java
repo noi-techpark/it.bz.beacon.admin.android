@@ -1497,6 +1497,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 1024);
             String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, getString(R.string.temp_folder), tempFilename);
 
+            //TODO samsung fix
+
             final File file = new File(tempUri);
 
             final ProgressDialog dialog = new ProgressDialog(this);
