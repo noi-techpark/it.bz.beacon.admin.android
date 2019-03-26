@@ -1515,36 +1515,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             String tempUri = BitmapTools.saveToInternalStorage(this, bitmap,
                     getString(R.string.temp_folder), tempFilename);
 
-            try {
-                ExifInterface ei = new ExifInterface(tempUri);
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
-
-                Bitmap rotatedBitmap = null;
-                switch (orientation) {
-
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        rotatedBitmap = rotateImage(bitmap, 90);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        rotatedBitmap = rotateImage(bitmap, 180);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        rotatedBitmap = rotateImage(bitmap, 270);
-                        break;
-
-                    case ExifInterface.ORIENTATION_NORMAL:
-                    default:
-                        rotatedBitmap = bitmap;
-                }
-
-                BitmapTools.saveToInternalStorage(this, rotatedBitmap, getString(R.string.temp_folder), tempFilename);
-            } catch (IOException e) {
-                //
-            }
-
             final File file = new File(tempUri);
 
             final ProgressDialog dialog = new ProgressDialog(this);
