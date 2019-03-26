@@ -20,7 +20,11 @@ public class BeaconClusterItem extends BaseClusterItem {
         else {
             this.status = beaconMinimal.getStatus();
         }
-        if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
+
+        if (beaconMinimal.getStatus().equals(Beacon.STATUS_NOT_INSTALLED)
+                && beaconMinimal.getProvisoricLat() != 0 && beaconMinimal.getProvisoricLng() != 0) {
+            this.position = new LatLng(beaconMinimal.getProvisoricLat(), beaconMinimal.getProvisoricLng());
+        } else if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
             this.position = new LatLng(beaconMinimal.getLat(), beaconMinimal.getLng());
         }
     }

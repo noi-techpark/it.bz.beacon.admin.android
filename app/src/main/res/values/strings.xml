@@ -116,6 +116,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="status_configuration_pending">Configuration pending</string>
     <string name="status_no_signal">No signal</string>
     <string name="status_issue">Issue(s) reported</string>
+    <string name="status_installed">Installed</string>
     <string name="status_not_installed">Not installed</string>
     <string name="outdoor">outdoor</string>
     <string name="indoor">indoor</string>

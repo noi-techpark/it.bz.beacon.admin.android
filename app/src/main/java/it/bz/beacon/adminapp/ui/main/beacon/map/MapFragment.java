@@ -152,7 +152,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                         beaconMinimal.setStatus(Beacon.STATUS_NOT_INSTALLED);
                                     }
 
-                                    if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
+                                    if (statusFilter.equals(Beacon.STATUS_INSTALLED)) {
+                                        if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
+                                            mapBeacons.add(beaconMinimal);
+                                        }
+                                    } else if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
                                         mapBeacons.add(beaconMinimal);
                                     }
                                 }
@@ -273,8 +277,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             if (beacon.getStatus().equalsIgnoreCase(Beacon.STATUS_NOT_INSTALLED)) {
                 it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon info = infos.get(beacon.getId());
                 if (info != null) {
-                    beacon.setLat(info.getLatitude().floatValue());
-                    beacon.setLng(info.getLongitude().floatValue());
+                    beacon.setProvisoricLat(info.getLatitude().floatValue());
+                    beacon.setProvisoricLng(info.getLongitude().floatValue());
                 }
             }
             BeaconClusterItem clusterItem = new BeaconClusterItem(beacon);

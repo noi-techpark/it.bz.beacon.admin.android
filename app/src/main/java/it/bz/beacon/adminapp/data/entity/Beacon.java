@@ -23,6 +23,7 @@ public class Beacon {
     public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
     public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
+    public static final String STATUS_INSTALLED = "INSTALLED";
     public static final String STATUS_NOT_INSTALLED = "NOT_INSTALLED";
 
     @Retention(RetentionPolicy.SOURCE)
