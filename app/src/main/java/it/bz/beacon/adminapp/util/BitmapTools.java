@@ -49,7 +49,7 @@ public class BitmapTools {
     public static Bitmap resizeBitmap(String photoPath, int maxSideLength) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(photoPath, bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
         int photoWidth = bmOptions.outWidth;
         int photoHeight = bmOptions.outHeight;
 

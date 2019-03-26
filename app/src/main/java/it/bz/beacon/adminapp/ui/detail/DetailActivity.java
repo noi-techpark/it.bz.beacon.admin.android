@@ -11,7 +11,10 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -64,9 +67,11 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.img.ImageHandler;
 import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -1490,14 +1495,55 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         mapView.onLowMemory();
     }
 
+    private Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
     @Override
     public void onPickResult(final PickResult pickResult) {
         if (pickResult.getError() == null) {
             String tempFilename = System.currentTimeMillis() + ".jpg";
-            Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 1024);
-            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, getString(R.string.temp_folder), tempFilename);
+            Bitmap bitmap = pickResult.getBitmap();
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()),
+                    new RectF(0, 0, 1024, 1024), Matrix.ScaleToFit.CENTER);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+                    rotationMatrix, true);
+            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap,
+                    getString(R.string.temp_folder), tempFilename);
 
-            //TODO samsung fix
+            try {
+                ExifInterface ei = new ExifInterface(tempUri);
+                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+
+                Bitmap rotatedBitmap = null;
+                switch (orientation) {
+
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        rotatedBitmap = rotateImage(bitmap, 90);
+                        break;
+
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        rotatedBitmap = rotateImage(bitmap, 180);
+                        break;
+
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        rotatedBitmap = rotateImage(bitmap, 270);
+                        break;
+
+                    case ExifInterface.ORIENTATION_NORMAL:
+                    default:
+                        rotatedBitmap = bitmap;
+                }
+
+                BitmapTools.saveToInternalStorage(this, rotatedBitmap, getString(R.string.temp_folder), tempFilename);
+            } catch (IOException e) {
+                //
+            }
 
             final File file = new File(tempUri);
 
