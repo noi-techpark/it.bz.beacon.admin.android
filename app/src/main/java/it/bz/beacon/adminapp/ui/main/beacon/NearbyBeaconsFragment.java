@@ -233,7 +233,6 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
                 super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
-                    updateBatteryStatus(profile);
                     updateList(profile);
                 }
             }

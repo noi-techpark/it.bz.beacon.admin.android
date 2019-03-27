@@ -395,7 +395,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
                 super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
-                    updateBatteryStatus(profile);
                     updateBeaconNearby(profile);
                 }
             }
