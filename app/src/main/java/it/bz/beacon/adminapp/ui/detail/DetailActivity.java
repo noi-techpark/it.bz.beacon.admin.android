@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.location.Location;
-import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -32,7 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +48,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -67,11 +64,9 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
-import com.vansuita.pickimage.img.ImageHandler;
 import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -98,11 +93,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiException;
-import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
-import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
-import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -111,16 +101,20 @@ import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
-import it.bz.beacon.adminapp.ui.main.MainActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.api.TrustedBeaconControllerApi;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.BeaconBatteryLevelUpdate;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
         GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
@@ -430,14 +424,14 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                     update.setBatteryLevel(profile.getBatteryLevel());
                     String[] nameParts = profile.getName().split("#");
-                    trustedApi.updateUsingPATCH2Async(update, nameParts[1], new it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiCallback<it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon>() {
+                    trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                         @Override
-                        public void onFailure(it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiException e, int i, Map<String, List<String>> map) {
+                        public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
                         }
 
                         @Override
-                        public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+                        public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
 
                         }
 

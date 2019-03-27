@@ -51,7 +51,6 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -60,9 +59,12 @@ import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.ui.BaseActivity;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.api.TrustedBeaconControllerApi;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.BeaconBatteryLevelUpdate;
 
 import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_ID;
 import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_NAME;
@@ -310,19 +312,20 @@ public class PendingConfigurationActivity extends BaseActivity {
                 }
             }
 
+
             private void updateBatteryStatus(ISecureProfile profile) {
                 try {
                     BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                     update.setBatteryLevel(profile.getBatteryLevel());
                     String[] nameParts = profile.getName().split("#");
-                    trustedApi.updateUsingPATCH2Async(update, nameParts[1], new it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiCallback<it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon>() {
+                    trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                         @Override
-                        public void onFailure(it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiException e, int i, Map<String, List<String>> map) {
+                        public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
                         }
 
                         @Override
-                        public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+                        public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
 
                         }
 
@@ -336,7 +339,8 @@ public class PendingConfigurationActivity extends BaseActivity {
 
                         }
                     }).execute();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     //
                 }
             }

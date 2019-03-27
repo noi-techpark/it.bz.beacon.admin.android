@@ -38,11 +38,11 @@ import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiCallback;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiException;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.api.TrustedBeaconControllerApi;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon;
-import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.BeaconBatteryLevelUpdate;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.model.Beacon;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
 
 public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
@@ -296,7 +296,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                     BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                     update.setBatteryLevel(profile.getBatteryLevel());
                     String[] nameParts = profile.getName().split("#");
-                    trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<Beacon>() {
+                    trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<Beacon>() {
                         @Override
                         public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
@@ -317,7 +317,8 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
                         }
                     }).execute();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     //
                 }
             }
