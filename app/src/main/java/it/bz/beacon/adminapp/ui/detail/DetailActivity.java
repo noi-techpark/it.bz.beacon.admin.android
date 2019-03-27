@@ -421,30 +421,32 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
             private void updateBatteryStatus(ISecureProfile profile) {
                 try {
-                    BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
-                    update.setBatteryLevel(profile.getBatteryLevel());
-                    String[] nameParts = profile.getName().split("#");
-                    trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
-                        @Override
-                        public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
+                    if (profile.getBatteryLevel() > 0) {
+                        BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
+                        update.setBatteryLevel(profile.getBatteryLevel());
+                        String[] nameParts = profile.getName().split("#");
+                        trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                            @Override
+                            public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+                            @Override
+                            public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onUploadProgress(long l, long l1, boolean b) {
+                            @Override
+                            public void onUploadProgress(long l, long l1, boolean b) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onDownloadProgress(long l, long l1, boolean b) {
+                            @Override
+                            public void onDownloadProgress(long l, long l1, boolean b) {
 
-                        }
-                    }).execute();
+                            }
+                        }).execute();
+                    }
                 } catch (Exception e) {
                     //
                 }
