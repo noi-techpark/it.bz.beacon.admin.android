@@ -348,8 +348,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         isEditing = false;
 
         trustedApi = new TrustedBeaconControllerApi();
-        trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
-        trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
+            trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+            trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        }
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);

@@ -117,8 +117,10 @@ public class PendingConfigurationActivity extends BaseActivity {
         }
 
         trustedApi = new TrustedBeaconControllerApi();
-        trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
-        trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
+            trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+            trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        }
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         pendingSecureConfigViewModel = ViewModelProviders.of(this).get(PendingSecureConfigViewModel.class);

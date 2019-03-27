@@ -38,6 +38,7 @@ git clone https://github.com/raiffeisennet/beacon-suedtirol-administration-andro
 * Copy config/google_maps_api.xml to app/src/release/res/values/google_maps_api.xml and fill required values
 * Copy config/beacon_suedtirol_api.xml to app/src/debug/res/values/beacon_suedtirol_api.xml and fill required values
 * Copy config/beacon_suedtirol_api.xml to app/src/release/res/values/beacon_suedtirol_api.xml and fill required values
+* If you own credentials for trusted api, fill them in too
 * Add keystore.keystore
 
 ## Running tests
