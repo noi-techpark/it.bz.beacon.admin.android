@@ -27,10 +27,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 
 
+import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconImage;
 import java.io.File;
 import it.bz.beacon.adminapp.swagger.client.model.Resource;
-import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -270,8 +270,8 @@ public class ImageControllerApi {
      * @return BaseMessage
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public it.bz.beacon.adminapp.swagger.client.model.BaseMessage deleteUsingDELETE(String beaconId, Long id) throws ApiException {
-        ApiResponse<it.bz.beacon.adminapp.swagger.client.model.BaseMessage> resp = deleteUsingDELETEWithHttpInfo(beaconId, id);
+    public BaseMessage deleteUsingDELETE(String beaconId, Long id) throws ApiException {
+        ApiResponse<BaseMessage> resp = deleteUsingDELETEWithHttpInfo(beaconId, id);
         return resp.getData();
     }
 
@@ -283,9 +283,9 @@ public class ImageControllerApi {
      * @return ApiResponse&lt;BaseMessage&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<it.bz.beacon.adminapp.swagger.client.model.BaseMessage> deleteUsingDELETEWithHttpInfo(String beaconId, Long id) throws ApiException {
+    public ApiResponse<BaseMessage> deleteUsingDELETEWithHttpInfo(String beaconId, Long id) throws ApiException {
         com.squareup.okhttp.Call call = deleteUsingDELETEValidateBeforeCall(beaconId, id, null, null);
-        Type localVarReturnType = new TypeToken<it.bz.beacon.adminapp.swagger.client.model.BaseMessage>(){}.getType();
+        Type localVarReturnType = new TypeToken<BaseMessage>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
@@ -298,7 +298,7 @@ public class ImageControllerApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call deleteUsingDELETEAsync(String beaconId, Long id, final ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BaseMessage> callback) throws ApiException {
+    public com.squareup.okhttp.Call deleteUsingDELETEAsync(String beaconId, Long id, final ApiCallback<BaseMessage> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;

@@ -14,11 +14,14 @@
 package it.bz.beacon.adminapp.swagger.client.model;
 
 import java.util.Objects;
-
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -43,6 +46,12 @@ public class BeaconOrderData {
 
   @SerializedName("uuid")
   private UUID uuid = null;
+
+  @SerializedName("zoneCode")
+  private String zoneCode = null;
+
+  @SerializedName("zoneId")
+  private Integer zoneId = null;
 
   public BeaconOrderData beaconId(String beaconId) {
     this.beaconId = beaconId;
@@ -152,6 +161,42 @@ public class BeaconOrderData {
     this.uuid = uuid;
   }
 
+  public BeaconOrderData zoneCode(String zoneCode) {
+    this.zoneCode = zoneCode;
+    return this;
+  }
+
+   /**
+   * Get zoneCode
+   * @return zoneCode
+  **/
+  @ApiModelProperty(value = "")
+  public String getZoneCode() {
+    return zoneCode;
+  }
+
+  public void setZoneCode(String zoneCode) {
+    this.zoneCode = zoneCode;
+  }
+
+  public BeaconOrderData zoneId(Integer zoneId) {
+    this.zoneId = zoneId;
+    return this;
+  }
+
+   /**
+   * Get zoneId
+   * @return zoneId
+  **/
+  @ApiModelProperty(value = "")
+  public Integer getZoneId() {
+    return zoneId;
+  }
+
+  public void setZoneId(Integer zoneId) {
+    this.zoneId = zoneId;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -167,12 +212,14 @@ public class BeaconOrderData {
         Objects.equals(this.major, beaconOrderData.major) &&
         Objects.equals(this.minor, beaconOrderData.minor) &&
         Objects.equals(this.namespace, beaconOrderData.namespace) &&
-        Objects.equals(this.uuid, beaconOrderData.uuid);
+        Objects.equals(this.uuid, beaconOrderData.uuid) &&
+        Objects.equals(this.zoneCode, beaconOrderData.zoneCode) &&
+        Objects.equals(this.zoneId, beaconOrderData.zoneId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(beaconId, instanceId, major, minor, namespace, uuid);
+    return Objects.hash(beaconId, instanceId, major, minor, namespace, uuid, zoneCode, zoneId);
   }
 
 
@@ -187,6 +234,8 @@ public class BeaconOrderData {
     sb.append("    minor: ").append(toIndentedString(minor)).append("\n");
     sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
+    sb.append("    zoneCode: ").append(toIndentedString(zoneCode)).append("\n");
+    sb.append("    zoneId: ").append(toIndentedString(zoneId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

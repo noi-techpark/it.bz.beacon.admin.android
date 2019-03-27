@@ -1,0 +1,4 @@
+{
+  "modelPackage": "it.bz.beacon.adminapp.swagger.client.model",
+  "apiPackage": "it.bz.beacon.adminapp.swagger.client.api"
+}
