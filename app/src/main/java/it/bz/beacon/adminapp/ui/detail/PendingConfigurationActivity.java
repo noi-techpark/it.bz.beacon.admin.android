@@ -117,8 +117,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
 
-        ApiClient apiClient = new ApiClient();
-        trustedApi = new TrustedBeaconControllerApi(apiClient);
+        trustedApi = new TrustedBeaconControllerApi(new ApiClient());
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
             trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
             trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
