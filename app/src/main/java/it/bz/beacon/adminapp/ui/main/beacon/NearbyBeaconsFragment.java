@@ -68,7 +68,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        
+
         trustedApi = new TrustedBeaconControllerApi(new ApiClient());
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
             trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
