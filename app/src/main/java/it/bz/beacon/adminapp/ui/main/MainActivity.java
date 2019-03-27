@@ -115,7 +115,6 @@ public class MainActivity extends BaseActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(""));
         getMyLocation();
-        NearbyBeaconManager manager = new NearbyBeaconManager(this);
     }
 
     @Override

@@ -14,7 +14,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -29,7 +32,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
 
     private Context context;
     private OnImageDeleteListener deleteListener;
-    private List<BeaconImage> images = new ArrayList<>();
+    private LinkedHashMap<String, BeaconImage> images = new LinkedHashMap<>();
 
     public GalleryAdapter(Context context, OnImageDeleteListener deleteListener) {
         this.context = context;
@@ -46,7 +49,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
 
     @Override
     public void onBindViewHolder(@NonNull GalleryAdapter.ImageViewHolder holder, int position) {
-        holder.setImage(images.get(position));
+        holder.setImage(new ArrayList<>(images.values()).get(position));
     }
 
     public void clear() {
@@ -55,13 +58,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
     }
 
     public void addBeaconImage(BeaconImage image) {
-        this.images.add(image);
+        this.images.put(image.getFileName(), image);
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return images != null ? images.size() : 0;
+        return images.size();
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder {

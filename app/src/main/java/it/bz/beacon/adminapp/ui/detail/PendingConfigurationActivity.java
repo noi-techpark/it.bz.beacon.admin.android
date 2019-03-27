@@ -39,6 +39,7 @@ import com.kontakt.sdk.android.common.model.Config;
 import com.kontakt.sdk.android.common.profile.ISecureProfile;
 
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -60,6 +61,8 @@ import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
 import it.bz.beacon.adminapp.ui.BaseActivity;
+import it.bz.beacon.beaconsuedtirolsdk.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.BeaconBatteryLevelUpdate;
 
 import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_ID;
 import static it.bz.beacon.adminapp.ui.detail.DetailActivity.EXTRA_BEACON_NAME;
@@ -97,6 +100,8 @@ public class PendingConfigurationActivity extends BaseActivity {
 
     private ProgressDialog dialog;
 
+    private TrustedBeaconControllerApi trustedApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +113,11 @@ public class PendingConfigurationActivity extends BaseActivity {
             beaconName = getIntent().getStringExtra(EXTRA_BEACON_NAME);
             beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
+
+        trustedApi = new TrustedBeaconControllerApi();
+        trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+        trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         pendingSecureConfigViewModel = ViewModelProviders.of(this).get(PendingSecureConfigViewModel.class);
 
@@ -269,25 +279,26 @@ public class PendingConfigurationActivity extends BaseActivity {
         return new SimpleSecureProfileListener() {
             @Override
             public void onProfileDiscovered(final ISecureProfile profile) {
-                updateBeaconNearby(profile);
                 super.onProfileDiscovered(profile);
+                updateBatteryStatus(profile);
+                updateBeaconNearby(profile);
             }
 
             @Override
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
                     updateBeaconNearby(profile);
                 }
-                super.onProfilesUpdated(profiles);
             }
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
+                super.onProfileLost(profile);
                 if (beacon.getManufacturerId().equals(profile.getUniqueId())) {
                     secureProfile = null;
                     btnApplyNow.setEnabled(false);
                 }
-                super.onProfileLost(profile);
             }
 
             private void updateBeaconNearby(ISecureProfile profile) {
@@ -296,6 +307,37 @@ public class PendingConfigurationActivity extends BaseActivity {
                     if ((beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) && !isPendingConfigNull) {
                         btnApplyNow.setEnabled(true);
                     }
+                }
+            }
+
+            private void updateBatteryStatus(ISecureProfile profile) {
+                try {
+                    BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
+                    update.setBatteryLevel(profile.getBatteryLevel());
+                    String[] nameParts = profile.getName().split("#");
+                    trustedApi.updateUsingPATCH2Async(update, nameParts[1], new it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiCallback<it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon>() {
+                        @Override
+                        public void onFailure(it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiException e, int i, Map<String, List<String>> map) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+
+                        }
+
+                        @Override
+                        public void onUploadProgress(long l, long l1, boolean b) {
+
+                        }
+
+                        @Override
+                        public void onDownloadProgress(long l, long l1, boolean b) {
+
+                        }
+                    }).execute();
+                } catch (Exception e) {
+                    //
                 }
             }
         };

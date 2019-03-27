@@ -117,8 +117,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private void loadData() {
         infos.clear();
         if (getContext() != null) {
-            final NearbyBeaconManager manager = new NearbyBeaconManager(getContext());
-            manager.getAllBeacons(new LoadAllBeaconsEvent() {
+            NearbyBeaconManager.getInstance().getAllBeacons(new LoadAllBeaconsEvent() {
                 @Override
                 public void onSuccess(List<it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon> list) {
                     if (list != null) {

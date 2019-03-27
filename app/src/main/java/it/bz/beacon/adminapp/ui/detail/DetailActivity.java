@@ -119,6 +119,8 @@ import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
+import it.bz.beacon.beaconsuedtirolsdk.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.BeaconBatteryLevelUpdate;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
         GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
@@ -335,6 +337,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     private boolean loadingImages = false;
 
+    private TrustedBeaconControllerApi trustedApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -348,6 +352,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
         configureTabListeners();
         isEditing = false;
+
+        trustedApi = new TrustedBeaconControllerApi();
+        trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+        trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
@@ -385,23 +393,24 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onProfileDiscovered(final ISecureProfile profile) {
                 updateBeaconNearby(profile);
+                updateBatteryStatus(profile);
                 super.onProfileDiscovered(profile);
             }
 
             @Override
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
                     updateBeaconNearby(profile);
                 }
-                super.onProfilesUpdated(profiles);
             }
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
+                super.onProfileLost(profile);
                 if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
                     btnShowPendingConfig.setEnabled(false);
                 }
-                super.onProfileLost(profile);
             }
 
             private void updateBeaconNearby(ISecureProfile profile) {
@@ -413,6 +422,37 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     if ((profile.getTelemetry() != null) && (profile.getTelemetry().getTimestamp() > 0)) {
                         txtTemperature.setText(getString(R.string.degree, profile.getTelemetry().getTemperature()));
                     }
+                }
+            }
+
+            private void updateBatteryStatus(ISecureProfile profile) {
+                try {
+                    BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
+                    update.setBatteryLevel(profile.getBatteryLevel());
+                    String[] nameParts = profile.getName().split("#");
+                    trustedApi.updateUsingPATCH2Async(update, nameParts[1], new it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiCallback<it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon>() {
+                        @Override
+                        public void onFailure(it.bz.beacon.beaconsuedtirolsdk.swagger.client.ApiException e, int i, Map<String, List<String>> map) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+
+                        }
+
+                        @Override
+                        public void onUploadProgress(long l, long l1, boolean b) {
+
+                        }
+
+                        @Override
+                        public void onDownloadProgress(long l, long l1, boolean b) {
+
+                        }
+                    }).execute();
+                } catch (Exception e) {
+                    //
                 }
             }
         };
@@ -667,8 +707,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     private void loadInfo(String beaconId) {
-        NearbyBeaconManager manager = new NearbyBeaconManager(this);
-        manager.getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
+        NearbyBeaconManager.getInstance().getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
             @Override
             public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo) {
                 txtAddressName.setText(beaconInfo.getName());
