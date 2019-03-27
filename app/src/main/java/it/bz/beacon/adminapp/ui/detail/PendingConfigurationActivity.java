@@ -60,6 +60,7 @@ import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
@@ -116,7 +117,8 @@ public class PendingConfigurationActivity extends BaseActivity {
             beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
 
-        trustedApi = new TrustedBeaconControllerApi();
+        ApiClient apiClient = new ApiClient();
+        trustedApi = new TrustedBeaconControllerApi(apiClient);
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
             trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
             trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
