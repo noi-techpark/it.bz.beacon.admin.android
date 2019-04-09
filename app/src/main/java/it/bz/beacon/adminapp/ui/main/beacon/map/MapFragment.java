@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +17,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.clustering.ClusterManager;
@@ -35,6 +40,7 @@ import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.ActivityCompat;
@@ -111,8 +117,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private void loadData() {
         infos.clear();
         if (getContext() != null) {
-            final NearbyBeaconManager manager = new NearbyBeaconManager(getContext());
-            manager.getAllBeacons(new LoadAllBeaconsEvent() {
+            NearbyBeaconManager.getInstance().getAllBeacons(new LoadAllBeaconsEvent() {
                 @Override
                 public void onSuccess(List<it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon> list) {
                     if (list != null) {
@@ -146,7 +151,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                         beaconMinimal.setStatus(Beacon.STATUS_NOT_INSTALLED);
                                     }
 
-                                    if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
+                                    if (statusFilter.equals(Beacon.STATUS_INSTALLED)) {
+                                        if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
+                                            mapBeacons.add(beaconMinimal);
+                                        }
+                                    } else if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
                                         mapBeacons.add(beaconMinimal);
                                     }
                                 }
@@ -171,7 +180,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.clear();
-        showMyLocation();
+        startLocating();
         setUpClusterer();
 
         try {
@@ -185,9 +194,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private void showMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+
+
+    private LocationRequest locationRequest = new LocationRequest();
+    private LocationCallback locationCallback = new LocationCallback();
+
+    private void startLocating() {
+        if (getActivity() != null && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
@@ -196,20 +209,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        LOCATION_PERMISSION_REQUEST);
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
                             }
                         })
                         .create();
                 dialog.show();
             }
             else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
+        } else {
+            doStartLocating();
         }
-        else {
+    }
+
+    @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
+    private void doStartLocating() {
+        if (map != null) {
+            map.getUiSettings().setMyLocationButtonEnabled(true);
             map.setMyLocationEnabled(true);
+        }
+    }
+
+    private void stopLocating() {
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+        try {
+            map.setMyLocationEnabled(false);
+        } catch (SecurityException e) {
+
         }
     }
 
@@ -218,7 +245,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showMyLocation();
+                    startLocating();
                 }
                 break;
             default:
@@ -249,8 +276,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             if (beacon.getStatus().equalsIgnoreCase(Beacon.STATUS_NOT_INSTALLED)) {
                 it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon info = infos.get(beacon.getId());
                 if (info != null) {
-                    beacon.setLat(info.getLatitude().floatValue());
-                    beacon.setLng(info.getLongitude().floatValue());
+                    beacon.setProvisoricLat(info.getLatitude().floatValue());
+                    beacon.setProvisoricLng(info.getLongitude().floatValue());
                 }
             }
             BeaconClusterItem clusterItem = new BeaconClusterItem(beacon);
@@ -305,6 +332,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
+        startLocating();
         mapView.onResume();
         PubSub.getInstance().register(this);
     }
@@ -312,6 +340,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onPause() {
         super.onPause();
+        stopLocating();
         mapView.onPause();
         PubSub.getInstance().unregister(this);
     }

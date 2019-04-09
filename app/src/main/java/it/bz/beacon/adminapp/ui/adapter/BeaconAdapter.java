@@ -104,27 +104,32 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     if (statusFilter.equals(Beacon.STATUS_ALL)) {
                         results.count = originalValues.size();
                         results.values = originalValues;
-                    }
-                    else {
+                    } else {
                         for (int i = 0; i < originalValues.size(); i++) {
                             BeaconMinimal beaconMinimal = originalValues.get(i);
-                            if (statusFilter.equals(Beacon.STATUS_NOT_INSTALLED)) {
-                                if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
-                                    filteredBeacons.add(beaconMinimal);
-                                }
-                            }
-                            else {
-                                if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
-                                    filteredBeacons.add(beaconMinimal);
-                                }
+                            switch (statusFilter) {
+                                case Beacon.STATUS_INSTALLED:
+                                    if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
+                                case Beacon.STATUS_NOT_INSTALLED:
+                                    if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
+                                default:
+                                    if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
                             }
                         }
                         results.count = filteredBeacons.size();
                         results.values = filteredBeacons;
                     }
 
-                }
-                else {
+                } else {
                     searchFilter = searchFilter.toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);

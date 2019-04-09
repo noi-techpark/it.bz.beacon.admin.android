@@ -17,11 +17,6 @@ import com.squareup.okhttp.*;
 import com.squareup.okhttp.internal.http.HttpMethod;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
-
-import it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth;
-import it.bz.beacon.adminapp.swagger.client.auth.Authentication;
-import it.bz.beacon.adminapp.swagger.client.auth.HttpBasicAuth;
-import it.bz.beacon.adminapp.swagger.client.auth.OAuth;
 import okio.BufferedSink;
 import okio.Okio;
 import org.threeten.bp.LocalDate;
@@ -50,6 +45,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.bz.beacon.adminapp.swagger.client.auth.Authentication;
+import it.bz.beacon.adminapp.swagger.client.auth.HttpBasicAuth;
+import it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth;
+import it.bz.beacon.adminapp.swagger.client.auth.OAuth;
+
 public class ApiClient {
 
     private String basePath = "https://api.beacon-dev.it";
@@ -57,7 +57,7 @@ public class ApiClient {
     private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String tempFolderPath = null;
 
-    private Map<String, it.bz.beacon.adminapp.swagger.client.auth.Authentication> authentications;
+    private Map<String, Authentication> authentications;
 
     private DateFormat dateFormat;
     private DateFormat datetimeFormat;
@@ -69,7 +69,7 @@ public class ApiClient {
     private KeyManager[] keyManagers;
 
     private OkHttpClient httpClient;
-    private it.bz.beacon.adminapp.swagger.client.JSON json;
+    private JSON json;
 
     private HttpLoggingInterceptor loggingInterceptor;
 
@@ -82,14 +82,15 @@ public class ApiClient {
 
         verifyingSsl = true;
 
-        json = new it.bz.beacon.adminapp.swagger.client.JSON();
+        json = new JSON();
 
         // Set default User-Agent.
         setUserAgent("Swagger-Codegen/1.0.0/java");
 
         // Setup authentications (key: authentication name, value: authentication).
-        authentications = new HashMap<String, it.bz.beacon.adminapp.swagger.client.auth.Authentication>();
-        authentications.put("JWT", new it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth("header", "Authorization"));
+        authentications = new HashMap<String, Authentication>();
+        authentications.put("JWT", new ApiKeyAuth("header", "Authorization"));
+        authentications.put("TrustedAuth", new HttpBasicAuth());
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -139,7 +140,7 @@ public class ApiClient {
      *
      * @return JSON object
      */
-    public it.bz.beacon.adminapp.swagger.client.JSON getJSON() {
+    public JSON getJSON() {
         return json;
     }
 
@@ -250,7 +251,7 @@ public class ApiClient {
      *
      * @return Map of authentication objects
      */
-    public Map<String, it.bz.beacon.adminapp.swagger.client.auth.Authentication> getAuthentications() {
+    public Map<String, Authentication> getAuthentications() {
         return authentications;
     }
 
@@ -260,7 +261,7 @@ public class ApiClient {
      * @param authName The authentication name
      * @return The authentication, null if not found
      */
-    public it.bz.beacon.adminapp.swagger.client.auth.Authentication getAuthentication(String authName) {
+    public Authentication getAuthentication(String authName) {
         return authentications.get(authName);
     }
 
@@ -270,9 +271,9 @@ public class ApiClient {
      * @param username Username
      */
     public void setUsername(String username) {
-        for (it.bz.beacon.adminapp.swagger.client.auth.Authentication auth : authentications.values()) {
-            if (auth instanceof it.bz.beacon.adminapp.swagger.client.auth.HttpBasicAuth) {
-                ((it.bz.beacon.adminapp.swagger.client.auth.HttpBasicAuth) auth).setUsername(username);
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof HttpBasicAuth) {
+                ((HttpBasicAuth) auth).setUsername(username);
                 return;
             }
         }
@@ -285,8 +286,8 @@ public class ApiClient {
      * @param password Password
      */
     public void setPassword(String password) {
-        for (it.bz.beacon.adminapp.swagger.client.auth.Authentication auth : authentications.values()) {
-            if (auth instanceof it.bz.beacon.adminapp.swagger.client.auth.HttpBasicAuth) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof HttpBasicAuth) {
                 ((HttpBasicAuth) auth).setPassword(password);
                 return;
             }
@@ -300,9 +301,9 @@ public class ApiClient {
      * @param apiKey API key
      */
     public void setApiKey(String apiKey) {
-        for (it.bz.beacon.adminapp.swagger.client.auth.Authentication auth : authentications.values()) {
-            if (auth instanceof it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth) {
-                ((it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth) auth).setApiKey(apiKey);
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKey(apiKey);
                 return;
             }
         }
@@ -315,8 +316,8 @@ public class ApiClient {
      * @param apiKeyPrefix API key prefix
      */
     public void setApiKeyPrefix(String apiKeyPrefix) {
-        for (it.bz.beacon.adminapp.swagger.client.auth.Authentication auth : authentications.values()) {
-            if (auth instanceof it.bz.beacon.adminapp.swagger.client.auth.ApiKeyAuth) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof ApiKeyAuth) {
                 ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
                 return;
             }
@@ -330,8 +331,8 @@ public class ApiClient {
      * @param accessToken Access token
      */
     public void setAccessToken(String accessToken) {
-        for (it.bz.beacon.adminapp.swagger.client.auth.Authentication auth : authentications.values()) {
-            if (auth instanceof it.bz.beacon.adminapp.swagger.client.auth.OAuth) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof OAuth) {
                 ((OAuth) auth).setAccessToken(accessToken);
                 return;
             }
@@ -517,13 +518,13 @@ public class ApiClient {
      * @param value The value of the parameter.
      * @return A list containing a single {@code Pair} object.
      */
-    public List<it.bz.beacon.adminapp.swagger.client.Pair> parameterToPair(String name, Object value) {
-        List<it.bz.beacon.adminapp.swagger.client.Pair> params = new ArrayList<it.bz.beacon.adminapp.swagger.client.Pair>();
+    public List<Pair> parameterToPair(String name, Object value) {
+        List<Pair> params = new ArrayList<Pair>();
 
         // preconditions
         if (name == null || name.isEmpty() || value == null || value instanceof Collection) return params;
 
-        params.add(new it.bz.beacon.adminapp.swagger.client.Pair(name, parameterToString(value)));
+        params.add(new Pair(name, parameterToString(value)));
         return params;
     }
 
@@ -537,8 +538,8 @@ public class ApiClient {
      * @param value The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
-    public List<it.bz.beacon.adminapp.swagger.client.Pair> parameterToPairs(String collectionFormat, String name, Collection value) {
-        List<it.bz.beacon.adminapp.swagger.client.Pair> params = new ArrayList<it.bz.beacon.adminapp.swagger.client.Pair>();
+    public List<Pair> parameterToPairs(String collectionFormat, String name, Collection value) {
+        List<Pair> params = new ArrayList<Pair>();
 
         // preconditions
         if (name == null || name.isEmpty() || value == null || value.isEmpty()) {
@@ -548,7 +549,7 @@ public class ApiClient {
         // create the params based on the collection format
         if ("multi".equals(collectionFormat)) {
             for (Object item : value) {
-                params.add(new it.bz.beacon.adminapp.swagger.client.Pair(name, escapeString(parameterToString(item))));
+                params.add(new Pair(name, escapeString(parameterToString(item))));
             }
             return params;
         }
@@ -572,7 +573,7 @@ public class ApiClient {
             sb.append(escapeString(parameterToString(item)));
         }
 
-        params.add(new it.bz.beacon.adminapp.swagger.client.Pair(name, sb.substring(delimiter.length())));
+        params.add(new Pair(name, sb.substring(delimiter.length())));
 
         return params;
     }
@@ -668,11 +669,11 @@ public class ApiClient {
      * @param response HTTP response
      * @param returnType The type of the Java object
      * @return The deserialized Java object
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to deserialize response body, i.e. cannot read response body
+     * @throws ApiException If fail to deserialize response body, i.e. cannot read response body
      *   or the Content-Type of the response is not supported.
      */
     @SuppressWarnings("unchecked")
-    public <T> T deserialize(Response response, Type returnType) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public <T> T deserialize(Response response, Type returnType) throws ApiException {
         if (response == null || returnType == null) {
             return null;
         }
@@ -682,7 +683,7 @@ public class ApiClient {
             try {
                 return (T) response.body().bytes();
             } catch (IOException e) {
-                throw new it.bz.beacon.adminapp.swagger.client.ApiException(e);
+                throw new ApiException(e);
             }
         } else if (returnType.equals(File.class)) {
             // Handle file downloading.
@@ -696,7 +697,7 @@ public class ApiClient {
             else
                 respBody = null;
         } catch (IOException e) {
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException(e);
+            throw new ApiException(e);
         }
 
         if (respBody == null || "".equals(respBody)) {
@@ -714,7 +715,7 @@ public class ApiClient {
             // Expecting string, return the raw response body.
             return (T) respBody;
         } else {
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException(
+            throw new ApiException(
                     "Content type \"" + contentType + "\" is not supported for type: " + returnType,
                     response.code(),
                     response.headers().toMultimap(),
@@ -729,9 +730,9 @@ public class ApiClient {
      * @param obj The Java object
      * @param contentType The request Content-Type
      * @return The serialized request body
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to serialize the given object
+     * @throws ApiException If fail to serialize the given object
      */
-    public RequestBody serialize(Object obj, String contentType) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public RequestBody serialize(Object obj, String contentType) throws ApiException {
         if (obj instanceof byte[]) {
             // Binary (byte array) body parameter support.
             return RequestBody.create(MediaType.parse(contentType), (byte[]) obj);
@@ -747,7 +748,7 @@ public class ApiClient {
             }
             return RequestBody.create(MediaType.parse(contentType), content);
         } else {
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException("Content type \"" + contentType + "\" is not supported");
+            throw new ApiException("Content type \"" + contentType + "\" is not supported");
         }
     }
 
@@ -755,10 +756,10 @@ public class ApiClient {
      * Download file from the given response.
      *
      * @param response An instance of the Response object
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to read file content from response and write to disk
+     * @throws ApiException If fail to read file content from response and write to disk
      * @return Downloaded file
      */
-    public File downloadFileFromResponse(Response response) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public File downloadFileFromResponse(Response response) throws ApiException {
         try {
             File file = prepareDownloadFile(response);
             BufferedSink sink = Okio.buffer(Okio.sink(file));
@@ -766,7 +767,7 @@ public class ApiClient {
             sink.close();
             return file;
         } catch (IOException e) {
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException(e);
+            throw new ApiException(e);
         }
     }
 
@@ -818,10 +819,10 @@ public class ApiClient {
      *
      * @param <T> Type
      * @param call An instance of the Call object
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to execute the call
+     * @throws ApiException If fail to execute the call
      * @return ApiResponse&lt;T&gt;
      */
-    public <T> it.bz.beacon.adminapp.swagger.client.ApiResponse<T> execute(Call call) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public <T> ApiResponse<T> execute(Call call) throws ApiException {
         return execute(call, null);
     }
 
@@ -834,15 +835,15 @@ public class ApiClient {
      * @return ApiResponse object containing response status, headers and
      *   data, which is a Java object deserialized from response body and would be null
      *   when returnType is null.
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to execute the call
+     * @throws ApiException If fail to execute the call
      */
-    public <T> it.bz.beacon.adminapp.swagger.client.ApiResponse<T> execute(Call call, Type returnType) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public <T> ApiResponse<T> execute(Call call, Type returnType) throws ApiException {
         try {
             Response response = call.execute();
             T data = handleResponse(response, returnType);
             return new ApiResponse<T>(response.code(), response.headers().toMultimap(), data);
         } catch (IOException e) {
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException(e);
+            throw new ApiException(e);
         }
     }
 
@@ -871,7 +872,7 @@ public class ApiClient {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                callback.onFailure(new it.bz.beacon.adminapp.swagger.client.ApiException(e), 0, null);
+                callback.onFailure(new ApiException(e), 0, null);
             }
 
             @Override
@@ -879,7 +880,7 @@ public class ApiClient {
                 T result;
                 try {
                     result = (T) handleResponse(response, returnType);
-                } catch (it.bz.beacon.adminapp.swagger.client.ApiException e) {
+                } catch (ApiException e) {
                     callback.onFailure(e, response.code(), response.headers().toMultimap());
                     return;
                 }
@@ -894,11 +895,11 @@ public class ApiClient {
      * @param <T> Type
      * @param response Response
      * @param returnType Return type
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If the response has a unsuccessful status code or
+     * @throws ApiException If the response has a unsuccessful status code or
      *   fail to deserialize the response body
      * @return Type
      */
-    public <T> T handleResponse(Response response, Type returnType) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public <T> T handleResponse(Response response, Type returnType) throws ApiException {
         if (response.isSuccessful()) {
             if (returnType == null || response.code() == 204) {
                 // returning null if the returnType is not defined,
@@ -907,7 +908,7 @@ public class ApiClient {
                     try {
                         response.body().close();
                     } catch (IOException e) {
-                        throw new it.bz.beacon.adminapp.swagger.client.ApiException(response.message(), e, response.code(), response.headers().toMultimap());
+                        throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                     }
                 }
                 return null;
@@ -920,10 +921,10 @@ public class ApiClient {
                 try {
                     respBody = response.body().string();
                 } catch (IOException e) {
-                    throw new it.bz.beacon.adminapp.swagger.client.ApiException(response.message(), e, response.code(), response.headers().toMultimap());
+                    throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                 }
             }
-            throw new it.bz.beacon.adminapp.swagger.client.ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
+            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
         }
     }
 
@@ -940,9 +941,9 @@ public class ApiClient {
      * @param authNames The authentications to apply
      * @param progressRequestListener Progress request listener
      * @return The HTTP call
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to serialize the request body object
+     * @throws ApiException If fail to serialize the request body object
      */
-    public Call buildCall(String path, String method, List<it.bz.beacon.adminapp.swagger.client.Pair> queryParams, List<it.bz.beacon.adminapp.swagger.client.Pair> collectionQueryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames, ProgressRequestBody.ProgressRequestListener progressRequestListener) throws it.bz.beacon.adminapp.swagger.client.ApiException {
+    public Call buildCall(String path, String method, List<Pair> queryParams, List<Pair> collectionQueryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames, ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Request request = buildRequest(path, method, queryParams, collectionQueryParams, body, headerParams, formParams, authNames, progressRequestListener);
 
         return httpClient.newCall(request);
@@ -961,9 +962,9 @@ public class ApiClient {
      * @param authNames The authentications to apply
      * @param progressRequestListener Progress request listener
      * @return The HTTP request 
-     * @throws it.bz.beacon.adminapp.swagger.client.ApiException If fail to serialize the request body object
+     * @throws ApiException If fail to serialize the request body object
      */
-    public Request buildRequest(String path, String method, List<it.bz.beacon.adminapp.swagger.client.Pair> queryParams, List<it.bz.beacon.adminapp.swagger.client.Pair> collectionQueryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames, ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public Request buildRequest(String path, String method, List<Pair> queryParams, List<Pair> collectionQueryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames, ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         updateParamsForAuth(authNames, queryParams, headerParams);
 
         final String url = buildUrl(path, queryParams, collectionQueryParams);
@@ -1015,14 +1016,14 @@ public class ApiClient {
      * @param collectionQueryParams The collection query parameters
      * @return The full URL
      */
-    public String buildUrl(String path, List<it.bz.beacon.adminapp.swagger.client.Pair> queryParams, List<it.bz.beacon.adminapp.swagger.client.Pair> collectionQueryParams) {
+    public String buildUrl(String path, List<Pair> queryParams, List<Pair> collectionQueryParams) {
         final StringBuilder url = new StringBuilder();
         url.append(basePath).append(path);
 
         if (queryParams != null && !queryParams.isEmpty()) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
             String prefix = path.contains("?") ? "&" : "?";
-            for (it.bz.beacon.adminapp.swagger.client.Pair param : queryParams) {
+            for (Pair param : queryParams) {
                 if (param.getValue() != null) {
                     if (prefix != null) {
                         url.append(prefix);
@@ -1038,7 +1039,7 @@ public class ApiClient {
 
         if (collectionQueryParams != null && !collectionQueryParams.isEmpty()) {
             String prefix = url.toString().contains("?") ? "&" : "?";
-            for (it.bz.beacon.adminapp.swagger.client.Pair param : collectionQueryParams) {
+            for (Pair param : collectionQueryParams) {
                 if (param.getValue() != null) {
                     if (prefix != null) {
                         url.append(prefix);

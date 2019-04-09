@@ -3,28 +3,30 @@ package it.bz.beacon.adminapp.ui.detail;
 import android.content.Context;
 import android.content.ContextWrapper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toolbar;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 
 public class ImageFullscreenActivity extends BaseActivity {
 
+    public static final String EXTRA_TITLE = "EXTRA_TITLE";
     public static final String EXTRA_IMAGE_FILENAME = "EXTRA_IMAGE_FILENAME";
 
     @BindView(R.id.image)
-    protected ImageView img;
+    protected PhotoView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class ImageFullscreenActivity extends BaseActivity {
                     Picasso.with(this)
                             .load(file)
                             .placeholder(R.drawable.placeholder)
-                            .into(img);
+                            .into(imageView);
                 }
             }
         }
@@ -61,6 +63,7 @@ public class ImageFullscreenActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         }
+        setTitle("Beacon image");
     }
 
     @Override
@@ -74,5 +77,19 @@ public class ImageFullscreenActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void rotate(float degrees) {
+        imageView.setRotationBy(degrees);
+    }
+
+    @OnClick(R.id.rotate_left)
+    public void rotateLeft() {
+        rotate(-90);
+    }
+
+    @OnClick(R.id.rotate_right)
+    public void rotateRight() {
+        rotate(90);
     }
 }

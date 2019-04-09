@@ -92,6 +92,7 @@ public class MainActivity extends BaseActivity
                 getString(R.string.status_battery_low),
                 getString(R.string.status_issue),
                 getString(R.string.status_no_signal),
+                getString(R.string.status_installed),
                 getString(R.string.status_not_installed)};
         statusFilterValues = new String[]{Beacon.STATUS_ALL,
                 Beacon.STATUS_OK,
@@ -99,6 +100,7 @@ public class MainActivity extends BaseActivity
                 Beacon.STATUS_BATTERY_LOW,
                 Beacon.STATUS_ISSUE,
                 Beacon.STATUS_NO_SIGNAL,
+                Beacon.STATUS_INSTALLED,
                 Beacon.STATUS_NOT_INSTALLED};
         radiusFilterItems = new String[]{getString(R.string.status_all),
                 "1 km",
@@ -113,7 +115,6 @@ public class MainActivity extends BaseActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(""));
         getMyLocation();
-        NearbyBeaconManager manager = new NearbyBeaconManager(this);
     }
 
     @Override

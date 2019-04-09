@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,12 +31,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.materialrangebar.RangeBar;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,7 +48,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -72,6 +75,7 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -80,6 +84,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -88,11 +93,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiException;
-import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
-import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
-import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
@@ -101,18 +101,31 @@ import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiClient;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
+import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
-public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult, GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
+public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
+        GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
 
     public static final String EXTRA_BEACON_ID = "EXTRA_BEACON_ID";
     public static final String EXTRA_BEACON_NAME = "EXTRA_BEACON_NAME";
     private static final int LOCATION_PERMISSION_REQUEST = 1;
+
+    @BindView(R.id.scrollview)
+    protected NestedScrollView scrollView;
 
     @BindView(R.id.progress)
     protected ConstraintLayout progress;
@@ -317,6 +330,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     private ProximityManager proximityManager;
 
+    private boolean loadingImages = false;
+
+    private TrustedBeaconControllerApi trustedApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -331,6 +348,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         configureTabListeners();
         isEditing = false;
 
+        trustedApi = new TrustedBeaconControllerApi(new ApiClient());
+        if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
+            trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+            trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        }
+
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
 
@@ -342,6 +365,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
 
         initializeKontakt();
     }
@@ -366,23 +390,24 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onProfileDiscovered(final ISecureProfile profile) {
                 updateBeaconNearby(profile);
+                updateBatteryStatus(profile);
                 super.onProfileDiscovered(profile);
             }
 
             @Override
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
                     updateBeaconNearby(profile);
                 }
-                super.onProfilesUpdated(profiles);
             }
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
+                super.onProfileLost(profile);
                 if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
                     btnShowPendingConfig.setEnabled(false);
                 }
-                super.onProfileLost(profile);
             }
 
             private void updateBeaconNearby(ISecureProfile profile) {
@@ -396,12 +421,64 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     }
                 }
             }
+
+            private void updateBatteryStatus(ISecureProfile profile) {
+                if ((beacon != null) && (beacon.getManufacturerId().equals(profile.getUniqueId()))) {
+                    try {
+                        if (profile.getBatteryLevel() > 0) {
+                            BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
+                            update.setBatteryLevel(profile.getBatteryLevel());
+                            String[] nameParts = profile.getName().split("#");
+                            trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                                @Override
+                                public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
+
+                                }
+
+                                @Override
+                                public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+
+                                }
+
+                                @Override
+                                public void onUploadProgress(long l, long l1, boolean b) {
+
+                                }
+
+                                @Override
+                                public void onDownloadProgress(long l, long l1, boolean b) {
+
+                                }
+                            }).execute();
+                        }
+                    } catch (Exception e) {
+                        //
+                    }
+                }
+            }
         };
+    }
+
+    private class ImageCounter {
+        private int counter = 0;
+        private int goal;
+
+        public ImageCounter(int goal) {
+            this.goal = goal;
+        }
+
+        void count() {
+            counter++;
+            if (counter >= goal) {
+                loadingImages = false;
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        startLocating();
         if (!isEditing) {
             loadBeacon();
             loadInfo(beaconId);
@@ -414,26 +491,42 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconImageViewModel.getAllByBeaconId(beaconId).observe(this, new Observer<List<BeaconImage>>() {
             @Override
             public void onChanged(@Nullable List<BeaconImage> beaconImages) {
-                if (beaconImages != null) {
-                    refreshImages(beaconImages);
-                    if (beaconImages.size() > 0) {
-                        galleryAdapter.setBeaconImages(beaconImages);
-                        images.setVisibility(View.VISIBLE);
-                        txtImagesEmpty.setVisibility(View.GONE);
-                    }
-                    else {
-                        images.setVisibility(View.GONE);
-                        txtImagesEmpty.setVisibility(View.VISIBLE);
+                if (!loadingImages) {
+                    loadingImages = true;
+
+                    images.setVisibility(View.GONE);
+                    txtImagesEmpty.setVisibility(View.VISIBLE);
+                    galleryAdapter.clear();
+
+                    if (beaconImages != null) {
+                        final ImageCounter counter = new ImageCounter(beaconImages.size());
+                        for (BeaconImage beaconImage : beaconImages) {
+                            BitmapTools.downloadImage(DetailActivity.this, beaconImage, new OnImagesDownloadedCallback() {
+                                @Override
+                                public void onSuccess(BeaconImage beaconImage) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            galleryAdapter.addBeaconImage(beaconImage);
+                                            images.setVisibility(View.VISIBLE);
+                                            txtImagesEmpty.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    counter.count();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    counter.count();
+                                }
+                            });
+                        }
+                    } else {
+                        loadingImages = false;
                     }
                 }
             }
         });
-    }
-
-    private void refreshImages(List<BeaconImage> beaconImages) {
-        for (BeaconImage beaconImage : beaconImages) {
-            BitmapTools.downloadImage(this, beaconImage);
-        }
     }
 
     protected void setContentEnabled(boolean enabled) {
@@ -603,7 +696,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 beacon = loadedBeacon;
                 showData();
                 mapView.getMapAsync(DetailActivity.this);
-                fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
                 makeMapScrollable();
 //                            Debug.stopMethodTracing();
             }
@@ -616,8 +708,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     private void loadInfo(String beaconId) {
-        NearbyBeaconManager manager = new NearbyBeaconManager(this);
-        manager.getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
+        NearbyBeaconManager.getInstance().getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
             @Override
             public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo) {
                 txtAddressName.setText(beaconInfo.getName());
@@ -846,6 +937,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.getUiSettings().setZoomControlsEnabled(true);
+        stopLocating();
+        startLocating();
 
         try {
             boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
@@ -867,7 +960,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 setMarker(latlng);
             }
             else {
-                showMyLocation();
+                goToMyLocation();
             }
         }
 
@@ -896,9 +989,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
-    private void showMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+    private LocationRequest locationRequest = new LocationRequest();
+    private LocationCallback locationCallback = new MyLocationCallback();
+
+    private void startLocating() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
                         .setTitle(getString(R.string.location_permission_title))
@@ -907,41 +1002,79 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        LOCATION_PERMISSION_REQUEST);
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
                             }
                         })
                         .create();
                 dialog.show();
             }
             else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
+        } else {
+            doStartLocating();
         }
-        else {
+    }
+
+    private void stopLocating() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                        .setTitle(getString(R.string.location_permission_title))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+            else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+            }
+        } else {
+            doStopLocating();
+        }
+    }
+
+    @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
+    private void doStartLocating() {
+        if (map != null) {
             map.getUiSettings().setMyLocationButtonEnabled(true);
             map.setMyLocationEnabled(true);
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if ((location != null) && (currentLocation == null)) {
-                                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                if ((beacon == null) || (beacon.getLat() == 0) || (beacon.getLng() == 0)) {
-                                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getZoomLevel()));
-                                }
-                                currentLocation = latLng;
-                            }
-                        }
-                    });
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    @RequiresPermission(value = Manifest.permission.ACCESS_FINE_LOCATION)
+    private void doStopLocating() {
+        if (map != null) {
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.setMyLocationEnabled(false);
+        }
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+
+    private void goToMyLocation() {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, getZoomLevel()));
+    }
+
+    private class MyLocationCallback extends LocationCallback {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
         }
     }
 
     // workaround to make a map inside a ScrollView scrollable and zoomable
     @SuppressLint("ClickableViewAccessibility")
     private void makeMapScrollable() {
-        final ScrollView mainScrollView = findViewById(R.id.scrollview);
         ImageView transparentImageView = findViewById(R.id.transparent_image);
 
         transparentImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -952,17 +1085,17 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         // Disallow ScrollView to intercept touch events.
-                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        scrollView.requestDisallowInterceptTouchEvent(true);
                         // Disable touch on transparent view
                         return false;
 
                     case MotionEvent.ACTION_UP:
                         // Allow ScrollView to intercept touch events.
-                        mainScrollView.requestDisallowInterceptTouchEvent(false);
+                        scrollView.requestDisallowInterceptTouchEvent(false);
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        scrollView.requestDisallowInterceptTouchEvent(true);
                         return false;
 
                     default:
@@ -981,7 +1114,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showMyLocation();
+                    startLocating();
                     startScanning();
                 }
                 break;
@@ -1378,6 +1511,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @Override
     public void onPause() {
         super.onPause();
+        stopLocating();
         proximityManager.stopScanning();
         proximityManager.disconnect();
         mapView.onPause();
@@ -1401,12 +1535,25 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         mapView.onLowMemory();
     }
 
+    private Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
     @Override
     public void onPickResult(final PickResult pickResult) {
         if (pickResult.getError() == null) {
             String tempFilename = System.currentTimeMillis() + ".jpg";
-            Bitmap bitmap = BitmapTools.resizeBitmap(pickResult.getPath(), 1024);
-            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap, getString(R.string.temp_folder), tempFilename);
+            Bitmap bitmap = pickResult.getBitmap();
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()),
+                    new RectF(0, 0, 1024, 1024), Matrix.ScaleToFit.CENTER);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+                    rotationMatrix, true);
+            String tempUri = BitmapTools.saveToInternalStorage(this, bitmap,
+                    getString(R.string.temp_folder), tempFilename);
 
             final File file = new File(tempUri);
 
@@ -1463,8 +1610,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                     }
                 });
-            }
-            catch (ApiException e) {
+            } catch (ApiException e) {
                 e.printStackTrace();
             }
 

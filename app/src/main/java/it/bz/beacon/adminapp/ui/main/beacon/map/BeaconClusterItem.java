@@ -20,7 +20,11 @@ public class BeaconClusterItem extends BaseClusterItem {
         else {
             this.status = beaconMinimal.getStatus();
         }
-        if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
+
+        if (beaconMinimal.getStatus().equals(Beacon.STATUS_NOT_INSTALLED)
+                && beaconMinimal.getProvisoricLat() != 0 && beaconMinimal.getProvisoricLng() != 0) {
+            this.position = new LatLng(beaconMinimal.getProvisoricLat(), beaconMinimal.getProvisoricLng());
+        } else if (beaconMinimal.getLat() != 0 && beaconMinimal.getLng() != 0) {
             this.position = new LatLng(beaconMinimal.getLat(), beaconMinimal.getLng());
         }
     }
@@ -30,7 +34,6 @@ public class BeaconClusterItem extends BaseClusterItem {
         int major = beaconMinimal.getMajor();
         int minor = beaconMinimal.getMinor();
 
-        String manufacturerId = beaconMinimal.getManufacturerId();
-        return manufacturerId + System.getProperty("line.separator") + "Major: " + major + System.getProperty("line.separator") + "Minor: " + minor;
+        return "Major: " + major + System.getProperty("line.separator") + "Minor: " + minor;
     }
 }

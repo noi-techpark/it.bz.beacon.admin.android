@@ -13,6 +13,8 @@
 
 package it.bz.beacon.adminapp.swagger.client;
 
+import java.io.IOException;
+
 import java.util.Map;
 import java.util.List;
 

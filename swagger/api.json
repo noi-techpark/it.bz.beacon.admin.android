@@ -34,8 +34,8 @@
       "description": "Order Controller"
     },
     {
-      "name": "swagger-controller",
-      "description": "Swagger Controller"
+      "name": "trusted-beacon-controller",
+      "description": "Trusted Beacon Controller"
     },
     {
       "name": "user-controller",
@@ -43,225 +43,6 @@
     }
   ],
   "paths": {
-    "/": {
-      "get": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingGET",
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "deprecated": false
-      },
-      "head": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingHEAD",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "deprecated": false
-      },
-      "post": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "deprecated": false
-      },
-      "put": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingPUT",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "deprecated": false
-      },
-      "delete": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingDELETE",
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "deprecated": false
-      },
-      "options": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingOPTIONS",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "deprecated": false
-      },
-      "patch": {
-        "tags": [
-          "swagger-controller"
-        ],
-        "summary": "swaggerUi",
-        "operationId": "swaggerUiUsingPATCH",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "deprecated": false
-      }
-    },
     "/v1/admin/beacons": {
       "get": {
         "tags": [
@@ -992,6 +773,50 @@
         "deprecated": false
       }
     },
+    "/v1/admin/orders/csv/{orderSymbol}": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "summary": "Search a order by order symbol",
+        "operationId": "downloadCsvUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "orderSymbol",
+            "in": "path",
+            "description": "orderSymbol",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
     "/v1/admin/orders/{orderSymbol}": {
       "get": {
         "tags": [
@@ -1216,7 +1041,7 @@
           "user-controller"
         ],
         "summary": "Update a user",
-        "operationId": "updateUsingPATCH_1",
+        "operationId": "updateUsingPATCH_2",
         "consumes": [
           "application/json"
         ],
@@ -1519,6 +1344,62 @@
         },
         "deprecated": false
       }
+    },
+    "/v1/trusted/beacons/{id}/batteryLevel": {
+      "patch": {
+        "tags": [
+          "trusted-beacon-controller"
+        ],
+        "summary": "Update battery level of beacon",
+        "operationId": "updateUsingPATCH_1",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "batteryLevelUpdate",
+            "description": "batteryLevelUpdate",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BeaconBatteryLevelUpdate"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Beacon"
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "TrustedAuth": []
+          }
+        ],
+        "deprecated": false
+      }
     }
   },
   "securityDefinitions": {
@@ -1526,6 +1407,9 @@
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
+    },
+    "TrustedAuth": {
+      "type": "basic"
     }
   },
   "definitions": {
@@ -1703,6 +1587,23 @@
       },
       "title": "Beacon"
     },
+    "BeaconBatteryLevelUpdate": {
+      "type": "object",
+      "required": [
+        "batteryLevel"
+      ],
+      "properties": {
+        "batteryLevel": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 100,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
+        }
+      },
+      "title": "BeaconBatteryLevelUpdate"
+    },
     "BeaconImage": {
       "type": "object",
       "properties": {
@@ -1796,6 +1697,13 @@
         "uuid": {
           "type": "string",
           "format": "uuid"
+        },
+        "zoneCode": {
+          "type": "string"
+        },
+        "zoneId": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "title": "BeaconOrderData"

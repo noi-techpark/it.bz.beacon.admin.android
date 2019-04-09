@@ -8,6 +8,10 @@ public class BeaconMinimal {
     private int batteryLevel;
     private float lat;
     private float lng;
+    @Ignore
+    private float provisoricLat;
+    @Ignore
+    private float provisoricLng;
     private int major;
     private int minor;
     private String manufacturerId;
@@ -97,5 +101,21 @@ public class BeaconMinimal {
 
     public void setRssi(Integer rssi) {
         this.rssi = rssi;
+    }
+
+    public float getProvisoricLat() {
+        return provisoricLat;
+    }
+
+    public void setProvisoricLat(float provisoricLat) {
+        this.provisoricLat = provisoricLat;
+    }
+
+    public float getProvisoricLng() {
+        return provisoricLng;
+    }
+
+    public void setProvisoricLng(float provisoricLng) {
+        this.provisoricLng = provisoricLng;
     }
 }

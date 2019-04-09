@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -37,6 +38,12 @@ import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiClient;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.model.Beacon;
+import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
 
 public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
@@ -45,6 +52,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     private ProximityManager proximityManager;
     private BeaconViewModel beaconViewModel;
     private MutableLiveData<List<BeaconMinimal>> nearbyBeacons;
+    private TrustedBeaconControllerApi trustedApi;
 
     public NearbyBeaconsFragment() {
         // Required empty public constructor
@@ -60,6 +68,12 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        trustedApi = new TrustedBeaconControllerApi(new ApiClient());
+        if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
+            trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
+            trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
+        }
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         KontaktSDK.initialize(getString(R.string.apiKey));
         proximityManager = ProximityManagerFactory.create(getContext());
@@ -214,20 +228,22 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         return new SimpleSecureProfileListener() {
             @Override
             public void onProfileDiscovered(final ISecureProfile profile) {
-                updateList(profile);
                 super.onProfileDiscovered(profile);
+                updateBatteryStatus(profile);
+                updateList(profile);
             }
 
             @Override
             public void onProfilesUpdated(List<ISecureProfile> profiles) {
+                super.onProfilesUpdated(profiles);
                 for (ISecureProfile profile : profiles) {
                     updateList(profile);
                 }
-                super.onProfilesUpdated(profiles);
             }
 
             @Override
             public void onProfileLost(ISecureProfile profile) {
+                super.onProfileLost(profile);
                 beaconViewModel.getByInstanceId(profile.getUniqueId(), new LoadBeaconMinimalEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
@@ -247,7 +263,6 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         // TODO: show error
                     }
                 });
-                super.onProfileLost(profile);
             }
 
             private void updateList(final ISecureProfile profile) {
@@ -278,6 +293,39 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
                     }
                 });
+            }
+
+            private void updateBatteryStatus(ISecureProfile profile) {
+                try {
+                    if (profile.getBatteryLevel() > 0) {
+                        BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
+                        update.setBatteryLevel(profile.getBatteryLevel());
+                        String[] nameParts = profile.getName().split("#");
+                        trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                            @Override
+                            public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
+
+                            }
+
+                            @Override
+                            public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
+
+                            }
+
+                            @Override
+                            public void onUploadProgress(long l, long l1, boolean b) {
+
+                            }
+
+                            @Override
+                            public void onDownloadProgress(long l, long l1, boolean b) {
+
+                            }
+                        }).execute();
+                    }
+                } catch (Exception e) {
+                    //
+                }
             }
         };
     }

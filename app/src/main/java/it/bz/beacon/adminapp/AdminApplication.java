@@ -14,12 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.android.gms.maps.MapsInitializer;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
-import it.bz.beacon.adminapp.data.Storage;
+import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class AdminApplication extends Application {
 
@@ -34,6 +35,7 @@ public class AdminApplication extends Application {
     public void onCreate() {
         super.onCreate();
         storage = new Storage(getApplicationContext());
+        NearbyBeaconManager.initialize(this);
 
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath(getApplicationContext().getString(R.string.basePath));

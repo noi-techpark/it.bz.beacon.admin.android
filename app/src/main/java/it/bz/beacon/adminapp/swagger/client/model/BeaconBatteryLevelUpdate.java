@@ -24,29 +24,31 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * ManufacturerOrder
+ * BeaconBatteryLevelUpdate
  */
 
-public class ManufacturerOrder {
-  @SerializedName("id")
-  private String id = null;
+public class BeaconBatteryLevelUpdate {
+  @SerializedName("batteryLevel")
+  private Integer batteryLevel = null;
 
-  public ManufacturerOrder id(String id) {
-    this.id = id;
+  public BeaconBatteryLevelUpdate batteryLevel(Integer batteryLevel) {
+    this.batteryLevel = batteryLevel;
     return this;
   }
 
    /**
-   * Get id
-   * @return id
+   * Get batteryLevel
+   * minimum: 0
+   * maximum: 100
+   * @return batteryLevel
   **/
   @ApiModelProperty(required = true, value = "")
-  public String getId() {
-    return id;
+  public Integer getBatteryLevel() {
+    return batteryLevel;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setBatteryLevel(Integer batteryLevel) {
+    this.batteryLevel = batteryLevel;
   }
 
 
@@ -58,22 +60,22 @@ public class ManufacturerOrder {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ManufacturerOrder manufacturerOrder = (ManufacturerOrder) o;
-    return Objects.equals(this.id, manufacturerOrder.id);
+    BeaconBatteryLevelUpdate beaconBatteryLevelUpdate = (BeaconBatteryLevelUpdate) o;
+    return Objects.equals(this.batteryLevel, beaconBatteryLevelUpdate.batteryLevel);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(batteryLevel);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ManufacturerOrder {\n");
+    sb.append("class BeaconBatteryLevelUpdate {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    batteryLevel: ").append(toIndentedString(batteryLevel)).append("\n");
     sb.append("}");
     return sb.toString();
   }

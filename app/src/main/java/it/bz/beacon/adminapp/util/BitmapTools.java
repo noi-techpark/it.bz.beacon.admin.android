@@ -49,7 +49,7 @@ public class BitmapTools {
     public static Bitmap resizeBitmap(String photoPath, int maxSideLength) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(photoPath, bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
         int photoWidth = bmOptions.outWidth;
         int photoHeight = bmOptions.outHeight;
 
@@ -108,17 +108,19 @@ public class BitmapTools {
         }
     }
 
-    public static void downloadImage(Context context, BeaconImage beaconImage) {
-        DownloadImageTask downloadImageTask = new DownloadImageTask(beaconImage);
+    public static void downloadImage(Context context, BeaconImage beaconImage, OnImagesDownloadedCallback callback) {
+        DownloadImageTask downloadImageTask = new DownloadImageTask(beaconImage, callback);
         downloadImageTask.execute(context);
     }
 
     private static class DownloadImageTask extends AsyncTask<Context, Void, Void> {
 
         private BeaconImage beaconImage;
+        private OnImagesDownloadedCallback callback;
 
-        DownloadImageTask(BeaconImage beaconImage) {
+        DownloadImageTask(BeaconImage beaconImage, OnImagesDownloadedCallback callback) {
             this.beaconImage = beaconImage;
+            this.callback = callback;
         }
 
         @Override
@@ -153,9 +155,17 @@ public class BitmapTools {
                     }
                     fileOutput.close();
                     response.body().close();
+                    if (callback != null) {
+                        callback.onSuccess(beaconImage);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    if (callback != null) {
+                        callback.onFailure(e);
+                    }
                 }
+            } else {
+                callback.onSuccess(beaconImage);
             }
 
             return null;
