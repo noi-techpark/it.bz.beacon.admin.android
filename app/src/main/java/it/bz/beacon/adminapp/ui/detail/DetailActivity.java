@@ -498,7 +498,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     txtImagesEmpty.setVisibility(View.VISIBLE);
                     galleryAdapter.clear();
 
-                    if (beaconImages != null) {
+                    if (beaconImages != null && beaconImages.size() > 0) {
                         final ImageCounter counter = new ImageCounter(beaconImages.size());
                         for (BeaconImage beaconImage : beaconImages) {
                             BitmapTools.downloadImage(DetailActivity.this, beaconImage, new OnImagesDownloadedCallback() {
