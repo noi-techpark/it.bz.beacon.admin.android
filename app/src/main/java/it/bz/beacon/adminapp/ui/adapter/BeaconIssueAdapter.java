@@ -205,15 +205,17 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
             }
 
-            if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
-                battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
-            }
-            else {
-                if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
-                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
+            if (issue.getBatteryLevel() != null) {
+                if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
+                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
                 }
                 else {
-                    battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
+                    if (issue.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
+                        battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
+                    }
+                    else {
+                        battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
+                    }
                 }
             }
 
