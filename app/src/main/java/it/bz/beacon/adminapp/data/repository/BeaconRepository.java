@@ -52,7 +52,8 @@ public class BeaconRepository {
     }
 
     public void getById(String id, LoadBeaconEvent loadEvent) {
-        new LoadByIdTask(beaconDao, loadEvent).execute(id);
+        LoadByIdTask task = new LoadByIdTask(beaconDao, loadEvent);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
     }
 
     public void getByInstanceId(String instanceId, LoadBeaconMinimalEvent loadEvent) {
