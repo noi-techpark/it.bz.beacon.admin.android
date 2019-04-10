@@ -692,12 +692,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
             public void onSuccess(Beacon loadedBeacon) {
-
                 beacon = loadedBeacon;
                 showData();
                 mapView.getMapAsync(DetailActivity.this);
                 makeMapScrollable();
-//                            Debug.stopMethodTracing();
             }
 
             @Override
@@ -751,15 +749,17 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
 
             editName.setText(beacon.getName());
-            if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_alert_level)) {
-                imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
-            }
-            else {
-                if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_half_level)) {
-                    imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
+            if (beacon.getBatteryLevel() != null) {
+                if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_alert_level)) {
+                    imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
                 }
                 else {
-                    imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_full));
+                    if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_half_level)) {
+                        imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
+                    }
+                    else {
+                        imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_full));
+                    }
                 }
             }
             if (beacon.getStatus().equals(Beacon.STATUS_OK)) {
