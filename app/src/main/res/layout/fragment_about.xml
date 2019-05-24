@@ -60,6 +60,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
+            <Button
+                android:id="@+id/btn_open_website"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:padding="@dimen/app_default_margin"
+                android:text="@string/open_website"
+                android:textAllCaps="true" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
