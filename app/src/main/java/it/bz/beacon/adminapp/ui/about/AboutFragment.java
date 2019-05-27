@@ -1,6 +1,8 @@
 package it.bz.beacon.adminapp.ui.about;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.bz.beacon.adminapp.R;
 
 public class AboutFragment extends Fragment {
@@ -73,5 +76,13 @@ public class AboutFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @OnClick(R.id.btn_open_website)
+    public void open() {
+        String url = "https://beacon.bz.it";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 }

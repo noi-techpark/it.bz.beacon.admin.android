@@ -171,6 +171,6 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="description_hint">short, clear description</string>
     <string name="rotate_90_right">Rotate 90° right</string>
     <string name="rotate_90_left">Rotate 90° left</string>
-
+    <string name="open_website">Open Project Website</string>
 
 </resources>
