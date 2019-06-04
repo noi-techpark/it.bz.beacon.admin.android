@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,14 +16,23 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.clustering.ClusterManager;
@@ -38,16 +46,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -155,7 +153,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                         if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
                                             mapBeacons.add(beaconMinimal);
                                         }
-                                    } else if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
+                                    }
+                                    else if (beaconMinimal.getStatus().equalsIgnoreCase(statusFilter) || statusFilter.equals(Beacon.STATUS_ALL)) {
                                         mapBeacons.add(beaconMinimal);
                                     }
                                 }
@@ -195,7 +194,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-
     private LocationRequest locationRequest = new LocationRequest();
     private LocationCallback locationCallback = new LocationCallback();
 
@@ -218,7 +216,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             doStartLocating();
         }
     }
@@ -235,7 +234,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         map.getUiSettings().setMyLocationButtonEnabled(false);
         try {
             map.setMyLocationEnabled(false);
-        } catch (SecurityException e) {
+        }
+        catch (SecurityException e) {
 
         }
     }
@@ -365,6 +365,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onClusterItemInfoWindowClick(BaseClusterItem clusterItem) {
-        showDetail(clusterItem.getBeaconId(), clusterItem.getTitle());
+        if (clusterItem != null) {
+            showDetail(clusterItem.getBeaconId(), clusterItem.getTitle());
+        }
     }
 }

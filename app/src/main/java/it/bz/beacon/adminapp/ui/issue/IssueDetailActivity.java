@@ -1,6 +1,7 @@
 package it.bz.beacon.adminapp.ui.issue;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -12,6 +13,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -20,14 +26,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiException;
-import it.bz.beacon.adminapp.swagger.client.model.IssueSolution;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
@@ -37,8 +38,9 @@ import it.bz.beacon.adminapp.data.entity.IssueWithBeacon;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadIssueEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
-import it.bz.beacon.adminapp.eventbus.LogoutEvent;
-import it.bz.beacon.adminapp.eventbus.PubSub;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
+import it.bz.beacon.adminapp.swagger.client.model.IssueSolution;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -165,10 +167,19 @@ public class IssueDetailActivity extends BaseDetailActivity {
                             if (dialog != null) {
                                 dialog.dismiss();
                             }
-                            if (statusCode == 403) {
-                                Snackbar.make(findViewById(R.id.container), getString(R.string.error_authorization), Snackbar.LENGTH_LONG)
-                                        .show();
-                                PubSub.getInstance().post(new LogoutEvent());
+                            if ((statusCode == 403) || (statusCode == 401)) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(IssueDetailActivity.this, R.style.AlertDialogCustom));
+                                builder.setMessage(getString(R.string.error_authorization));
+                                builder.setCancelable(false);
+                                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                        AdminApplication.logout(IssueDetailActivity.this);
+                                    }
+                                });
+                                AlertDialog alert = builder.create();
+                                alert.show();
                             }
                             else {
                                 showSnackbarWithRetry(getString(R.string.no_internet));

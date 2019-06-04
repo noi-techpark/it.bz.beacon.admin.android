@@ -123,7 +123,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_invalid_password">Password is too short</string>
     <string name="error_incorrect_login">Wrong username or password</string>
     <string name="error_field_required">Required field</string>
-    <string name="error_authorization">Authorization not valid anymore. Please log in again!</string>
+    <string name="error_authorization">Authorization expired. Please log in again!</string>
     <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving changes…</string>
     <string name="saving_issue">Saving issue…</string>

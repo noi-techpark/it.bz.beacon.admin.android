@@ -35,7 +35,6 @@ import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconIssueRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
 import it.bz.beacon.adminapp.eventbus.LocationEvent;
-import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
 import it.bz.beacon.adminapp.ui.adapter.BeaconIssueAdapter;
@@ -227,7 +226,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        PubSub.getInstance().post(new LogoutEvent());
+                        AdminApplication.logout(getActivity());
                     }
                 })
                 .create();

@@ -31,8 +31,6 @@ import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconIssueViewModel;
-import it.bz.beacon.adminapp.eventbus.LogoutEvent;
-import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.util.DateFormatter;
 
@@ -155,10 +153,19 @@ public class NewIssueActivity extends BaseActivity {
                             if (dialog != null) {
                                 dialog.dismiss();
                             }
-                            if (statusCode == 403) {
-                                Snackbar.make(findViewById(R.id.container), getString(R.string.error_authorization), Snackbar.LENGTH_LONG)
-                                        .show();
-                                PubSub.getInstance().post(new LogoutEvent());
+                            if ((statusCode == 403) || (statusCode == 401)) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(NewIssueActivity.this, R.style.AlertDialogCustom));
+                                builder.setMessage(getString(R.string.error_authorization));
+                                builder.setCancelable(false);
+                                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                        AdminApplication.logout(NewIssueActivity.this);
+                                    }
+                                });
+                                AlertDialog alert = builder.create();
+                                alert.show();
                             }
                             else {
                                 showSnackbarWithRetry(getString(R.string.no_internet));

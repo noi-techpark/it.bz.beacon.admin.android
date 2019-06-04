@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
-    implementation 'com.appyvet:materialrangebar:1.4.4'
+    implementation 'com.appyvet:materialrangebar:1.4.6'
     implementation 'androidx.annotation:annotation:1.0.2'
     implementation 'io.swagger:swagger-annotations:1.5.15'
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
@@ -62,6 +62,6 @@ dependencies {
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
-    implementation "androidx.work:work-runtime:2.0.0"
+    implementation "androidx.work:work-runtime:2.0.1"
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 }
