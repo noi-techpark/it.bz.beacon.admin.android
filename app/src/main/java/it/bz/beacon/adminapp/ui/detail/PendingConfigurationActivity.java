@@ -14,6 +14,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -22,7 +30,6 @@ import com.kontakt.sdk.android.ble.connection.ErrorCause;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.KontaktDeviceConnectionFactory;
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
-import com.kontakt.sdk.android.ble.connection.SyncableKontaktDeviceConnection;
 import com.kontakt.sdk.android.ble.connection.WriteListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
 import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
@@ -41,13 +48,6 @@ import com.kontakt.sdk.android.common.profile.ISecureProfile;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -89,13 +89,11 @@ public class PendingConfigurationActivity extends BaseActivity {
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
-    private boolean isPendingConfigEmpty = true;
     private boolean isPendingConfigNull = true;
 
     private BeaconViewModel beaconViewModel;
     private PendingSecureConfigViewModel pendingSecureConfigViewModel;
 
-    private SyncableKontaktDeviceConnection syncableKontaktDeviceConnection;
     private KontaktCloud kontaktCloud;
     private KontaktDeviceConnection kontaktDeviceConnection;
     private ProximityManager proximityManager;
@@ -171,9 +169,6 @@ public class PendingConfigurationActivity extends BaseActivity {
                         if (loadedBeacon.getPendingConfiguration() == null) {
                             isPendingConfigNull = true;
                         }
-                        else {
-                            isPendingConfigEmpty = true;
-                        }
                     }
                 }
             }
@@ -189,7 +184,6 @@ public class PendingConfigurationActivity extends BaseActivity {
         if (containerView.getChildCount() > 1) {
             containerView.removeViews(1, containerView.getChildCount() - 1);
         }
-        isPendingConfigEmpty = true;
         txtEmpty.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.GONE);
 
@@ -232,7 +226,6 @@ public class PendingConfigurationActivity extends BaseActivity {
     private LinearLayout addTextDifference(String oldValue, String newValue, String title, LinearLayout parent) {
         View differenceText = null;
         if (!oldValue.equalsIgnoreCase(newValue)) {
-            Log.d(AdminApplication.LOG_TAG, "found difference for " + title);
             if (parent == null) {
                 parent = (LinearLayout) getLayoutInflater().inflate(R.layout.section_pending_config, null);
             }
@@ -251,7 +244,6 @@ public class PendingConfigurationActivity extends BaseActivity {
     private LinearLayout addBooleanDifference(boolean oldValue, boolean newValue, String title, LinearLayout parent) {
         View differenceBoolean = null;
         if (oldValue != newValue) {
-            Log.d(AdminApplication.LOG_TAG, "found difference for " + title);
             if (parent == null) {
                 parent = (LinearLayout) getLayoutInflater().inflate(R.layout.section_pending_config, null);
             }
@@ -274,7 +266,6 @@ public class PendingConfigurationActivity extends BaseActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, (int) getResources().getDimension(R.dimen.app_default_margin), 0, 0);
             containerView.addView(section, layoutParams);
-            isPendingConfigEmpty = false;
             txtEmpty.setVisibility(View.GONE);
             scrollView.setVisibility(View.VISIBLE);
         }
@@ -343,7 +334,8 @@ public class PendingConfigurationActivity extends BaseActivity {
                             }
                         }).execute();
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     //
                 }
             }
@@ -390,7 +382,6 @@ public class PendingConfigurationActivity extends BaseActivity {
                         }
                         Log.d(AdminApplication.LOG_TAG, "sendToCloud successful");
                         hideProgressDialog();
-                        isPendingConfigEmpty = true;
                         isPendingConfigNull = true;
                         txtEmpty.setText(getString(R.string.applied_successfully));
                         showDifferences(beacon, null);
@@ -403,7 +394,6 @@ public class PendingConfigurationActivity extends BaseActivity {
                     public void onError(CloudError error) {
                         Log.e(AdminApplication.LOG_TAG, "sendToCloud failed: " + error.getMessage());
                         hideProgressDialog();
-                        isPendingConfigEmpty = true;
                         isPendingConfigNull = true;
                         txtEmpty.setText(error.getMessage());
                         showDifferences(beacon, null);
@@ -452,7 +442,6 @@ public class PendingConfigurationActivity extends BaseActivity {
             public void onSuccess(Configs response, CloudHeaders headers) {
                 if (response != null && response.getContent() != null && response.getContent().size() > 0) {
                     final Config config = response.getContent().get(0);
-                    Log.d(AdminApplication.LOG_TAG, "Config for beacon received: " + profile.getUniqueId());
 
                     kontaktDeviceConnection = KontaktDeviceConnectionFactory.create(PendingConfigurationActivity.this, profile, new KontaktDeviceConnection.ConnectionListener() {
                         @Override
@@ -467,12 +456,11 @@ public class PendingConfigurationActivity extends BaseActivity {
                                 public void onWriteSuccess(WriteListener.WriteResponse response) {
                                     sendToCloud(config, response);
                                     disconnect();
-                                    Log.d(AdminApplication.LOG_TAG, "Written");
                                 }
 
                                 @Override
                                 public void onWriteFailure(ErrorCause cause) {
-                                    Log.d(AdminApplication.LOG_TAG, "Write failure");
+                                    Log.e(AdminApplication.LOG_TAG, "Write failure");
                                     disconnect();
                                     Snackbar.make(scrollView, getString(R.string.error_writing_to_beacon), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(getString(R.string.retry), new View.OnClickListener() {
@@ -488,16 +476,23 @@ public class PendingConfigurationActivity extends BaseActivity {
 
                         @Override
                         public void onErrorOccured(int errorCode) {
-                            Log.d(AdminApplication.LOG_TAG, "Connection failure");
-                            hideProgressDialog();
-                            Snackbar.make(scrollView, getString(R.string.error_connecting_to_beacon), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.retry), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            sendToBeacon(profile);
-                                        }
-                                    })
-                                    .show();
+                            // error code 1019
+                            Log.e(AdminApplication.LOG_TAG, "Connection failure");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hideProgressDialog();
+                                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.error_connecting_to_beacon), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    sendToBeacon(profile);
+                                                }
+                                            })
+                                            .show();
+                                }
+                            });
+
                         }
 
                         @Override

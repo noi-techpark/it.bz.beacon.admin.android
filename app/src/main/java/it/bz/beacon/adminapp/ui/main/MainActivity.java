@@ -2,7 +2,6 @@ package it.bz.beacon.adminapp.ui.main;
 
 import android.Manifest;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,13 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
-import com.squareup.otto.Subscribe;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -28,15 +20,20 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.eventbus.LocationEvent;
-import it.bz.beacon.adminapp.eventbus.LogoutEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
@@ -44,12 +41,10 @@ import it.bz.beacon.adminapp.ui.BaseActivity;
 import it.bz.beacon.adminapp.ui.about.AboutFragment;
 import it.bz.beacon.adminapp.ui.issue.IssuesFragment;
 import it.bz.beacon.adminapp.ui.issue.map.IssuesMapFragment;
-import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.adminapp.ui.main.beacon.BeaconTabsFragment;
 import it.bz.beacon.adminapp.ui.main.beacon.map.MapFragment;
 import it.bz.beacon.adminapp.ui.map.LocationDisabledFragment;
 import it.bz.beacon.adminapp.ui.map.OnRetryLoadMapListener;
-import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
@@ -137,17 +132,10 @@ public class MainActivity extends BaseActivity
             btnLogout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    logout();
+                    AdminApplication.logout(MainActivity.this);
                 }
             });
         }
-    }
-
-    private void logout() {
-        storage.clearStorage();
-        deleteDatabase(BeaconDatabase.DB_NAME);
-        AdminApplication.setBearerToken("");
-        openLogin();
     }
 
     @Override
@@ -159,12 +147,6 @@ public class MainActivity extends BaseActivity
         else {
             super.onBackPressed();
         }
-    }
-
-    private void openLogin() {
-        Intent i = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(i);
-        finish();
     }
 
     @Override
@@ -450,11 +432,6 @@ public class MainActivity extends BaseActivity
                     })
                     .commit();
         }
-    }
-
-    @Subscribe
-    public void onLogoutRequested(LogoutEvent event) {
-        logout();
     }
 
     @Override

@@ -153,7 +153,6 @@
         app:mrb_rangeBar="false"
         app:mrb_selectorColor="@color/primary"
         app:mrb_temporaryPins="false"
-        app:mrb_tickColor="@color/primary50"
         app:mrb_tickEnd="7"
         app:mrb_tickInterval="1"
         app:mrb_tickStart="1" />

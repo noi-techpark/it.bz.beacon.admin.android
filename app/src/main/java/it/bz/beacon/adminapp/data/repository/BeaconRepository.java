@@ -4,14 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+
 import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Map;
 
-import androidx.lifecycle.LiveData;
-import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.BeaconDatabase;
@@ -23,6 +22,8 @@ import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
+import it.bz.beacon.adminapp.swagger.client.ApiCallback;
+import it.bz.beacon.adminapp.swagger.client.ApiException;
 
 public class BeaconRepository {
 
@@ -70,7 +71,7 @@ public class BeaconRepository {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
-                        if (statusCode == 403) {
+                        if ((statusCode == 403) || (statusCode == 401)) {
                             dataUpdateEvent.onAuthenticationFailed();
                         }
                         else {
@@ -161,7 +162,7 @@ public class BeaconRepository {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
-                        if (statusCode == 403) {
+                        if ((statusCode == 403) || (statusCode == 401)) {
                             dataUpdateEvent.onAuthenticationFailed();
                         }
                         else {

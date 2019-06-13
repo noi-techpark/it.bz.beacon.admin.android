@@ -40,7 +40,7 @@ public class BeaconImageRepository {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
-                        if (statusCode == 403) {
+                        if ((statusCode == 403) || (statusCode == 401)) {
                             dataUpdateEvent.onAuthenticationFailed();
                         } else {
                             dataUpdateEvent.onError();

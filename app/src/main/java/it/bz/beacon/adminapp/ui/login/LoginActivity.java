@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             showProgress(false);
-                            if (statusCode == 403) {
+                            if ((statusCode == 403) || (statusCode == 401)) {
                                 Snackbar.make(containerUsername, getString(R.string.error_incorrect_login), Snackbar.LENGTH_LONG)
                                         .show();
                             }

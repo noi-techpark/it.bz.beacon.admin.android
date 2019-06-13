@@ -29,8 +29,6 @@ import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
-import it.bz.beacon.adminapp.eventbus.LogoutEvent;
-import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -173,7 +171,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        PubSub.getInstance().post(new LogoutEvent());
+                        AdminApplication.logout(getActivity());
                     }
                 })
                 .create();

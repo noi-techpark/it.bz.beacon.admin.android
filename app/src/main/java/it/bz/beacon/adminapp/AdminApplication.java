@@ -3,6 +3,7 @@ package it.bz.beacon.adminapp;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -14,12 +15,14 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.android.gms.maps.MapsInitializer;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
+import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class AdminApplication extends Application {
@@ -115,5 +118,18 @@ public class AdminApplication extends Application {
 
     public static IssueControllerApi getIssueApi() {
         return issueControllerApi;
+    }
+
+    public static void logout(Context context) {
+        storage.clearStorage();
+        context.deleteDatabase(BeaconDatabase.DB_NAME);
+        BeaconDatabase.removeInstance();
+        AdminApplication.setBearerToken("");
+        Intent i = new Intent(context, LoginActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+        if (context instanceof Activity) {
+            ((Activity) context).finishAffinity();
+        }
     }
 }

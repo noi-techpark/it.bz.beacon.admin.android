@@ -7,6 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
 import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
@@ -56,6 +57,10 @@ public abstract class BeaconDatabase extends RoomDatabase {
             }
         }
         return INSTANCE;
+    }
+
+    public static void removeInstance() {
+        INSTANCE = null;
     }
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {

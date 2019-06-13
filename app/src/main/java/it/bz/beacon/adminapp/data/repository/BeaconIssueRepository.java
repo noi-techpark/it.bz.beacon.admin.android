@@ -72,7 +72,7 @@ public class BeaconIssueRepository {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (dataUpdateEvent != null) {
-                            if (statusCode == 403) {
+                            if ((statusCode == 403) || (statusCode == 401)) {
                                 dataUpdateEvent.onAuthenticationFailed();
                             }
                             else {
@@ -108,7 +108,7 @@ public class BeaconIssueRepository {
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         Log.e(AdminApplication.LOG_TAG, "onFailure: " + e.getMessage());
                         if (dataUpdateEvent != null) {
-                            if (statusCode == 403) {
+                            if ((statusCode == 403) || (statusCode == 401)) {
                                 dataUpdateEvent.onAuthenticationFailed();
                             }
                             else {

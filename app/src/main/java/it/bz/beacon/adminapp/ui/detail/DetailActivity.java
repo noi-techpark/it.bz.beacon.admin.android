@@ -34,6 +34,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.appyvet.materialrangebar.RangeBar;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -73,23 +91,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -451,7 +452,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                 }
                             }).execute();
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         //
                     }
                 }
@@ -521,7 +523,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                 }
                             });
                         }
-                    } else {
+                    }
+                    else {
                         loadingImages = false;
                     }
                 }
@@ -546,6 +549,16 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 @Override
                 public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                     showBatteryWarning();
+                }
+
+                @Override
+                public void onTouchStarted(RangeBar rangeBar) {
+
+                }
+
+                @Override
+                public void onTouchEnded(RangeBar rangeBar) {
+
                 }
             });
             editInterval.addTextChangedListener(this);
@@ -1011,7 +1024,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             doStartLocating();
         }
     }
@@ -1035,7 +1049,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
-        } else {
+        }
+        else {
             doStopLocating();
         }
     }
@@ -1319,6 +1334,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private class SaveTask extends AsyncTask<BeaconUpdate, Void, it.bz.beacon.adminapp.swagger.client.model.Beacon> {
 
         private ProgressDialog dialog = new ProgressDialog(DetailActivity.this, R.style.AlertDialogCustom);
+        private ApiException exception = null;
 
         @Override
         protected void onPreExecute() {
@@ -1337,9 +1353,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             }
             catch (ApiException e) {
                 e.printStackTrace();
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+                exception = e;
             }
             return null;
         }
@@ -1409,14 +1423,30 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 if (dialog != null) {
                     dialog.dismiss();
                 }
-                Snackbar.make(content, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.retry), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                save();
-                            }
-                        })
-                        .show();
+                if ((exception != null) && ((exception.getCode() == 401) || (exception.getCode() == 403))) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
+                    builder.setMessage(getString(R.string.error_authorization));
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            AdminApplication.logout(DetailActivity.this);
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else {
+                    Snackbar.make(content, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.retry), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    save();
+                                }
+                            })
+                            .show();
+                }
             }
         }
     }
@@ -1569,6 +1599,20 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         dialog.dismiss();
+                        if ((statusCode == 403) || (statusCode == 401)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
+                            builder.setMessage(getString(R.string.error_authorization));
+                            builder.setCancelable(false);
+                            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    AdminApplication.logout(DetailActivity.this);
+                                }
+                            });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }
                     }
 
                     @Override
@@ -1610,7 +1654,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                     }
                 });
-            } catch (ApiException e) {
+            }
+            catch (ApiException e) {
                 e.printStackTrace();
             }
 
@@ -1724,7 +1769,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     public void afterTextChanged(Editable s) {
         showBatteryWarning();
     }
-
 
     private void startScanningIfLocationPermissionGranted() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
