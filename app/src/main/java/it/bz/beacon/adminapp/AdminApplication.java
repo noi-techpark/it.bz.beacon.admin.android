@@ -132,4 +132,14 @@ public class AdminApplication extends Application {
             ((Activity) context).finishAffinity();
         }
     }
+
+    public static void renewLogin(Context context) {
+        AdminApplication.setBearerToken("");
+        Intent i = new Intent(context, LoginActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+        if (context instanceof Activity) {
+            ((Activity) context).finishAffinity();
+        }
+    }
 }
