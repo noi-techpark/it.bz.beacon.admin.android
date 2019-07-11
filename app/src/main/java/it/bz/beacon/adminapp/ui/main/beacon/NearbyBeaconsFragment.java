@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,10 +30,11 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
@@ -53,6 +55,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     private BeaconViewModel beaconViewModel;
     private MutableLiveData<List<BeaconMinimal>> nearbyBeacons;
     private TrustedBeaconControllerApi trustedApi;
+    private HashMap<String, BeaconMinimal> nearbyBeaconsMap;
 
     public NearbyBeaconsFragment() {
         // Required empty public constructor
@@ -78,6 +81,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         KontaktSDK.initialize(getString(R.string.apiKey));
         proximityManager = ProximityManagerFactory.create(getContext());
         proximityManager.setSecureProfileListener(createSecureProfileListener());
+        nearbyBeaconsMap = new HashMap<>();
     }
 
     private void startScanningIfLocationPermissionGranted() {
@@ -159,65 +163,39 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         });
     }
 
-    private boolean isBeaconInList(@NonNull List<BeaconMinimal> list, @NonNull BeaconMinimal beacon) {
-        for (BeaconMinimal beaconMinimal : list) {
-            if (beaconMinimal.getId().equals(beacon.getId())) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isBeaconInList(@NonNull BeaconMinimal beacon) {
+        return nearbyBeaconsMap.containsKey(beacon.getId());
     }
 
-    private List<BeaconMinimal> updateBeaconInList(List<BeaconMinimal> list, BeaconMinimal freshBeacon) {
-        for (BeaconMinimal beacon : list) {
-            if (freshBeacon.getId().equals(beacon.getId())) {
-                beacon.setManufacturerId(freshBeacon.getManufacturerId());
-                beacon.setName(freshBeacon.getName());
-                beacon.setMajor(freshBeacon.getMajor());
-                beacon.setMinor(freshBeacon.getMinor());
-                beacon.setBatteryLevel(freshBeacon.getBatteryLevel());
-                beacon.setStatus(freshBeacon.getStatus());
-                beacon.setLat(freshBeacon.getLat());
-                beacon.setLng(freshBeacon.getLng());
-                beacon.setRssi(freshBeacon.getRssi());
-            }
-        }
-        Collections.sort(list, new Comparator<BeaconMinimal>() {
-            public int compare(BeaconMinimal obj1, BeaconMinimal obj2) {
-                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
-                    return obj2.getRssi() - obj1.getRssi();
-                } else {
-                    return 0;
-                }
+    private List<BeaconMinimal> updateBeaconInList(BeaconMinimal freshBeacon) {
+        nearbyBeaconsMap.put(freshBeacon.getId(), freshBeacon);
+        List<BeaconMinimal> list = new ArrayList<>(nearbyBeaconsMap.values());
+        Collections.sort(list, (obj1, obj2) -> {
+            if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
+                return obj2.getRssi() - obj1.getRssi();
+            } else {
+                return 0;
             }
         });
         return list;
     }
 
-    private List<BeaconMinimal> addBeaconToList(List<BeaconMinimal> list, BeaconMinimal newBeacon) {
-        list.add(newBeacon);
-        Collections.sort(list, new Comparator<BeaconMinimal>() {
-            public int compare(BeaconMinimal obj1, BeaconMinimal obj2) {
-                if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
-                    return obj2.getRssi() - obj1.getRssi();
-                } else {
-                    return 0;
-                }
+    private List<BeaconMinimal> addBeaconToList(BeaconMinimal newBeacon) {
+        nearbyBeaconsMap.put(newBeacon.getId(), newBeacon);
+        List<BeaconMinimal> list = new ArrayList<>(nearbyBeaconsMap.values());
+        Collections.sort(list, (obj1, obj2) -> {
+            if ((obj1 != null) && (obj2 != null) && (obj1.getRssi() != null) && (obj2.getRssi() != null)) {
+                return obj2.getRssi() - obj1.getRssi();
+            } else {
+                return 0;
             }
         });
         return list;
     }
 
-    private List<BeaconMinimal> removeBeaconFromList(List<BeaconMinimal> list, BeaconMinimal beacon) {
-        if ((list != null) && (list.size() > 0)) {
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getId().equals(beacon.getId())) {
-                    list.remove(i);
-                    break;
-                }
-            }
-        }
-        return list;
+    private List<BeaconMinimal> removeBeaconFromList(BeaconMinimal beacon) {
+        nearbyBeaconsMap.remove(beacon.getId());
+        return new ArrayList<>(nearbyBeaconsMap.values());
     }
 
     private SecureProfileListener createSecureProfileListener() {
@@ -243,19 +221,12 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                 beaconViewModel.getByInstanceId(profile.getUniqueId(), new LoadBeaconMinimalEvent() {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
-                        List<BeaconMinimal> newList;
-                        if (nearbyBeacons.getValue() == null) {
-                            newList = new ArrayList<>();
-                        } else {
-                            newList = nearbyBeacons.getValue();
-                        }
-                        newList = removeBeaconFromList(newList, beaconMinimal);
-                        nearbyBeacons.setValue(newList);
+                        nearbyBeacons.setValue(removeBeaconFromList(beaconMinimal));
                     }
 
                     @Override
                     public void onError() {
-                        // TODO: show error
+
                     }
                 });
             }
@@ -265,20 +236,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                     @Override
                     public void onSuccess(BeaconMinimal beaconMinimal) {
                         beaconMinimal.setRssi(profile.getRssi());
-                        List<BeaconMinimal> newList;
                         synchronized (this) {
-                            if (nearbyBeacons.getValue() == null) {
-                                newList = new ArrayList<>();
+                            if (isBeaconInList(beaconMinimal)) {
+                                nearbyBeacons.setValue(updateBeaconInList(beaconMinimal));
                             } else {
-                                newList = nearbyBeacons.getValue();
-                            }
-
-                            if (!isBeaconInList(newList, beaconMinimal)) {
-                                newList = addBeaconToList(newList, beaconMinimal);
-                                nearbyBeacons.setValue(newList);
-                            } else {
-                                newList = updateBeaconInList(newList, beaconMinimal);
-                                nearbyBeacons.setValue(newList);
+                                nearbyBeacons.setValue(addBeaconToList(beaconMinimal));
                             }
                         }
                     }
@@ -319,7 +281,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         }).execute();
                     }
                 } catch (Exception e) {
-                    //
+                    Log.e(AdminApplication.LOG_TAG, e.getLocalizedMessage());
                 }
             }
         };
