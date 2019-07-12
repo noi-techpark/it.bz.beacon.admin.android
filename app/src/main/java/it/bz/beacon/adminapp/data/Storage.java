@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.kontakt.sdk.android.common.model.Config;
-
 public class Storage {
 
     private final static String LOGIN_USER_TOKEN = "LOGIN_USER_TOKEN";
     private final static String LOGIN_USER_NAME = "LOGIN_USER_NAME";
+    private final static String LOGIN_PASSWORD = "LOGIN_PASSWORD";
     private final static String LAST_SYNCHRONIZATION_BEACONS = "LAST_SYNCHRONIZATION_BEACONS";
     private final static String LAST_SYNCHRONIZATION_ISSUES = "LAST_SYNCHRONIZATION_ISSUES";
     private final static String DONT_SHOW_WARNING_AGAIN = "DONT_SHOW_WARNING_AGAIN";
@@ -29,9 +28,14 @@ public class Storage {
         return sharedPreferences.getString(LOGIN_USER_TOKEN, null);
     }
 
-    public void setUser(String username, String token) {
+    public String getLoginPassword() {
+        return sharedPreferences.getString(LOGIN_PASSWORD, null);
+    }
+
+    public void setUser(String username, String password, String token) {
         sharedPreferences.edit()
                 .putString(LOGIN_USER_NAME, username)
+                .putString(LOGIN_PASSWORD, password)
                 .putString(LOGIN_USER_TOKEN, token)
                 .apply();
     }

@@ -226,7 +226,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        AdminApplication.logout(getActivity());
+                        AdminApplication.renewLogin(getActivity());
                     }
                 })
                 .create();

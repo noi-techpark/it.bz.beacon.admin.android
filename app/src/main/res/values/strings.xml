@@ -15,6 +15,7 @@
     <string name="all">All</string>
     <string name="nearby">Nearby</string>
     <string name="login">Login</string>
+    <string name="logged_in">Logged in again successfully</string>
     <string name="logout">Logout</string>
     <string name="map">Map</string>
     <string name="list">List</string>
@@ -158,7 +159,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="invalid_interval">Value must be between 100 and 10240</string>
     <string name="invalid_major_minor">Value must be between 0 and 65535</string>
     <string name="invalid_uuid">Invalid value for an UUID</string>
-    <string name="invalid_coordinate">Invalid coordinate (not in South Tyrol)</string>
+    <string name="invalid_coordinate">Invalid coordinates (not in South Tyrol)</string>
     <string name="problem_description">Problem description</string>
     <string name="new_issue">New Issue</string>
     <string name="resolve">Resolve</string>

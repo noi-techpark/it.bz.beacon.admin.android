@@ -452,8 +452,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                 }
                             }).execute();
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         //
                     }
                 }
@@ -523,8 +522,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         loadingImages = false;
                     }
                 }
@@ -580,8 +578,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 pendingInfo.setVisibility(View.VISIBLE);
             }
             btnShowPendingConfig.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             fabAddIssue.show();
             rbSignalStrength.setPinColor(ContextCompat.getColor(this, R.color.primary50));
             rbSignalStrength.setConnectingLineColor(ContextCompat.getColor(this, R.color.primary50));
@@ -690,8 +687,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     (child instanceof TextInputEditText) ||
                     (child instanceof Button) || (child instanceof RangeBar)) {
                 child.setEnabled(enabled);
-            }
-            else {
+            } else {
                 if (child instanceof ViewGroup) {
                     setViewTreeEnabled((ViewGroup) child, enabled);
                 }
@@ -765,12 +761,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             if (beacon.getBatteryLevel() != null) {
                 if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_alert_level)) {
                     imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_alert));
-                }
-                else {
+                } else {
                     if (beacon.getBatteryLevel() < getResources().getInteger(R.integer.battery_half_level)) {
                         imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_50));
-                    }
-                    else {
+                    } else {
                         imgBattery.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_battery_full));
                     }
                 }
@@ -801,8 +795,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 txtStatus.setText(getString(R.string.status_configuration_pending));
                 btnShowPendingConfig.setEnabled(false);
                 btnShowPendingConfig.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 btnShowPendingConfig.setVisibility(View.GONE);
             }
 
@@ -909,16 +902,14 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             deactivateToggleButton(btnIndoor);
             deactivateToggleButton(btnOutdoor);
             txtLocation.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             txtLocation.setVisibility(View.VISIBLE);
             if (location.equals(Beacon.LOCATION_OUTDOOR)) {
                 activateToggleButton(btnOutdoor);
                 deactivateToggleButton(btnIndoor);
                 floorContainer.setVisibility(View.GONE);
                 txtLocation.setText(getString(R.string.outdoor));
-            }
-            else {
+            } else {
                 activateToggleButton(btnIndoor);
                 deactivateToggleButton(btnOutdoor);
                 floorContainer.setVisibility(View.VISIBLE);
@@ -958,21 +949,18 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             if (!success) {
                 Log.e(AdminApplication.LOG_TAG, "Style parsing failed.");
             }
-        }
-        catch (Resources.NotFoundException e) {
+        } catch (Resources.NotFoundException e) {
             Log.e(AdminApplication.LOG_TAG, "Can't find style. Error: ", e);
         }
 
         if ((beacon != null) && (beacon.getLat() != 0) && (beacon.getLng() != 0)) {
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
             setMarker(latlng);
-        }
-        else {
+        } else {
             if ((beaconInfo != null) && (beaconInfo.getLatitude() != 0) && (beaconInfo.getLongitude() != 0)) {
                 LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
                 setMarker(latlng);
-            }
-            else {
+            } else {
                 goToMyLocation();
             }
         }
@@ -1020,12 +1008,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             doStartLocating();
         }
     }
@@ -1045,12 +1031,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             doStopLocating();
         }
     }
@@ -1191,8 +1175,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             containerInterval.setError(getString(R.string.mandatory));
             tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
             valid = false;
-        }
-        else {
+        } else {
             value = Integer.valueOf(editInterval.getText().toString());
             if ((value < 100) || (value > 10240)) {
                 containerInterval.setError(getString(R.string.invalid_interval));
@@ -1206,12 +1189,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
-        }
-        else {
+        } else {
             try {
                 UUID uuid = UUID.fromString(editUuid.getText().toString());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 containerUuid.setError(getString(R.string.invalid_uuid));
                 tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
@@ -1223,8 +1204,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
-        }
-        else {
+        } else {
             value = Integer.valueOf(editMajor.getText().toString());
             if ((value < 0) || (value > 65535)) {
                 containerMajor.setError(getString(R.string.invalid_major_minor));
@@ -1238,8 +1218,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 tabLayoutConfig.getTabAt(1).setIcon(R.drawable.ic_error);
                 valid = false;
             }
-        }
-        else {
+        } else {
             value = Integer.valueOf(editMinor.getText().toString());
             if ((value < 0) || (value > 65535)) {
                 containerMinor.setError(getString(R.string.invalid_major_minor));
@@ -1322,8 +1301,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconUpdate.setTelemetry(switchTelemetry.isChecked());
         if (beacon.getLocationType().equals(Beacon.LOCATION_INDOOR)) {
             beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.INDOOR);
-        }
-        else {
+        } else {
             beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.OUTDOOR);
         }
 
@@ -1350,8 +1328,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         protected it.bz.beacon.adminapp.swagger.client.model.Beacon doInBackground(BeaconUpdate... beaconUpdates) {
             try {
                 return AdminApplication.getBeaconApi().updateUsingPATCH(beaconUpdates[0], beaconId);
-            }
-            catch (ApiException e) {
+            } catch (ApiException e) {
                 e.printStackTrace();
                 exception = e;
             }
@@ -1394,8 +1371,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 updatedBeacon.setUuid(result.getUuid().toString());
                 if (result.getPendingConfiguration() != null) {
                     updatedBeacon.setPendingConfiguration((new Gson()).toJson(result.getPendingConfiguration()));
-                }
-                else {
+                } else {
                     updatedBeacon.setPendingConfiguration(null);
                 }
 
@@ -1418,8 +1394,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 setContentEnabled(isEditing);
                 invalidateOptionsMenu();
                 setUpToolbar(beaconName);
-            }
-            else {
+            } else {
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -1431,13 +1406,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
-                            AdminApplication.logout(DetailActivity.this);
+                            AdminApplication.renewLogin(DetailActivity.this);
                         }
                     });
                     AlertDialog alert = builder.create();
                     alert.show();
-                }
-                else {
+                } else {
                     Snackbar.make(content, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.retry), new View.OnClickListener() {
                                 @Override
@@ -1504,8 +1478,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         if (currentLocation != null) {
             setLatLngEditFields(currentLocation.latitude, currentLocation.longitude);
             setMarker(currentLocation);
-        }
-        else {
+        } else {
             showDialog(getString(R.string.position_not_available));
         }
     }
@@ -1515,8 +1488,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         if (beaconInfo != null) {
             setLatLngEditFields(beaconInfo.getLatitude(), beaconInfo.getLongitude());
             setMarker(new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude()));
-        }
-        else {
+        } else {
             showDialog(getString(R.string.position_not_available));
         }
     }
@@ -1607,7 +1579,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
-                                    AdminApplication.logout(DetailActivity.this);
+                                    AdminApplication.renewLogin(DetailActivity.this);
                                 }
                             });
                             AlertDialog alert = builder.create();
@@ -1644,8 +1616,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
                         if (!done) {
                             dialog.setProgress((int) (bytesWritten * 100 / contentLength));
-                        }
-                        else {
+                        } else {
                             dialog.dismiss();
                         }
                     }
@@ -1654,13 +1625,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                     }
                 });
-            }
-            catch (ApiException e) {
+            } catch (ApiException e) {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             showToast(pickResult.getError().getMessage(), Toast.LENGTH_LONG);
         }
     }
@@ -1735,8 +1704,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
                 }
             });
-        }
-        catch (ApiException e) {
+        } catch (ApiException e) {
             e.printStackTrace();
             if (dialog != null) {
                 dialog.dismiss();
@@ -1787,13 +1755,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             startScanning();
         }
     }

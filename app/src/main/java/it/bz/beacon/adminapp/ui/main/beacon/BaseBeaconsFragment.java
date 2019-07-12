@@ -171,7 +171,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        AdminApplication.logout(getActivity());
+                        AdminApplication.renewLogin(getActivity());
                     }
                 })
                 .create();
