@@ -247,7 +247,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
                     @Override
                     public void onError() {
-
+                        Log.e(AdminApplication.LOG_TAG, "beaconViewModel.getByInstanceId failed");
                     }
                 });
             }
@@ -261,12 +261,11 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                             @Override
                             public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
-
+                                Log.e(AdminApplication.LOG_TAG, "updateBatteryStatus failed: " + e.getLocalizedMessage());
                             }
 
                             @Override
                             public void onSuccess(it.bz.beacon.adminapp.swagger.client.model.Beacon beacon, int i, Map<String, List<String>> map) {
-
                             }
 
                             @Override
