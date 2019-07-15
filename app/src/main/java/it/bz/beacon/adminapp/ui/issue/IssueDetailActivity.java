@@ -175,7 +175,7 @@ public class IssueDetailActivity extends BaseDetailActivity {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         dialogInterface.dismiss();
-                                        AdminApplication.logout(IssueDetailActivity.this);
+                                        AdminApplication.renewLogin(IssueDetailActivity.this);
                                     }
                                 });
                                 AlertDialog alert = builder.create();

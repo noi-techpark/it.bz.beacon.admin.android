@@ -21,5 +21,6 @@
     <color name="status_warning">#f6dd00</color>
     <color name="status_error">#d20000</color>
     <color name="status_pending">@color/primary</color>
+    <color name="semitransparent">#4d000000</color>
 
 </resources>

@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.main;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -127,6 +130,17 @@ public class MainActivity extends BaseActivity
         TextView txtUsername = navigationView.getHeaderView(0).findViewById(R.id.navigation_username);
         txtUsername.setText(storage.getLoginUserName());
 
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            TextView txtVersion = navigationView.getRootView().findViewById(R.id.txt_version);
+            if (txtVersion != null) {
+                txtVersion.setText(String.format(Locale.getDefault(), getString(R.string.version), version));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         Button btnLogout = navigationView.getHeaderView(0).findViewById(R.id.navigation_logout);
         if (btnLogout != null) {
             btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -143,8 +157,7 @@ public class MainActivity extends BaseActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -167,16 +180,14 @@ public class MainActivity extends BaseActivity
                 isMapShowing = false;
                 if (currentMode == MODE_BEACONS) {
                     switchFragment(getString(R.string.beacons), BeaconTabsFragment.newInstance(statusFilterValues[filterIndex]));
-                }
-                else {
+                } else {
                     switchFragment(getString(R.string.issues), IssuesFragment.newInstance(currentLocation));
                 }
                 break;
             case R.id.menu_filter:
                 if ((currentMode == MODE_ISSUES) && (currentLocation == null)) {
                     showLocationNotAvailableDialog();
-                }
-                else {
+                } else {
                     showFilterDialog();
                 }
                 break;
@@ -252,13 +263,11 @@ public class MainActivity extends BaseActivity
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST_FUSED);
             }
-        }
-        else {
+        } else {
             getFusedLocation();
         }
     }
@@ -286,8 +295,7 @@ public class MainActivity extends BaseActivity
         if (filterItem != null) {
             if (isFilterActive) {
                 filterItem.setIcon(R.drawable.ic_menu_filter);
-            }
-            else {
+            } else {
                 filterItem.setIcon(R.drawable.ic_menu_filter_outline);
             }
         }
@@ -340,14 +348,12 @@ public class MainActivity extends BaseActivity
                         })
                         .create()
                         .show();
-            }
-            else {
+            } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             showMapFragment();
         }
     }
@@ -385,12 +391,10 @@ public class MainActivity extends BaseActivity
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         showMapFragment();
-                    }
-                    else {
+                    } else {
                         showLocationDisabledFragment();
                     }
-                }
-                else {
+                } else {
                     showLocationDisabledFragment();
                 }
                 break;
