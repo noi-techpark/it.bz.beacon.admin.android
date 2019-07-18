@@ -1,0 +1,40 @@
+{
+    "project_info": {
+      "project_number": "1007739912262",
+      "firebase_url": "https://beacon-suedtirol-admin.firebaseio.com",
+      "project_id": "beacon-suedtirol-admin",
+      "storage_bucket": "beacon-suedtirol-admin.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:1007739912262:android:113f403592ffc8cd",
+          "android_client_info": {
+            "package_name": "it.bz.beacon.admin"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": ""
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
