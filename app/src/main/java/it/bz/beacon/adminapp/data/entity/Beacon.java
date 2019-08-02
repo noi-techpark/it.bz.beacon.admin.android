@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import com.google.gson.Gson;
+
 import it.bz.beacon.adminapp.R;
 
 @Entity
@@ -66,6 +69,44 @@ public class Beacon {
     private String pendingConfiguration;
 
     public Beacon() {
+    }
+
+    public Beacon(it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon) {
+        this.setId(remoteBeacon.getId());
+        this.setBatteryLevel(remoteBeacon.getBatteryLevel());
+        this.setDescription(remoteBeacon.getDescription());
+        this.setEddystoneEid(remoteBeacon.isEddystoneEid());
+        this.setEddystoneEtlm(remoteBeacon.isEddystoneEtlm());
+        this.setEddystoneTlm(remoteBeacon.isEddystoneTlm());
+        this.setEddystoneUid(remoteBeacon.isEddystoneUid());
+        this.setEddystoneUrl(remoteBeacon.isEddystoneUrl());
+        this.setIBeacon(remoteBeacon.isIBeacon());
+        this.setInstanceId(remoteBeacon.getInstanceId());
+        this.setInterval(remoteBeacon.getInterval());
+        this.setLastSeen(remoteBeacon.getLastSeen());
+        this.setLat(remoteBeacon.getLat());
+        this.setLng(remoteBeacon.getLng());
+        this.setLocationDescription(remoteBeacon.getLocationDescription());
+        if (remoteBeacon.getLocationType() != null) {
+            this.setLocationType(remoteBeacon.getLocationType().getValue());
+        }
+        this.setMajor(remoteBeacon.getMajor());
+        this.setMinor(remoteBeacon.getMinor());
+        this.setManufacturer(remoteBeacon.getManufacturer().getValue());
+        this.setManufacturerId(remoteBeacon.getManufacturerId());
+        this.setName(remoteBeacon.getName());
+        this.setNamespace(remoteBeacon.getNamespace());
+        this.setStatus(remoteBeacon.getStatus().getValue());
+        this.setTelemetry(remoteBeacon.isTelemetry());
+        this.setTxPower(remoteBeacon.getTxPower());
+        this.setUrl(remoteBeacon.getUrl());
+        this.setUuid(remoteBeacon.getUuid().toString());
+        if (remoteBeacon.getPendingConfiguration() != null) {
+            this.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
+        }
+        else {
+            this.setPendingConfiguration(null);
+        }
     }
 
     public static int getMarkerId(@FilterStatus String status) {

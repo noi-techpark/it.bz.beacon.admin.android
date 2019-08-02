@@ -2,12 +2,12 @@ package it.bz.beacon.adminapp.data.repository;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import com.google.gson.Gson;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,8 +74,7 @@ public class BeaconRepository {
                     if (dataUpdateEvent != null) {
                         if ((statusCode == 403) || (statusCode == 401)) {
                             dataUpdateEvent.onAuthenticationFailed();
-                        }
-                        else {
+                        } else {
                             dataUpdateEvent.onError();
                         }
                     }
@@ -85,9 +84,7 @@ public class BeaconRepository {
                 public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.Beacon> result, int statusCode, Map<String, List<String>> responseHeaders) {
 
                     if (result != null) {
-                        for (int i = 0; i < result.size(); i++) {
-                            saveBeacon(result.get(i));
-                        }
+                        saveBeacons(result);
                         if (dataUpdateEvent != null) {
                             dataUpdateEvent.onSuccess();
                         }
@@ -103,8 +100,7 @@ public class BeaconRepository {
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                 }
             });
-        }
-        catch (ApiException e) {
+        } catch (ApiException e) {
             if (dataUpdateEvent != null) {
                 dataUpdateEvent.onError();
             }
@@ -113,48 +109,22 @@ public class BeaconRepository {
     }
 
     private void saveBeacon(it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon) {
-        // indicates that something went wrong when the server tried to get infos from Kontakt.io
         if (remoteBeacon.getUuid() == null) {
+            // indicates that something went wrong when the server tried to get infos from Kontakt.io
             return;
         }
-        Beacon beacon;
-        beacon = new Beacon();
-        beacon.setId(remoteBeacon.getId());
-        beacon.setBatteryLevel(remoteBeacon.getBatteryLevel());
-        beacon.setDescription(remoteBeacon.getDescription());
-        beacon.setEddystoneEid(remoteBeacon.isEddystoneEid());
-        beacon.setEddystoneEtlm(remoteBeacon.isEddystoneEtlm());
-        beacon.setEddystoneTlm(remoteBeacon.isEddystoneTlm());
-        beacon.setEddystoneUid(remoteBeacon.isEddystoneUid());
-        beacon.setEddystoneUrl(remoteBeacon.isEddystoneUrl());
-        beacon.setIBeacon(remoteBeacon.isIBeacon());
-        beacon.setInstanceId(remoteBeacon.getInstanceId());
-        beacon.setInterval(remoteBeacon.getInterval());
-        beacon.setLastSeen(remoteBeacon.getLastSeen());
-        beacon.setLat(remoteBeacon.getLat());
-        beacon.setLng(remoteBeacon.getLng());
-        beacon.setLocationDescription(remoteBeacon.getLocationDescription());
-        if (remoteBeacon.getLocationType() != null) {
-            beacon.setLocationType(remoteBeacon.getLocationType().getValue());
-        }
-        beacon.setMajor(remoteBeacon.getMajor());
-        beacon.setMinor(remoteBeacon.getMinor());
-        beacon.setManufacturer(remoteBeacon.getManufacturer().getValue());
-        beacon.setManufacturerId(remoteBeacon.getManufacturerId());
-        beacon.setName(remoteBeacon.getName());
-        beacon.setNamespace(remoteBeacon.getNamespace());
-        beacon.setStatus(remoteBeacon.getStatus().getValue());
-        beacon.setTelemetry(remoteBeacon.isTelemetry());
-        beacon.setTxPower(remoteBeacon.getTxPower());
-        beacon.setUrl(remoteBeacon.getUrl());
-        beacon.setUuid(remoteBeacon.getUuid().toString());
-        if (remoteBeacon.getPendingConfiguration() != null) {
-            beacon.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
-        }
-        else {
-            beacon.setPendingConfiguration(null);
-        }
+        Beacon beacon = new Beacon(remoteBeacon);
         insert(beacon, null);
+    }
+
+    private void saveBeacons(List<it.bz.beacon.adminapp.swagger.client.model.Beacon> remoteBeacons) {
+        ArrayList<Beacon> beacons = new ArrayList<>();
+        for (it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon : remoteBeacons) {
+            if (remoteBeacon.getUuid() != null) {
+                beacons.add(new Beacon(remoteBeacon));
+            }
+        }
+        insertMultiple(beacons);
     }
 
     public void refreshBeacon(String beaconId, final DataUpdateEvent dataUpdateEvent) {
@@ -165,8 +135,7 @@ public class BeaconRepository {
                     if (dataUpdateEvent != null) {
                         if ((statusCode == 403) || (statusCode == 401)) {
                             dataUpdateEvent.onAuthenticationFailed();
-                        }
-                        else {
+                        } else {
                             dataUpdateEvent.onError();
                         }
                     }
@@ -190,8 +159,7 @@ public class BeaconRepository {
                 public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
                 }
             });
-        }
-        catch (ApiException e) {
+        } catch (ApiException e) {
             Log.e(AdminApplication.LOG_TAG, e.getMessage());
             if (dataUpdateEvent != null) {
                 dataUpdateEvent.onError();
@@ -201,6 +169,15 @@ public class BeaconRepository {
 
     public void insert(Beacon beacon, InsertEvent event) {
         new InsertAsyncTask(beaconDao, event).execute(beacon);
+    }
+
+    public void insertMultiple(ArrayList<Beacon> beacons) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                beaconDao.insertMultiple(beacons);
+            }
+        }).start();
     }
 
     private static class InsertAsyncTask extends AsyncTask<Beacon, Void, Long> {
@@ -245,8 +222,7 @@ public class BeaconRepository {
         protected void onPostExecute(Beacon beacon) {
             if ((loadEvent != null) && (beacon != null)) {
                 loadEvent.onSuccess(beacon);
-            }
-            else {
+            } else {
                 loadEvent.onError();
             }
         }
