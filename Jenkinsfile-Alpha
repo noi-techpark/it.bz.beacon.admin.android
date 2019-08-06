@@ -24,7 +24,6 @@ pipeline {
         MAIL = "info@opendatahub.bz.it"
         GITHUB_URL = "https://github.com/noi-techpark/beacon-suedtirol-administration-android"
         APP_TITLE = "Beacon Südtirol/Alto Adige Administration Android App"
-
     }
 
     stages {
@@ -87,7 +86,7 @@ pipeline {
             steps {
                 script {
 
-                    title = ${APP_TITLE}
+                    title = "${APP_TITLE}"
 
                     body  = "-----------------------------------------------------\n"
                     body += title + "\n"
@@ -98,7 +97,7 @@ pipeline {
                     body += "Cheers,\n"
                     body += "The Open Data Hub Team\n\n\n"
                     body += "----\n"
-                    body += "[1] " + ${GITHUB_URL}
+                    body += "[1] ${GITHUB_URL}"
 
                     mail to: "${MAIL}",
                         subject: title + " - Version ${VERSION_NAME} released",
