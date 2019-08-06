@@ -3,7 +3,6 @@ package it.bz.beacon.adminapp.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.os.Debug;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,13 +13,14 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -133,10 +133,28 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
                     searchFilter = searchFilter.toLowerCase();
                     for (int i = 0; i < originalValues.size(); i++) {
                         BeaconMinimal beaconMinimal = originalValues.get(i);
-                        if (((beaconMinimal.getStatus().equals(statusFilter)) || (statusFilter.equals(Beacon.STATUS_ALL))) &&
-                                (beaconMinimal.getName().toLowerCase().contains(searchFilter)
-                                        || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter))) {
-                            filteredBeacons.add(beaconMinimal);
+                        if ((beaconMinimal.getName().toLowerCase().contains(searchFilter)
+                                || beaconMinimal.getManufacturerId().toLowerCase().contains(searchFilter))) {
+                            switch (statusFilter) {
+                                case Beacon.STATUS_ALL:
+                                    filteredBeacons.add(beaconMinimal);
+                                    break;
+                                case Beacon.STATUS_INSTALLED:
+                                    if (beaconMinimal.getLat() != 0 || beaconMinimal.getLng() != 0) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
+                                case Beacon.STATUS_NOT_INSTALLED:
+                                    if (beaconMinimal.getLat() == 0 && beaconMinimal.getLng() == 0) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
+                                default:
+                                    if ((beaconMinimal.getStatus().equalsIgnoreCase(statusFilter))) {
+                                        filteredBeacons.add(beaconMinimal);
+                                    }
+                                    break;
+                            }
                         }
                     }
                     results.count = filteredBeacons.size();
@@ -197,12 +215,10 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
 
             if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_alert_level)) {
                 battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_alert));
-            }
-            else {
+            } else {
                 if (beaconMinimal.getBatteryLevel() < context.getResources().getInteger(R.integer.battery_half_level)) {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_50));
-                }
-                else {
+                } else {
                     battery.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full));
                 }
             }
@@ -210,8 +226,7 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             if (beaconMinimal.getRssi() != null) {
                 rssi.setVisibility(View.VISIBLE);
                 rssi.setText(context.getString(R.string.rssi, beaconMinimal.getRssi()));
-            }
-            else {
+            } else {
                 rssi.setVisibility(View.GONE);
             }
             battery.setAlpha(0.6f);

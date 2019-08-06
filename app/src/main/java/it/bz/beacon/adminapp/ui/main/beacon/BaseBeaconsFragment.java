@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.AdminApplication;
@@ -81,8 +82,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
             public void onChanged(@Nullable List<BeaconMinimal> beacons) {
                 if (beacons == null || beacons.size() <= 0) {
                     showNoData();
-                }
-                else {
+                } else {
                     adapter.setBeacons(beacons);
                     adapter.getFilter().filter(statusFilter + "#" + searchFilter);
                     showList();

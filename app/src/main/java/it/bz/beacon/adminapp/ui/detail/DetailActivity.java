@@ -1058,7 +1058,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     }
 
     private void goToMyLocation() {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, getZoomLevel()));
+        if (currentLocation != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, getZoomLevel()));
+        }
     }
 
     private class MyLocationCallback extends LocationCallback {
@@ -1572,18 +1574,22 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         dialog.dismiss();
                         if ((statusCode == 403) || (statusCode == 401)) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
-                            builder.setMessage(getString(R.string.error_authorization));
-                            builder.setCancelable(false);
-                            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                    AdminApplication.renewLogin(DetailActivity.this);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
+                                    builder.setMessage(getString(R.string.error_authorization));
+                                    builder.setCancelable(false);
+                                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                            AdminApplication.renewLogin(DetailActivity.this);
+                                        }
+                                    });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
                                 }
                             });
-                            AlertDialog alert = builder.create();
-                            alert.show();
                         }
                     }
 

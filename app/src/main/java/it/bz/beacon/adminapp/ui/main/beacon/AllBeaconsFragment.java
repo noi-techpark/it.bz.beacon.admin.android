@@ -1,6 +1,7 @@
 package it.bz.beacon.adminapp.ui.main.beacon;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +13,8 @@ import java.util.List;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
@@ -23,7 +26,6 @@ public class AllBeaconsFragment extends BaseBeaconsFragment {
     private BeaconViewModel beaconViewModel;
 
     public AllBeaconsFragment() {
-        // Required empty public constructor
     }
 
     public static AllBeaconsFragment newInstance(String statusFilter) {

@@ -174,5 +174,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="rotate_90_left">Rotate 90° left</string>
     <string name="open_website">Open Project Website</string>
     <string name="version">Version %s</string>
+    <string name="error_bluetooth_disable">Bluetooth is disabled!</string>
+    <string name="enable">Enable</string>
 
 </resources>
