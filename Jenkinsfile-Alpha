@@ -20,6 +20,10 @@ pipeline {
         KEYSTORE_ALIAS_PASSWORD = credentials('beacon-admin-android-keystore-alias-password')
         SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
         GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
+
+        MAIL = "info@opendatahub.bz.it"
+        GITHUB_URL = "https://github.com/noi-techpark/beacon-suedtirol-administration-android"
+        APP_TITLE = "Beacon Südtirol/Alto Adige Administration Android App"
     }
 
     stages {
@@ -75,6 +79,29 @@ pipeline {
                         sh 'git commit -m "Version increment"'
                         sh 'git push origin HEAD:master'
                     }
+                }
+            }
+        }
+        stage('Send Email') {
+            steps {
+                script {
+
+                    title = "${APP_TITLE}"
+
+                    body  = "-----------------------------------------------------\n"
+                    body += title + "\n"
+                    body += "-----------------------------------------------------\n\n"
+                    body += "Hi all,\nwe are proud to announce that v${VERSION_NAME} of the\n"
+                    body += "Beacon Android Administration App [1] has been\n"
+                    body += "released.\n\n"
+                    body += "Cheers,\n"
+                    body += "The Open Data Hub Team\n\n\n"
+                    body += "----\n"
+                    body += "[1] ${GITHUB_URL}"
+
+                    mail to: "${MAIL}",
+                        subject: title + " - Version ${VERSION_NAME} released",
+                        body: body
                 }
             }
         }
