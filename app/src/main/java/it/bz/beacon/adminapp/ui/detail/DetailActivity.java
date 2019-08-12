@@ -1292,10 +1292,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         beaconUpdate.setNamespace(editNamespace.getText().toString());
         beaconUpdate.setInstanceId(editInstanceId.getText().toString());
         beaconUpdate.setUrl(editUrl.getText().toString());
-        if (editLatitude.getText() != null) {
+        if ((editLatitude.getText() != null) && (!TextUtils.isEmpty(editLatitude.getText().toString()))) {
             beaconUpdate.setLat(Float.parseFloat(editLatitude.getText().toString().replace(',', '.')));
         }
-        if (editLongitude.getText() != null) {
+        if ((editLongitude.getText() != null) && (!TextUtils.isEmpty(editLongitude.getText().toString()))) {
             beaconUpdate.setLng(Float.parseFloat(editLongitude.getText().toString().replace(',', '.')));
         }
         beaconUpdate.setDescription(editDescription.getText().toString());
