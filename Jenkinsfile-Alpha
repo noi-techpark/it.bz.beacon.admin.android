@@ -13,6 +13,8 @@ pipeline {
         GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
         BEACON_SUEDTIROL_API_URL = "https://api.beacon.bz.it"
         KONTAKT_IO_API_KEY = credentials('beacon-admin-android-kontakt-io-api-key')
+        API_TRUSTED_USER = credentials('beacon-admin-android-api-trusted-user')
+        API_TRUSTED_PASSWORD = credentials('beacon-admin-android-api-trusted-password')
         GOOGLE_SERVICES_JSON_FILE = credentials('beacon-admin-android-google-services-json')
         KEYSTORE_FILE = credentials('beacon-admin-android-keystore-file')
         KEYSTORE_PASSWORD = credentials('beacon-admin-android-keystore-password')
@@ -41,6 +43,10 @@ pipeline {
                     sh 'sed -i "" "s%BEACON_SUEDTIROL_API_URL%${BEACON_SUEDTIROL_API_URL}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
                     sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/release/res/values/beacon_suedtirol_api.xml'
                     sh 'sed -i "" "s%KONTAKT_IO_API_KEY%${KONTAKT_IO_API_KEY}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%API_TRUSTED_USER%${API_TRUSTED_USER}%" app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%API_TRUSTED_USER%${API_TRUSTED_USER}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/release/res/values/beacon_suedtirol_api.xml'
+                    sh 'sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/debug/res/values/beacon_suedtirol_api.xml'
 
                     sh 'cat "${GOOGLE_SERVICES_JSON_FILE}" > app/google-services.json'
                     sh 'cat "${KEYSTORE_FILE}" > keystore.jks'
