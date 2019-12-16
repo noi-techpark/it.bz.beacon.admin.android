@@ -164,8 +164,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                     setUpToolbar();
                     if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
                         showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
-                    }
-                    else {
+                    } else {
                         if (loadedBeacon.getPendingConfiguration() == null) {
                             isPendingConfigNull = true;
                         }
@@ -212,8 +211,7 @@ public class PendingConfigurationActivity extends BaseActivity {
             section = addBooleanDifference(beacon.isEddystoneTlm(), pendingConfiguration.isEddystoneTlm(), getString(R.string.details_eddystone_tlm), section);
             addSection(section, getString(R.string.details_eddystone));
             isPendingConfigNull = false;
-        }
-        else {
+        } else {
             isPendingConfigNull = true;
         }
     }
@@ -334,8 +332,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                             }
                         }).execute();
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     //
                 }
             }
@@ -436,7 +433,11 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void sendToBeacon(final ISecureProfile profile) {
+        if (profile == null) {
+            return;
+        }
         showProgressDialog();
+
         kontaktCloud.configs().secure().withIds(profile.getUniqueId()).execute(new CloudCallback<Configs>() {
             @Override
             public void onSuccess(Configs response, CloudHeaders headers) {
@@ -537,13 +538,11 @@ public class PendingConfigurationActivity extends BaseActivity {
                         })
                         .create();
                 dialog.show();
-            }
-            else {
+            } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
-        }
-        else {
+        } else {
             startScanning();
         }
     }
