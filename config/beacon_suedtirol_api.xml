@@ -1,6 +1,6 @@
 <resources>
     <string translatable="false" name="basePath">BEACON_SUEDTIROL_API_URL</string>
     <string translatable="false" name="apiKey">KONTAKT_IO_API_KEY</string>
-    <string translatable="false" name="trustedApiUser"/>
-    <string translatable="false" name="trustedApiPassword"/>
+    <string translatable="false" name="trustedApiUser">API_TRUSTED_USER</string>
+    <string translatable="false" name="trustedApiPassword">API_TRUSTED_PASSWORD</string>
 </resources>
