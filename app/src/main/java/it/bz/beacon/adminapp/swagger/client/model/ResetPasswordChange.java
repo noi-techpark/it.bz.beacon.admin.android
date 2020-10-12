@@ -24,30 +24,49 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconBatteryLevelUpdate
+ * ResetPasswordChange
  */
-public class BeaconBatteryLevelUpdate {
-  @SerializedName("batteryLevel")
-  private Integer batteryLevel = null;
+public class ResetPasswordChange {
+  @SerializedName("newPassword")
+  private String newPassword = null;
 
-  public BeaconBatteryLevelUpdate batteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  @SerializedName("token")
+  private String token = null;
+
+  public ResetPasswordChange newPassword(String newPassword) {
+    this.newPassword = newPassword;
     return this;
   }
 
    /**
-   * Get batteryLevel
-   * minimum: 0
-   * maximum: 100
-   * @return batteryLevel
+   * Get newPassword
+   * @return newPassword
   **/
   @ApiModelProperty(required = true, value = "")
-  public Integer getBatteryLevel() {
-    return batteryLevel;
+  public String getNewPassword() {
+    return newPassword;
   }
 
-  public void setBatteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
+  }
+
+  public ResetPasswordChange token(String token) {
+    this.token = token;
+    return this;
+  }
+
+   /**
+   * Get token
+   * @return token
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 
 
@@ -59,22 +78,24 @@ public class BeaconBatteryLevelUpdate {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconBatteryLevelUpdate beaconBatteryLevelUpdate = (BeaconBatteryLevelUpdate) o;
-    return Objects.equals(this.batteryLevel, beaconBatteryLevelUpdate.batteryLevel);
+    ResetPasswordChange resetPasswordChange = (ResetPasswordChange) o;
+    return Objects.equals(this.newPassword, resetPasswordChange.newPassword) &&
+        Objects.equals(this.token, resetPasswordChange.token);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel);
+    return Objects.hash(newPassword, token);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconBatteryLevelUpdate {\n");
+    sb.append("class ResetPasswordChange {\n");
     
-    sb.append("    batteryLevel: ").append(toIndentedString(batteryLevel)).append("\n");
+    sb.append("    newPassword: ").append(toIndentedString(newPassword)).append("\n");
+    sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

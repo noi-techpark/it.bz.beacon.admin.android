@@ -24,30 +24,28 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconBatteryLevelUpdate
+ * ResetPasswordRequest
  */
-public class BeaconBatteryLevelUpdate {
-  @SerializedName("batteryLevel")
-  private Integer batteryLevel = null;
+public class ResetPasswordRequest {
+  @SerializedName("username")
+  private String username = null;
 
-  public BeaconBatteryLevelUpdate batteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public ResetPasswordRequest username(String username) {
+    this.username = username;
     return this;
   }
 
    /**
-   * Get batteryLevel
-   * minimum: 0
-   * maximum: 100
-   * @return batteryLevel
+   * Get username
+   * @return username
   **/
   @ApiModelProperty(required = true, value = "")
-  public Integer getBatteryLevel() {
-    return batteryLevel;
+  public String getUsername() {
+    return username;
   }
 
-  public void setBatteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
 
@@ -59,22 +57,22 @@ public class BeaconBatteryLevelUpdate {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconBatteryLevelUpdate beaconBatteryLevelUpdate = (BeaconBatteryLevelUpdate) o;
-    return Objects.equals(this.batteryLevel, beaconBatteryLevelUpdate.batteryLevel);
+    ResetPasswordRequest resetPasswordRequest = (ResetPasswordRequest) o;
+    return Objects.equals(this.username, resetPasswordRequest.username);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel);
+    return Objects.hash(username);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconBatteryLevelUpdate {\n");
+    sb.append("class ResetPasswordRequest {\n");
     
-    sb.append("    batteryLevel: ").append(toIndentedString(batteryLevel)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("}");
     return sb.toString();
   }

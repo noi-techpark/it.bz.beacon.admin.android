@@ -138,7 +138,7 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
     @Override
     public void onRefresh() {
         BeaconRepository beaconRepository = new BeaconRepository(getContext());
-        beaconRepository.refreshBeacons(new DataUpdateEvent() {
+        beaconRepository.refreshBeacons(null, new DataUpdateEvent() {
             @Override
             public void onSuccess() {
                 Log.i(AdminApplication.LOG_TAG, "Beacons refreshed!");

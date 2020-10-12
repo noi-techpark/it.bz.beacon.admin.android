@@ -24,30 +24,28 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconBatteryLevelUpdate
+ * PasswordReset
  */
-public class BeaconBatteryLevelUpdate {
-  @SerializedName("batteryLevel")
-  private Integer batteryLevel = null;
+public class PasswordReset {
+  @SerializedName("newPassword")
+  private String newPassword = null;
 
-  public BeaconBatteryLevelUpdate batteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public PasswordReset newPassword(String newPassword) {
+    this.newPassword = newPassword;
     return this;
   }
 
    /**
-   * Get batteryLevel
-   * minimum: 0
-   * maximum: 100
-   * @return batteryLevel
+   * Get newPassword
+   * @return newPassword
   **/
   @ApiModelProperty(required = true, value = "")
-  public Integer getBatteryLevel() {
-    return batteryLevel;
+  public String getNewPassword() {
+    return newPassword;
   }
 
-  public void setBatteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
   }
 
 
@@ -59,22 +57,22 @@ public class BeaconBatteryLevelUpdate {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconBatteryLevelUpdate beaconBatteryLevelUpdate = (BeaconBatteryLevelUpdate) o;
-    return Objects.equals(this.batteryLevel, beaconBatteryLevelUpdate.batteryLevel);
+    PasswordReset passwordReset = (PasswordReset) o;
+    return Objects.equals(this.newPassword, passwordReset.newPassword);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel);
+    return Objects.hash(newPassword);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconBatteryLevelUpdate {\n");
+    sb.append("class PasswordReset {\n");
     
-    sb.append("    batteryLevel: ").append(toIndentedString(batteryLevel)).append("\n");
+    sb.append("    newPassword: ").append(toIndentedString(newPassword)).append("\n");
     sb.append("}");
     return sb.toString();
   }

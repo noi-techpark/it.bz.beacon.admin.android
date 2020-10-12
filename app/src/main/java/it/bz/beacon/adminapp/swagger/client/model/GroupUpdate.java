@@ -24,30 +24,28 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * BeaconBatteryLevelUpdate
+ * GroupUpdate
  */
-public class BeaconBatteryLevelUpdate {
-  @SerializedName("batteryLevel")
-  private Integer batteryLevel = null;
+public class GroupUpdate {
+  @SerializedName("name")
+  private String name = null;
 
-  public BeaconBatteryLevelUpdate batteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public GroupUpdate name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * Get batteryLevel
-   * minimum: 0
-   * maximum: 100
-   * @return batteryLevel
+   * Get name
+   * @return name
   **/
   @ApiModelProperty(required = true, value = "")
-  public Integer getBatteryLevel() {
-    return batteryLevel;
+  public String getName() {
+    return name;
   }
 
-  public void setBatteryLevel(Integer batteryLevel) {
-    this.batteryLevel = batteryLevel;
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -59,22 +57,22 @@ public class BeaconBatteryLevelUpdate {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconBatteryLevelUpdate beaconBatteryLevelUpdate = (BeaconBatteryLevelUpdate) o;
-    return Objects.equals(this.batteryLevel, beaconBatteryLevelUpdate.batteryLevel);
+    GroupUpdate groupUpdate = (GroupUpdate) o;
+    return Objects.equals(this.name, groupUpdate.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batteryLevel);
+    return Objects.hash(name);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconBatteryLevelUpdate {\n");
+    sb.append("class GroupUpdate {\n");
     
-    sb.append("    batteryLevel: ").append(toIndentedString(batteryLevel)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

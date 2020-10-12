@@ -21,63 +21,52 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import it.bz.beacon.adminapp.swagger.client.model.BeaconOrderData;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * BeaconOrder
+ * Group
  */
-public class BeaconOrder {
-  @SerializedName("beacons")
-  private List<BeaconOrderData> beacons = null;
+public class Group {
+  @SerializedName("id")
+  private Long id = null;
 
-  @SerializedName("orderSymbol")
-  private String orderSymbol = null;
+  @SerializedName("name")
+  private String name = null;
 
-  public BeaconOrder beacons(List<BeaconOrderData> beacons) {
-    this.beacons = beacons;
-    return this;
-  }
-
-  public BeaconOrder addBeaconsItem(BeaconOrderData beaconsItem) {
-    if (this.beacons == null) {
-      this.beacons = new ArrayList<BeaconOrderData>();
-    }
-    this.beacons.add(beaconsItem);
+  public Group id(Long id) {
+    this.id = id;
     return this;
   }
 
    /**
-   * Get beacons
-   * @return beacons
+   * Get id
+   * @return id
   **/
   @ApiModelProperty(value = "")
-  public List<BeaconOrderData> getBeacons() {
-    return beacons;
+  public Long getId() {
+    return id;
   }
 
-  public void setBeacons(List<BeaconOrderData> beacons) {
-    this.beacons = beacons;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public BeaconOrder orderSymbol(String orderSymbol) {
-    this.orderSymbol = orderSymbol;
+  public Group name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * Get orderSymbol
-   * @return orderSymbol
+   * Get name
+   * @return name
   **/
   @ApiModelProperty(value = "")
-  public String getOrderSymbol() {
-    return orderSymbol;
+  public String getName() {
+    return name;
   }
 
-  public void setOrderSymbol(String orderSymbol) {
-    this.orderSymbol = orderSymbol;
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -89,24 +78,24 @@ public class BeaconOrder {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BeaconOrder beaconOrder = (BeaconOrder) o;
-    return Objects.equals(this.beacons, beaconOrder.beacons) &&
-        Objects.equals(this.orderSymbol, beaconOrder.orderSymbol);
+    Group group = (Group) o;
+    return Objects.equals(this.id, group.id) &&
+        Objects.equals(this.name, group.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(beacons, orderSymbol);
+    return Objects.hash(id, name);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BeaconOrder {\n");
+    sb.append("class Group {\n");
     
-    sb.append("    beacons: ").append(toIndentedString(beacons)).append("\n");
-    sb.append("    orderSymbol: ").append(toIndentedString(orderSymbol)).append("\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

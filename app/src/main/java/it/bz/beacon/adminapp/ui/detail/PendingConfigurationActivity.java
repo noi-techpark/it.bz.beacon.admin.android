@@ -310,7 +310,7 @@ public class PendingConfigurationActivity extends BaseActivity {
                         BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                         update.setBatteryLevel(profile.getBatteryLevel());
                         String[] nameParts = profile.getName().split("#");
-                        trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                        trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                             @Override
                             public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 

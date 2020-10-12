@@ -430,7 +430,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                             BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                             update.setBatteryLevel(profile.getBatteryLevel());
                             String[] nameParts = profile.getName().split("#");
-                            trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                            trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                                 @Override
                                 public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
@@ -1569,7 +1569,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             dialog.show();
 
             try {
-                AdminApplication.getImageApi().createUsingPOST1Async(beaconId, file, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>() {
+                AdminApplication.getImageApi().createUsingPOST2Async(beaconId, file, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         dialog.dismiss();
@@ -1678,7 +1678,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         dialog.show();
 
         try {
-            AdminApplication.getImageApi().deleteUsingDELETEAsync(beaconId, beaconImage.getId(), new ApiCallback<BaseMessage>() {
+            AdminApplication.getImageApi().deleteUsingDELETE1Async(beaconId, beaconImage.getId(), new ApiCallback<BaseMessage>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dialog != null) {
