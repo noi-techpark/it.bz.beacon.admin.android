@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textColorHint="@android:color/white"
+                android:textColorHint="@color/primaryText"
                 app:hintTextAppearance="@style/TextAppearance.Hint.Login"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -90,9 +90,9 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true"
-                    tools:text="@string/login_username"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@android:color/white" />
+                    android:textColor="@color/primaryText"
+                    android:textColorHint="@color/primaryText"
+                    tools:text="@string/login_username" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -102,13 +102,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColorHint="@android:color/white"
+                android:background="@null"
+                android:textColorHint="@color/primaryText"
                 app:hintTextAppearance="@style/TextAppearance.Hint.Login"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/usernameContainer"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="#fff">
+                app:passwordToggleTint="@color/primaryText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password"
@@ -122,18 +123,17 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    tools:text="@string/login_password"
-                    android:textColor="#fff" />
+                    android:textColor="@color/primaryText"
+                    tools:text="@string/login_password" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/background_location_button"
+                android:backgroundTint="@color/primaryLight"
                 android:clickable="true"
                 android:elevation="0dp"
                 android:focusable="true"
@@ -142,7 +142,8 @@
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/passwordContainer" />
+                app:layout_constraintTop_toBottomOf="@id/passwordContainer"
+                tools:layout_editor_absoluteX="16dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

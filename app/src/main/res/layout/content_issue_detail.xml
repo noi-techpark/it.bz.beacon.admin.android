@@ -149,10 +149,10 @@
 
             <Button
                 android:id="@+id/issue_solve"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:background="@null"
                 android:padding="@dimen/app_default_margin"
                 android:text="@string/resolve"
                 android:textAllCaps="true"
@@ -180,8 +180,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/app_default_margin"
-                    app:hintTextAppearance="@style/TextAppearance.Hint">
+                    android:layout_marginTop="@dimen/app_default_margin">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/solution"
@@ -201,8 +200,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/app_default_margin"
-                    app:hintTextAppearance="@style/TextAppearance.Hint">
+                    android:layout_marginTop="@dimen/app_default_margin">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/date"
@@ -226,8 +224,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/app_default_margin"
-                    app:hintTextAppearance="@style/TextAppearance.Hint">
+                    android:layout_marginTop="@dimen/app_default_margin">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/solution_description"
