@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -20,11 +21,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -90,6 +93,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -1467,14 +1471,51 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     dialog.dismiss();
                 }
                 if ((exception != null) && ((exception.getCode() == 401) || (exception.getCode() == 403))) {
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
-                    builder.setMessage(getString(R.string.error_authorization));
+                    builder.setMessage(getString(exception.getCode() == 401? R.string.error_authorization: R.string.error_forbidden));
                     builder.setCancelable(false);
                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
-                            AdminApplication.renewLogin(DetailActivity.this);
+                            AdminApplication.renewLogin(DetailActivity.this, () -> {
+                                if(exception.getCode() == 403) {
+                                    final Dialog dialogTransparent = new Dialog(DetailActivity.this, android.R.style.Theme_Black);
+                                    View view = LayoutInflater.from(DetailActivity.this).inflate(
+                                            R.layout.remove_border, null);
+                                    dialogTransparent.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                    dialogTransparent.getWindow().setBackgroundDrawableResource(
+                                            R.color.semitransparent);
+                                    dialogTransparent.setContentView(view);
+                                    dialogTransparent.show();
+
+                                    beaconViewModel.getRefreshedById(beaconId, new LoadBeaconEvent() {
+                                        @Override
+                                        public void onSuccess(Beacon loadedBeacon) {
+                                            if(!Optional.ofNullable(beacon.getGroupId()).orElse(Long.valueOf(Long.MIN_VALUE)).equals(loadedBeacon.getGroupId())){
+                                                group.setText(groupAdapter.getNameById(loadedBeacon.getGroupId()));
+                                            }
+                                            beacon = loadedBeacon;
+                                            dialogTransparent.dismiss();
+                                            if(!canEditBeacon()) {
+                                                quitEditMode();
+                                                Snackbar.make(findViewById(android.R.id.content), getString(R.string.not_authorized_config_beacon), Snackbar.LENGTH_SHORT)
+                                                        .show();
+                                            } else {
+                                                Snackbar.make(findViewById(android.R.id.content), getString(R.string.data_reloaded_successfully), Snackbar.LENGTH_SHORT)
+                                                        .show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            dialogTransparent.dismiss();
+                                            showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                     AlertDialog alert = builder.create();

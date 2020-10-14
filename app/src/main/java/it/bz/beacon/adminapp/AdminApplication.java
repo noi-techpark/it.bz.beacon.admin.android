@@ -30,6 +30,7 @@ import java.util.Map;
 
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
+import it.bz.beacon.adminapp.data.event.RenewLoginEvent;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
@@ -166,6 +167,10 @@ public class AdminApplication extends Application {
     }
 
     public static void renewLogin(final Activity activity) {
+        AdminApplication.renewLogin(activity, () -> {});
+    }
+
+    public static void renewLogin(final Activity activity, final RenewLoginEvent renewLoginEvent) {
         if (activity == null) {
             return;
         }
@@ -229,6 +234,7 @@ public class AdminApplication extends Application {
                             }
                             Snackbar.make(activity.findViewById(android.R.id.content), activity.getString(R.string.logged_in), Snackbar.LENGTH_SHORT)
                                     .show();
+                            renewLoginEvent.onSuccess();
                         }
                     });
                 }
