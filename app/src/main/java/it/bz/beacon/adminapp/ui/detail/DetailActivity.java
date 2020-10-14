@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -98,10 +99,12 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
+import it.bz.beacon.adminapp.data.entity.Group;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.GroupViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
@@ -111,6 +114,7 @@ import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
+import it.bz.beacon.adminapp.ui.adapter.GroupAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
@@ -151,6 +155,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.nameContainer)
     protected TextInputLayout containerName;
 
+    @BindView(R.id.groupContainer)
+    protected TextInputLayout containerGroup;
+
     @BindView(R.id.uuidContainer)
     protected TextInputLayout containerUuid;
 
@@ -171,6 +178,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @BindView(R.id.info_name)
     protected TextInputEditText editName;
+
+    @BindView(R.id.group)
+    protected AutoCompleteTextView group;
 
     @BindView(R.id.ibeacon_content)
     protected ConstraintLayout contentIBeacon;
@@ -327,12 +337,15 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     private BeaconViewModel beaconViewModel;
     private BeaconImageViewModel beaconImageViewModel;
+    private GroupViewModel groupViewModel;
 
     private ProximityManager proximityManager;
 
     private boolean loadingImages = false;
 
     private TrustedBeaconControllerApi trustedApi;
+
+    private GroupAdapter groupAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,6 +369,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
+        groupViewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
 
         mapView.onCreate(savedInstanceState);
 
@@ -366,6 +380,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
+
+        groupAdapter = new GroupAdapter(this);
+        group.setAdapter(groupAdapter);
+
 
         initializeKontakt();
     }
@@ -531,6 +549,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     protected void setContentEnabled(boolean enabled) {
         setViewTreeEnabled(contentInfo, enabled);
+        setViewTreeClickable(containerGroup, enabled);
         setViewTreeEnabled(contentIBeacon, enabled);
         setViewTreeEnabled(contentEddystone, enabled);
         setViewTreeEnabled(contentGPS, enabled);
@@ -684,6 +703,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             View child = viewGroup.getChildAt(i);
             if ((child instanceof SwitchCompat) ||
                     (child instanceof TextInputEditText) ||
+                    (child instanceof AutoCompleteTextView) ||
                     (child instanceof Button) || (child instanceof RangeBar)) {
                 child.setEnabled(enabled);
             } else {
@@ -694,8 +714,27 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
     }
 
+    private void setViewTreeClickable(ViewGroup viewGroup, boolean enabled) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            child.setClickable(enabled);
+            if (child instanceof ViewGroup) {
+                setViewTreeClickable((ViewGroup) child, enabled);
+            }
+        }
+    }
+
     private void loadBeacon() {
         showProgress(getString(R.string.loading));
+        groupViewModel.getAll().observe(DetailActivity.this, new Observer<List<Group>>() {
+            @Override
+            public void onChanged(@Nullable List<Group> groups) {
+                groupAdapter.setGroups(groups);
+                if(!isEditing && beacon != null) {
+                    group.setText(groupAdapter.getNameById(beacon.getGroupId()));
+                }
+            }
+        });
 
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
@@ -842,6 +881,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             });
             editDescription.setText(beacon.getDescription());
             editFloor.setText(beacon.getLocationDescription());
+
+            group.setText(groupAdapter.getNameById(beacon.getGroupId()));
         }
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
@@ -1172,6 +1213,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
             valid = false;
         }
+        if ((group.getText() == null) || (TextUtils.isEmpty(group.getText().toString())) ||
+                !groupAdapter.contains(group.getText().toString())) {
+            containerGroup.setError(getString(R.string.mandatory));
+            tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
+            valid = false;
+        }
         if ((editInterval.getText() == null) || (TextUtils.isEmpty(editInterval.getText().toString()))) {
             containerInterval.setError(getString(R.string.mandatory));
             tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
@@ -1276,6 +1323,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     protected void save() {
         BeaconUpdate beaconUpdate = new BeaconUpdate();
         beaconUpdate.setName(editName.getText().toString());
+        beaconUpdate.setGroup(groupAdapter.getGroupId(group.getText().toString()));
         beaconUpdate.setTxPower(rbSignalStrength.getRightIndex() + 1);
         beaconUpdate.setInterval(Integer.valueOf(editInterval.getText().toString()));
         beaconUpdate.setTelemetry(switchTelemetry.isChecked());
@@ -1364,6 +1412,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 updatedBeacon.setManufacturerId(result.getManufacturerId());
                 updatedBeacon.setName(result.getName());
                 beaconName = result.getName();
+                updatedBeacon.setGroupId(result.getGroup() != null ? result.getGroup().getId() : null);
                 updatedBeacon.setNamespace(result.getNamespace());
                 updatedBeacon.setStatus(result.getStatus().getValue());
                 updatedBeacon.setTelemetry(result.isTelemetry());

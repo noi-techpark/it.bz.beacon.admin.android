@@ -30,6 +30,7 @@ import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
 import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
+import it.bz.beacon.adminapp.data.repository.GroupRepository;
 import it.bz.beacon.adminapp.ui.adapter.BeaconAdapter;
 
 public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -137,16 +138,40 @@ public abstract class BaseBeaconsFragment extends Fragment implements SwipeRefre
 
     @Override
     public void onRefresh() {
-        BeaconRepository beaconRepository = new BeaconRepository(getContext());
-        beaconRepository.refreshBeacons(null, new DataUpdateEvent() {
+        GroupRepository groupRepository = new GroupRepository(getContext());
+        groupRepository.refreshGroups(new DataUpdateEvent() {
             @Override
             public void onSuccess() {
-                Log.i(AdminApplication.LOG_TAG, "Beacons refreshed!");
+                BeaconRepository beaconRepository = new BeaconRepository(getContext());
+                beaconRepository.refreshBeacons(null, new DataUpdateEvent() {
+                    @Override
+                    public void onSuccess() {
+                        Log.i(AdminApplication.LOG_TAG, "Beacons refreshed!");
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.e(AdminApplication.LOG_TAG, "Error refreshing beacons");
+                        swipeBeacons.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        Log.e(AdminApplication.LOG_TAG, "Authentication failed");
+                        swipeBeacons.setRefreshing(false);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showAuthenticationFailureDialog();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
             public void onError() {
-                Log.e(AdminApplication.LOG_TAG, "Error refreshing beacons");
+                Log.e(AdminApplication.LOG_TAG, "Error refreshing groups");
                 swipeBeacons.setRefreshing(false);
             }
 

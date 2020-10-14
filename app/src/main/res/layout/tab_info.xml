@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="87dp"
         android:layout_marginTop="@dimen/app_default_margin"
-        android:layout_marginBottom="@dimen/app_default_margin"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -31,6 +30,31 @@
             android:singleLine="true"
             android:textCursorDrawable="@null"
             tools:text="Beacon 12" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/groupContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_marginBottom="@dimen/app_default_margin"
+        app:errorEnabled="true"
+        tools:visibility="visible">
+
+        <AutoCompleteTextView
+            android:id="@+id/group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/details_group"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:text="Group 13">
+
+        </AutoCompleteTextView>
 
     </com.google.android.material.textfield.TextInputLayout>
 
