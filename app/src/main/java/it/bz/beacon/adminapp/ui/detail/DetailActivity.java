@@ -112,6 +112,7 @@ import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
+import it.bz.beacon.adminapp.swagger.client.model.UserRoleGroup;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
 import it.bz.beacon.adminapp.ui.adapter.GroupAdapter;
@@ -359,7 +360,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
         configureTabListeners();
-        isEditing = false;
+        setIsEditing(false);
 
         trustedApi = AdminApplication.getTrustedBeaconControllerApi();
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
@@ -558,6 +559,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
         if (isEditing) {
+            boolean isAdmin = AdminApplication.isAdmin();
+            if (!isAdmin) {
+                setViewTreeEnabled(containerGroup, false);
+                setViewTreeClickable(containerGroup, false);
+            }
             fabAddIssue.hide();
             rbSignalStrength.setPinColor(ContextCompat.getColor(this, R.color.primary));
             rbSignalStrength.setConnectingLineColor(ContextCompat.getColor(this, R.color.primary));
@@ -615,7 +621,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @Override
     protected void quitEditMode() {
-        isEditing = false;
+        setIsEditing(false);
         setContentEnabled(isEditing);
         showData();
         invalidateOptionsMenu();
@@ -1176,12 +1182,24 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         MenuItem saveItem = menu.findItem(R.id.menu_save);
 
         if (editItem != null) {
-            editItem.setVisible(!isEditing);
+            editItem.setVisible(!isEditing && canEditBeacon());
         }
         if (saveItem != null) {
             saveItem.setVisible(isEditing);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private boolean canEditBeacon() {
+        if (AdminApplication.isAdmin()) {
+            return true;
+        }
+        List<UserRoleGroup> userRoleGroups = AdminApplication.getUserRoleGroups();
+        return userRoleGroups.stream().filter(userRoleGroup -> beacon != null &&
+                    beacon.getGroupId() != null && beacon.getGroupId().equals(userRoleGroup.getGroup().getId()))
+                .anyMatch(userRoleGroup ->
+                        userRoleGroup.getRole() == UserRoleGroup.RoleEnum.MANAGER ||
+                                userRoleGroup.getRole() == UserRoleGroup.RoleEnum.BEACON_EDITOR);
     }
 
     @Override
@@ -1191,7 +1209,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         switch (id) {
             case R.id.menu_edit:
                 showPendingData();
-                isEditing = true;
+                setIsEditing(true);
                 if (map != null) {
                     map.setOnMapClickListener(this);
                 }
@@ -1440,7 +1458,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
-                isEditing = false;
+                setIsEditing(false);
                 setContentEnabled(isEditing);
                 invalidateOptionsMenu();
                 setUpToolbar(beaconName);
@@ -1546,6 +1564,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private void setLatLngEditFields(double latitude, double longitude) {
         editLatitude.setText(String.format(Locale.getDefault(), "%.6f", latitude));
         editLongitude.setText(String.format(Locale.getDefault(), "%.6f", longitude));
+    }
+
+    private void setIsEditing(boolean editing) {
+        this.isEditing = editing && canEditBeacon();
     }
 
     @Override

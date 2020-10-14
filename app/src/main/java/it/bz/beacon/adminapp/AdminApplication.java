@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +41,7 @@ import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationToken;
+import it.bz.beacon.adminapp.swagger.client.model.UserRoleGroup;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
@@ -243,5 +249,39 @@ public class AdminApplication extends Application {
             }
             Log.e(AdminApplication.LOG_TAG, e.getMessage());
         }
+    }
+
+    public static HashMap<String, Object> getTokenBody() {
+        String token = storage.getLoginUserToken();
+        if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
+            try {
+                String[] split = token.split("\\.");
+                byte[] decodedBytes = Base64.decode(split[1], Base64.URL_SAFE);
+                String bodyJson = new String(decodedBytes, "UTF-8");
+                return new Gson().fromJson(bodyJson, new TypeToken<HashMap<String, Object>>() {
+                }.getType());
+            } catch (Exception e) {
+                Log.e(AdminApplication.LOG_TAG, e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    public static boolean isAdmin() {
+        HashMap<String, Object> tokenBody = getTokenBody();
+        if(tokenBody != null) {
+            return (boolean) tokenBody.getOrDefault("admin", false);
+        }
+        return false;
+    }
+
+    public static List<UserRoleGroup> getUserRoleGroups() {
+        HashMap<String, Object> tokenBody = getTokenBody();
+        if(tokenBody != null) {
+            return new Gson().fromJson(new Gson().toJson(tokenBody.getOrDefault("groups", new Object())),
+                    new TypeToken<ArrayList<UserRoleGroup>>() {
+                    }.getType());
+        }
+        return new ArrayList<>();
     }
 }
