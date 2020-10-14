@@ -11,11 +11,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
+import it.bz.beacon.adminapp.data.dao.GroupDao;
 import it.bz.beacon.adminapp.data.dao.IssueWithBeaconDao;
 import it.bz.beacon.adminapp.data.dao.PendingSecureConfigDao;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
+import it.bz.beacon.adminapp.data.entity.Group;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 
 @Database(
@@ -23,9 +25,10 @@ import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
                 Beacon.class,
                 BeaconImage.class,
                 BeaconIssue.class,
-                PendingSecureConfig.class
+                PendingSecureConfig.class,
+                Group.class
         },
-        version = 5, exportSchema = true)
+        version = 6, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -41,6 +44,8 @@ public abstract class BeaconDatabase extends RoomDatabase {
     public abstract IssueWithBeaconDao issueWithBeaconDao();
 
     public abstract PendingSecureConfigDao pendingSecureConfigDao();
+
+    public abstract GroupDao groupDao();
 
     public static BeaconDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

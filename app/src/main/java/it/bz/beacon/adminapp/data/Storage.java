@@ -12,6 +12,7 @@ public class Storage {
     private final static String LOGIN_PASSWORD = "LOGIN_PASSWORD";
     private final static String LAST_SYNCHRONIZATION_BEACONS = "LAST_SYNCHRONIZATION_BEACONS";
     private final static String LAST_SYNCHRONIZATION_ISSUES = "LAST_SYNCHRONIZATION_ISSUES";
+    private final static String LAST_SYNCHRONIZATION_GROUPS = "LAST_SYNCHRONIZATION_GROUPS";
     private final static String DONT_SHOW_WARNING_AGAIN = "DONT_SHOW_WARNING_AGAIN";
 
     private SharedPreferences sharedPreferences;
@@ -54,6 +55,14 @@ public class Storage {
 
     public long getLastSynchronizationIssues() {
         return sharedPreferences.getLong(LAST_SYNCHRONIZATION_ISSUES, 0L);
+    }
+
+    public void setLastSynchronizationGroups(long lastSync) {
+        sharedPreferences.edit().putLong(LAST_SYNCHRONIZATION_GROUPS, lastSync).apply();
+    }
+
+    public long getLastSynchronizationGroups() {
+        return sharedPreferences.getLong(LAST_SYNCHRONIZATION_GROUPS, 0L);
     }
 
     public void setDontShowWarningAgain(boolean dontShowWarningAgain) {
