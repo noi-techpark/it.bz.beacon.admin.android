@@ -104,17 +104,21 @@ import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.entity.Group;
+import it.bz.beacon.adminapp.data.entity.Info;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
+import it.bz.beacon.adminapp.data.event.LoadInfoEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.GroupViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.InfoViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.InfoUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
 import it.bz.beacon.adminapp.swagger.client.model.UserRoleGroup;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
@@ -328,9 +332,40 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.show_pending_config)
     protected Button btnShowPendingConfig;
 
+    @BindView(R.id.details_poi_layout)
+    protected LinearLayout detailsPoiLayout;
+
+    @BindView(R.id.poi_content)
+    protected LinearLayout contentPoi;
+
+    @BindView(R.id.poiName)
+    protected TextInputEditText editPoiName;
+
+    @BindView(R.id.poiAddress)
+    protected TextInputEditText editPoiAddress;
+
+    @BindView(R.id.poiFloor)
+    protected TextInputEditText editPoiFloor;
+
+    @BindView(R.id.poiLatitude)
+    protected TextInputEditText editPoiLatitude;
+
+    @BindView(R.id.poiLongitude)
+    protected TextInputEditText editPoiLongitude;
+
+    @BindView(R.id.poiCap)
+    protected TextInputEditText editPoiCap;
+
+    @BindView(R.id.poiLocation)
+    protected TextInputEditText editPoiLocation;
+
+    @BindView(R.id.poiWebsite)
+    protected TextInputEditText editPoiWebsite;
+
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
+    private Info info;
     private it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo;
     private boolean isBatteryWarningShowing = false;
 
@@ -341,6 +376,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private GalleryAdapter galleryAdapter;
 
     private BeaconViewModel beaconViewModel;
+    private InfoViewModel infoViewModel;
     private BeaconImageViewModel beaconImageViewModel;
     private GroupViewModel groupViewModel;
 
@@ -373,6 +409,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        infoViewModel = ViewModelProviders.of(this).get(InfoViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
         groupViewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
 
@@ -559,6 +596,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         setViewTreeEnabled(contentEddystone, enabled);
         setViewTreeEnabled(contentGPS, enabled);
         setViewTreeEnabled(contentDescription, enabled);
+        setViewTreeEnabled(contentPoi, enabled);
 
         containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
@@ -628,6 +666,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         setIsEditing(false);
         setContentEnabled(isEditing);
         showData();
+        showInfoData();
         invalidateOptionsMenu();
         clearValidationErrors();
     }
@@ -743,6 +782,19 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 if(!isEditing && beacon != null) {
                     group.setText(groupAdapter.getNameById(beacon.getGroupId()));
                 }
+            }
+        });
+
+        infoViewModel.getById(beaconId, new LoadInfoEvent() {
+            @Override
+            public void onSuccess(Info loadedInfo) {
+                info = loadedInfo;
+                showInfoData();
+            }
+
+            @Override
+            public void onError() {
+
             }
         });
 
@@ -897,6 +949,28 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
+    }
+
+    protected void showInfoData() {
+        if (info != null) {
+            editPoiName.setText(info.getName());
+            editPoiAddress.setText(info.getAddress());
+            editPoiFloor.setText(info.getFloor());
+            editPoiCap.setText(info.getCap());
+            editPoiLocation.setText(info.getLocation());
+            if (info.getLatitude() != null) {
+                editPoiLatitude.setText(info.getLatitude().toString());
+            } else {
+                editPoiLatitude.setText("");
+            }
+            if (info.getLongitude() != null) {
+                editPoiLongitude.setText(info.getLongitude().toString());
+            } else {
+                editPoiLongitude.setText("");
+            }
+            editPoiWebsite.setText(info.getWebsite());
+        }
+        detailsPoiLayout.setVisibility(View.VISIBLE);
     }
 
     private void showPendingData() {
@@ -1376,6 +1450,22 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.OUTDOOR);
         }
 
+        InfoUpdate infoUpdate = new InfoUpdate();
+        infoUpdate.setName(editPoiName.getText().toString());
+        infoUpdate.setAddress(editPoiAddress.getText().toString());
+        infoUpdate.setFloor(editPoiFloor.getText().toString());
+        if ((editPoiLatitude.getText() != null) && (!TextUtils.isEmpty(editPoiLatitude.getText().toString()))) {
+            infoUpdate.setLatitude(Float.parseFloat(editPoiLatitude.getText().toString().replace(',', '.')));
+        }
+        if ((editPoiLongitude.getText() != null) && (!TextUtils.isEmpty(editPoiLongitude.getText().toString()))) {
+            infoUpdate.setLongitude(Float.parseFloat(editPoiLongitude.getText().toString().replace(',', '.')));
+        }
+        infoUpdate.setCap(editPoiCap.getText().toString());
+        infoUpdate.setLocation(editPoiLocation.getText().toString());
+        infoUpdate.setWebsite(editPoiWebsite.getText().toString());
+
+        beaconUpdate.setInfo(infoUpdate);
+
         SaveTask saveTask = new SaveTask();
         saveTask.execute(beaconUpdate);
     }
@@ -1447,25 +1537,38 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     updatedBeacon.setPendingConfiguration(null);
                 }
 
-                beaconViewModel.insert(updatedBeacon, new InsertEvent() {
+                infoViewModel.getRefreshedById(beaconId, new LoadInfoEvent() {
                     @Override
-                    public void onSuccess(long id) {
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
-                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
-                        loadBeacon();
+                    public void onSuccess(Info info) {
+                        beaconViewModel.insert(updatedBeacon, new InsertEvent() {
+                            @Override
+                            public void onSuccess(long id) {
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+                                showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                                loadBeacon();
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                            }
+                        });
+                        setIsEditing(false);
+                        setContentEnabled(isEditing);
+                        invalidateOptionsMenu();
+                        setUpToolbar(beaconName);
                     }
 
                     @Override
-                    public void onFailure() {
+                    public void onError() {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
                         showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
-                setIsEditing(false);
-                setContentEnabled(isEditing);
-                invalidateOptionsMenu();
-                setUpToolbar(beaconName);
             } else {
                 if (dialog != null) {
                     dialog.dismiss();

@@ -291,6 +291,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/details_poi_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_default_margin"
+                android:background="@drawable/background_config_card"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_address_layout"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <TextView
+                    android:id="@+id/details_poi"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/app_default_margin"
+                    android:text="@string/details_section_poi" />
+
+                <include layout="@layout/tab_poi"></include>
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/details_location_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -298,7 +325,7 @@
                 android:background="@drawable/background_config_card"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_address_layout">
+                app:layout_constraintTop_toBottomOf="@id/details_poi_layout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
