@@ -13,19 +13,44 @@
 
 package it.bz.beacon.adminapp.swagger.client.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Objects;
-
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.IOException;
 
 /**
  * GroupUpdate
  */
 
 public class GroupUpdate {
+  @SerializedName("kontaktIoApiKey")
+  private String kontaktIoApiKey = null;
+
   @SerializedName("name")
   private String name = null;
+
+  public GroupUpdate kontaktIoApiKey(String kontaktIoApiKey) {
+    this.kontaktIoApiKey = kontaktIoApiKey;
+    return this;
+  }
+
+   /**
+   * Get kontaktIoApiKey
+   * @return kontaktIoApiKey
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public String getKontaktIoApiKey() {
+    return kontaktIoApiKey;
+  }
+
+  public void setKontaktIoApiKey(String kontaktIoApiKey) {
+    this.kontaktIoApiKey = kontaktIoApiKey;
+  }
 
   public GroupUpdate name(String name) {
     this.name = name;
@@ -55,12 +80,13 @@ public class GroupUpdate {
       return false;
     }
     GroupUpdate groupUpdate = (GroupUpdate) o;
-    return Objects.equals(this.name, groupUpdate.name);
+    return Objects.equals(this.kontaktIoApiKey, groupUpdate.kontaktIoApiKey) &&
+        Objects.equals(this.name, groupUpdate.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(kontaktIoApiKey, name);
   }
 
 
@@ -69,6 +95,7 @@ public class GroupUpdate {
     StringBuilder sb = new StringBuilder();
     sb.append("class GroupUpdate {\n");
     
+    sb.append("    kontaktIoApiKey: ").append(toIndentedString(kontaktIoApiKey)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();

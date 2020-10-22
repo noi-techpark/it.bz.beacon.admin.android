@@ -8,7 +8,7 @@
     "contact": {},
     "license": {}
   },
-  "host": "api.beacon.bz.it",
+  "host": "localhost:8080",
   "basePath": "/",
   "tags": [
     {
@@ -362,7 +362,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues for the specified beacon ID",
-        "operationId": "getListUsingGET_5",
+        "operationId": "getListUsingGET_4",
         "produces": [
           "application/json"
         ],
@@ -965,7 +965,7 @@
           "issue-controller"
         ],
         "summary": "View a list of available issues",
-        "operationId": "getListUsingGET_4",
+        "operationId": "getListUsingGET_5",
         "produces": [
           "application/json"
         ],
@@ -2458,6 +2458,9 @@
         "iBeacon": {
           "type": "boolean"
         },
+        "info": {
+          "$ref": "#/definitions/InfoUpdate"
+        },
         "instanceId": {
           "type": "string"
         },
@@ -2599,6 +2602,9 @@
           "type": "integer",
           "format": "int64"
         },
+        "kontaktIoApiKey": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         }
@@ -2630,9 +2636,13 @@
     "GroupUpdate": {
       "type": "object",
       "required": [
+        "kontaktIoApiKey",
         "name"
       ],
       "properties": {
+        "kontaktIoApiKey": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         }
@@ -2734,6 +2744,47 @@
         }
       },
       "title": "Info"
+    },
+    "InfoUpdate": {
+      "type": "object",
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "cap": {
+          "type": "string"
+        },
+        "floor": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float",
+          "minimum": -90.0,
+          "maximum": 90.0,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
+        },
+        "location": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float",
+          "minimum": -180.0,
+          "maximum": 180.0,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "InfoUpdate"
     },
     "InputStream": {
       "type": "object",
