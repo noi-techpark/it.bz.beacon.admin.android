@@ -38,6 +38,7 @@ import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.GroupControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.InfoControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
@@ -50,6 +51,7 @@ public class AdminApplication extends Application {
 
     private static AuthControllerApi authControllerApi;
     private static BeaconControllerApi beaconControllerApi;
+    private static InfoControllerApi infoControllerApi;
     private static ImageControllerApi imageControllerApi;
     private static IssueControllerApi issueControllerApi;
     private static TrustedBeaconControllerApi trustedBeaconControllerApi;
@@ -75,6 +77,7 @@ public class AdminApplication extends Application {
         it.bz.beacon.adminapp.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
+        infoControllerApi = new InfoControllerApi();
         imageControllerApi = new ImageControllerApi();
         issueControllerApi = new IssueControllerApi();
         trustedBeaconControllerApi = new TrustedBeaconControllerApi();
@@ -135,6 +138,10 @@ public class AdminApplication extends Application {
 
     public static BeaconControllerApi getBeaconApi() {
         return beaconControllerApi;
+    }
+
+    public static InfoControllerApi getInfoControllerApi() {
+        return infoControllerApi;
     }
 
     public static ImageControllerApi getImageApi() {

@@ -12,12 +12,14 @@ import it.bz.beacon.adminapp.data.dao.BeaconDao;
 import it.bz.beacon.adminapp.data.dao.BeaconImageDao;
 import it.bz.beacon.adminapp.data.dao.BeaconIssueDao;
 import it.bz.beacon.adminapp.data.dao.GroupDao;
+import it.bz.beacon.adminapp.data.dao.InfoDao;
 import it.bz.beacon.adminapp.data.dao.IssueWithBeaconDao;
 import it.bz.beacon.adminapp.data.dao.PendingSecureConfigDao;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
 import it.bz.beacon.adminapp.data.entity.BeaconIssue;
 import it.bz.beacon.adminapp.data.entity.Group;
+import it.bz.beacon.adminapp.data.entity.Info;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 
 @Database(
@@ -26,9 +28,10 @@ import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
                 BeaconImage.class,
                 BeaconIssue.class,
                 PendingSecureConfig.class,
-                Group.class
+                Group.class,
+                Info.class
         },
-        version = 6, exportSchema = true)
+        version = 7, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 
@@ -36,6 +39,8 @@ public abstract class BeaconDatabase extends RoomDatabase {
     public static String DB_NAME = "beacon_db";
 
     public abstract BeaconDao beaconDao();
+
+    public abstract InfoDao infoDao();
 
     public abstract BeaconImageDao beaconImageDao();
 
