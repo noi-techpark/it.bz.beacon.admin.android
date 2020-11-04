@@ -32,6 +32,7 @@ import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationToken;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
@@ -43,6 +44,7 @@ public class AdminApplication extends Application {
     private static BeaconControllerApi beaconControllerApi;
     private static ImageControllerApi imageControllerApi;
     private static IssueControllerApi issueControllerApi;
+    private static TrustedBeaconControllerApi trustedBeaconControllerApi;
     private static Storage storage;
     public static final String LOG_TAG = "BeaconAdmin";
 
@@ -66,6 +68,7 @@ public class AdminApplication extends Application {
         beaconControllerApi = new BeaconControllerApi();
         imageControllerApi = new ImageControllerApi();
         issueControllerApi = new IssueControllerApi();
+        trustedBeaconControllerApi = new TrustedBeaconControllerApi();
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
             setBearerToken(storage.getLoginUserToken());
         }
@@ -130,6 +133,10 @@ public class AdminApplication extends Application {
 
     public static IssueControllerApi getIssueApi() {
         return issueControllerApi;
+    }
+
+    public static TrustedBeaconControllerApi getTrustedBeaconControllerApi() {
+        return trustedBeaconControllerApi;
     }
 
     public static void logout(Context context) {

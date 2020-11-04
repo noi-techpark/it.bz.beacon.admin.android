@@ -103,7 +103,6 @@ import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
@@ -349,7 +348,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         configureTabListeners();
         isEditing = false;
 
-        trustedApi = new TrustedBeaconControllerApi(new ApiClient());
+        trustedApi = AdminApplication.getTrustedBeaconControllerApi();
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
             trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
             trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
