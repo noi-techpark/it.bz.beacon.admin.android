@@ -10,6 +10,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -17,18 +19,17 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.List;
 import java.util.Map;
 
-import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import it.bz.beacon.adminapp.AdminApplication;
+import it.bz.beacon.adminapp.R;
+import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationToken;
-import it.bz.beacon.adminapp.AdminApplication;
-import it.bz.beacon.adminapp.R;
-import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.ui.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         authControllerApi = AdminApplication.getAuthApi();
 
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
-            openMain();
+            openMain(false);
         }
 
         setContentView(R.layout.activity_login);
@@ -156,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             showProgress(false);
-                            openMain();
+                            openMain(true);
                         }
                     });
                 }
@@ -186,8 +187,9 @@ public class LoginActivity extends AppCompatActivity {
         progress.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    protected void openMain() {
+    protected void openMain(boolean refreshData) {
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        i.putExtra(MainActivity.EXTRA_REFRESH_DATA, refreshData);
         startActivity(i);
         finish();
     }

@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,9 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
+import it.bz.beacon.adminapp.data.repository.GroupRepository;
+import it.bz.beacon.adminapp.data.repository.InfoRepository;
 import it.bz.beacon.adminapp.eventbus.LocationEvent;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.RadiusFilterEvent;
@@ -51,6 +55,8 @@ import it.bz.beacon.adminapp.ui.map.OnRetryLoadMapListener;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRetryLoadMapListener {
+
+    public static final String EXTRA_REFRESH_DATA = "EXTRA_REFRESH_DATA";
 
     private static final int LOCATION_PERMISSION_REQUEST = 1;
     private static final int LOCATION_PERMISSION_REQUEST_FUSED = 2;
@@ -83,6 +89,47 @@ public class MainActivity extends BaseActivity
         storage = AdminApplication.getStorage();
         setSupportActionBar(toolbar);
         setupNavigationDrawer();
+
+        if(getIntent() != null) {
+            if (getIntent().getBooleanExtra(MainActivity.EXTRA_REFRESH_DATA, false)) {
+
+                GroupRepository groupRepository = new GroupRepository(this);
+                groupRepository.refreshGroups(new DataUpdateEvent() {
+                    @Override
+                    public void onSuccess() {
+                        InfoRepository infoRepository = new InfoRepository(MainActivity.this);
+                        infoRepository.refreshInfos(new DataUpdateEvent() {
+                            @Override
+                            public void onSuccess() {
+                                Log.i(AdminApplication.LOG_TAG, "Infos refreshed!");
+                            }
+
+                            @Override
+                            public void onError() {
+                                Log.e(AdminApplication.LOG_TAG, "Error refreshing infos");
+
+                            }
+
+                            @Override
+                            public void onAuthenticationFailed() {
+                                Log.e(AdminApplication.LOG_TAG, "Authentication failed");
+                                // ignore
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.e(AdminApplication.LOG_TAG, "Error refreshing groups");
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        Log.e(AdminApplication.LOG_TAG, "Authentication failed");
+                    }
+                });
+            }
+        }
 
         statusFilterItems = new String[]{getString(R.string.status_all),
                 getString(R.string.status_ok),
