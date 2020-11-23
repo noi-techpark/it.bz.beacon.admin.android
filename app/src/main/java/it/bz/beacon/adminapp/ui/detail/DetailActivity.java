@@ -152,6 +152,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.config_tablayout)
     protected TabLayout tabLayoutConfig;
 
+    @BindView(R.id.poi_tablayout)
+    protected TabLayout tabLayoutPoi;
+
     @BindView(R.id.info_tablayout)
     protected TabLayout tabLayoutLocation;
 
@@ -335,8 +338,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.details_poi_layout)
     protected LinearLayout detailsPoiLayout;
 
-    @BindView(R.id.poi_content)
-    protected LinearLayout contentPoi;
+    @BindView(R.id.poi_info_content)
+    protected LinearLayout contentPoiInfo;
+
+    @BindView(R.id.poi_location_content)
+    protected LinearLayout contentPoiLocation;
 
     @BindView(R.id.poiName)
     protected TextInputEditText editPoiName;
@@ -593,7 +599,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         setViewTreeEnabled(contentEddystone, enabled);
         setViewTreeEnabled(contentGPS, enabled);
         setViewTreeEnabled(contentDescription, enabled);
-        setViewTreeEnabled(contentPoi, enabled);
+        setViewTreeEnabled(contentPoiInfo, enabled);
+        setViewTreeEnabled(contentPoiLocation, enabled);
 
         containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
@@ -686,6 +693,23 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             }
         });
 
+        tabLayoutPoi.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                onPoiTabTapped(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                onPoiTabTapped(tab.getPosition());
+            }
+        });
+
         tabLayoutLocation.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -740,6 +764,19 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 contentMap.setVisibility(View.GONE);
                 contentGPS.setVisibility(View.GONE);
                 contentDescription.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    private void onPoiTabTapped(int position) {
+        switch (position) {
+            case 0:
+                contentPoiInfo.setVisibility(View.VISIBLE);
+                contentPoiLocation.setVisibility(View.GONE);
+                break;
+            case 1:
+                contentPoiInfo.setVisibility(View.GONE);
+                contentPoiLocation.setVisibility(View.VISIBLE);
                 break;
         }
     }

@@ -184,5 +184,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="poi_cap">CAP</string>
     <string name="poi_location">Location</string>
     <string name="details_section_poi">POI</string>
+    <string name="details_poi_info">Info</string>
+    <string name="details_poi_location">Location</string>
 
 </resources>

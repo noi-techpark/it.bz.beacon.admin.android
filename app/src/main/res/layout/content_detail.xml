@@ -297,7 +297,6 @@
                 android:layout_marginTop="@dimen/app_default_margin"
                 android:background="@drawable/background_config_card"
                 android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/details_address_layout"
@@ -312,8 +311,33 @@
                     android:padding="@dimen/app_default_margin"
                     android:text="@string/details_section_poi" />
 
-                <include layout="@layout/tab_poi"></include>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/poi_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    app:tabGravity="fill"
+                    app:tabIconTint="@color/status_error"
+                    app:tabIndicatorColor="@color/primaryLight"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/primaryLight"
+                    app:tabTextColor="@color/secondaryText">
 
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_poi_info" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_poi_location" />
+
+                </com.google.android.material.tabs.TabLayout>
+
+                <include layout="@layout/tab_poi_info" />
+
+                <include layout="@layout/tab_poi_location" />
 
             </LinearLayout>
 
