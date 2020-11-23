@@ -31,7 +31,7 @@ import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
                 Group.class,
                 Info.class
         },
-        version = 7, exportSchema = true)
+        version = 8, exportSchema = true)
 
 public abstract class BeaconDatabase extends RoomDatabase {
 

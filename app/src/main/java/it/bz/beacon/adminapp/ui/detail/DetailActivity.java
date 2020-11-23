@@ -359,9 +359,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.poiLocation)
     protected TextInputEditText editPoiLocation;
 
-    @BindView(R.id.poiWebsite)
-    protected TextInputEditText editPoiWebsite;
-
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
@@ -968,7 +965,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             } else {
                 editPoiLongitude.setText("");
             }
-            editPoiWebsite.setText(info.getWebsite());
         }
         detailsPoiLayout.setVisibility(View.VISIBLE);
     }
@@ -1462,7 +1458,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
         infoUpdate.setCap(editPoiCap.getText().toString());
         infoUpdate.setLocation(editPoiLocation.getText().toString());
-        infoUpdate.setWebsite(editPoiWebsite.getText().toString());
 
         beaconUpdate.setInfo(infoUpdate);
 

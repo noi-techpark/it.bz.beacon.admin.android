@@ -27,7 +27,6 @@ public class Info {
     private String floor;
     private String cap;
     private String location;
-    private String website;
     private Double latitude;
     private Double longitude;
     private Integer batteryLevel;
@@ -51,7 +50,6 @@ public class Info {
         this.setFloor(remoteInfo.getFloor());
         this.setCap(remoteInfo.getCap());
         this.setLocation(remoteInfo.getLocation());
-        this.setWebsite(remoteInfo.getWebsite());
         this.setLatitude(remoteInfo.getLatitude());
         this.setLongitude(remoteInfo.getLongitude());
         this.setBatteryLevel(remoteInfo.getBatteryLevel());
@@ -117,14 +115,6 @@ public class Info {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
     }
 
     public Double getLatitude() {

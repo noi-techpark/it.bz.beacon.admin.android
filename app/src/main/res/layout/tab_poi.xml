@@ -165,25 +165,4 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/poiWebsiteContainer"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/poiWebsite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="@string/poi_website"
-            android:imeOptions="actionNext"
-            android:inputType="textCapWords"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textCursorDrawable="@null"
-            tools:text="https://noi.bz.it" />
-    </com.google.android.material.textfield.TextInputLayout>
-
 </LinearLayout>
