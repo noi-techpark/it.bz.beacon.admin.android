@@ -128,7 +128,6 @@ import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
-import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
         GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
@@ -287,18 +286,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.eddystone_switch_url)
     protected SwitchCompat switchUrl;
 
-    @BindView(R.id.address_name)
-    protected TextView txtAddressName;
-
-    @BindView(R.id.address_address)
-    protected TextView txtAddress;
-
-    @BindView(R.id.address_latitude)
-    protected TextView txtAddressLatitude;
-
-    @BindView(R.id.address_longitude)
-    protected TextView txtAddressLongitude;
-
     @BindView(R.id.details_location_subtitle)
     protected TextView txtLocation;
 
@@ -369,7 +356,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private String beaconName;
     private Beacon beacon;
     private Info info;
-    private it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo;
     private boolean isBatteryWarningShowing = false;
 
     protected GoogleMap map;
@@ -544,7 +530,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         startLocating();
         if (!isEditing) {
             loadBeacon();
-            loadInfo(beaconId);
         }
         startScanningIfLocationPermissionGranted();
         mapView.onResume();
@@ -823,6 +808,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onSuccess(Info loadedInfo) {
                 info = loadedInfo;
+                if ((map != null) && (beacon != null) && (beacon.getLat() == 0) && (beacon.getLng() == 0)) {
+                    LatLng latlng = new LatLng(info.getLatitude(), info.getLongitude());
+                    setMarker(latlng);
+                }
                 showInfoData();
             }
 
@@ -844,41 +833,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onError() {
                 showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
-            }
-        });
-    }
-
-    private void loadInfo(String beaconId) {
-        NearbyBeaconManager.getInstance().getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
-            @Override
-            public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo) {
-                txtAddressName.setText(beaconInfo.getName());
-                String address = "";
-                if (!TextUtils.isEmpty(beaconInfo.getAddress())) {
-                    address = beaconInfo.getAddress();
-                }
-                if (!TextUtils.isEmpty(address) || !TextUtils.isEmpty(beaconInfo.getCap()) || !TextUtils.isEmpty(beaconInfo.getLocation())) {
-                    address = address.concat(", ");
-                }
-                if (!TextUtils.isEmpty(beaconInfo.getCap())) {
-                    address = address.concat(beaconInfo.getCap()).concat(" ");
-                }
-                if (!TextUtils.isEmpty(beaconInfo.getLocation())) {
-                    address = address.concat(beaconInfo.getLocation());
-                }
-                txtAddress.setText(address);
-                txtAddressLatitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLatitude()));
-                txtAddressLongitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLongitude()));
-                DetailActivity.this.beaconInfo = beaconInfo;
-                if ((map != null) && (beacon != null) && (beacon.getLat() == 0) && (beacon.getLng() == 0)) {
-                    LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
-                    setMarker(latlng);
-                }
-            }
-
-            @Override
-            public void onError() {
-                Log.e(AdminApplication.LOG_TAG, "error");
             }
         });
     }
@@ -1114,8 +1068,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
             setMarker(latlng);
         } else {
-            if ((beaconInfo != null) && (beaconInfo.getLatitude() != 0) && (beaconInfo.getLongitude() != 0)) {
-                LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
+            if ((info != null) && (info.getLatitude() != 0) && (info.getLongitude() != 0)) {
+                LatLng latlng = new LatLng(info.getLatitude(), info.getLongitude());
                 setMarker(latlng);
             } else {
                 goToMyLocation();
@@ -1729,9 +1683,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @OnClick(R.id.gps_provisional_position)
     public void useProvisionalPosition(View view) {
-        if (beaconInfo != null) {
-            setLatLngEditFields(beaconInfo.getLatitude(), beaconInfo.getLongitude());
-            setMarker(new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude()));
+        if (info != null) {
+            setLatLngEditFields(info.getLatitude(), info.getLongitude());
+            setMarker(new LatLng(info.getLatitude(), info.getLongitude()));
         } else {
             showDialog(getString(R.string.position_not_available));
         }

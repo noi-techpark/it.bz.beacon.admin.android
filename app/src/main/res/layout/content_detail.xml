@@ -158,139 +158,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/details_address_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/app_default_margin"
-                android:background="@drawable/background_config_card"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_config_layout">
-
-                <TextView
-                    android:id="@+id/details_address"
-                    style="@style/TextAppearance.AppCompat.Large"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/app_default_margin"
-                    android:text="@string/details_section_address" />
-
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:orientation="horizontal"
-                    android:background="@color/backgroundBox"
-                    android:padding="@dimen/app_default_margin"
-                    android:useDefaultMargins="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="24dp"
-                        android:gravity="center_vertical"
-                        android:text="@string/details_info_name"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/address_name"
-                        android:layout_width="0dp"
-                        android:minHeight="24dp"
-                        android:layout_columnWeight="1"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|end"
-                        tools:text="Pavillon Zierpflanzen" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_columnSpan="2"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:minHeight="24dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="@string/details_section_address"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/address_address"
-                        android:layout_width="0dp"
-                        android:layout_columnWeight="1"
-                        android:minHeight="24dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|end"
-                        tools:ignore="HardcodedText"
-                        tools:text="Freiheitsstraße 45, 39012 Meran - Südtirol" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_columnSpan="2"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="Latitude"
-                        android:minHeight="24dp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/address_latitude"
-                        android:layout_width="0dp"
-                        android:layout_columnWeight="1"
-                        android:layout_height="wrap_content"
-                        android:minHeight="24dp"
-                        android:ellipsize="marquee"
-                        android:gravity="center_vertical|end"
-                        android:singleLine="true"
-                        android:textAllCaps="true"
-                        tools:text="46,135465" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_columnSpan="2"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="24dp"
-                        android:gravity="center_vertical"
-                        android:text="Longitude"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/address_longitude"
-                        android:layout_width="0dp"
-                        android:layout_columnWeight="1"
-                        android:layout_height="wrap_content"
-                        android:minHeight="24dp"
-                        android:ellipsize="marquee"
-                        android:gravity="center_vertical|end"
-                        android:singleLine="true"
-                        android:textAllCaps="true"
-                        tools:text="11,84384" />
-
-                </GridLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/details_poi_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -299,7 +166,7 @@
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/details_address_layout"
+                app:layout_constraintTop_toBottomOf="@id/details_config_layout"
                 android:visibility="gone"
                 tools:visibility="gone">
 
