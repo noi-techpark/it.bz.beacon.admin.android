@@ -13,6 +13,7 @@
 
 package it.bz.beacon.adminapp.swagger.client;
 
+
 public class Pair {
     private String name = "";
     private String value = "";

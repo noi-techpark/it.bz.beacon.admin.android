@@ -13,6 +13,7 @@
 
 package it.bz.beacon.adminapp.swagger.client;
 
+
 public class Configuration {
     private static ApiClient defaultApiClient = new ApiClient();
 

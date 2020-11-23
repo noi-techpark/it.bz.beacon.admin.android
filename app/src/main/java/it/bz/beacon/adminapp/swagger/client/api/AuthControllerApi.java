@@ -13,6 +13,15 @@
 
 package it.bz.beacon.adminapp.swagger.client.api;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
@@ -21,12 +30,6 @@ import it.bz.beacon.adminapp.swagger.client.Configuration;
 import it.bz.beacon.adminapp.swagger.client.Pair;
 import it.bz.beacon.adminapp.swagger.client.ProgressRequestBody;
 import it.bz.beacon.adminapp.swagger.client.ProgressResponseBody;
-
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
-
-
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationToken;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationTokenCheck;
@@ -34,12 +37,6 @@ import it.bz.beacon.adminapp.swagger.client.model.AuthenticationTokenCheckReques
 import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.swagger.client.model.ResetPasswordChange;
 import it.bz.beacon.adminapp.swagger.client.model.ResetPasswordRequest;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class AuthControllerApi {
     private ApiClient apiClient;
@@ -96,7 +93,7 @@ public class AuthControllerApi {
         if(progressListener != null) {
             apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                     com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
@@ -218,7 +215,7 @@ public class AuthControllerApi {
         if(progressListener != null) {
             apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                     com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
@@ -340,7 +337,7 @@ public class AuthControllerApi {
         if(progressListener != null) {
             apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                     com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
@@ -462,7 +459,7 @@ public class AuthControllerApi {
         if(progressListener != null) {
             apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                     com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))

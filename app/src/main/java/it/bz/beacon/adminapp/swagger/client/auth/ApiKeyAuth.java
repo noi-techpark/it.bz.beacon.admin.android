@@ -13,10 +13,11 @@
 
 package it.bz.beacon.adminapp.swagger.client.auth;
 
+import java.util.List;
+import java.util.Map;
+
 import it.bz.beacon.adminapp.swagger.client.Pair;
 
-import java.util.Map;
-import java.util.List;
 
 public class ApiKeyAuth implements Authentication {
   private final String location;
