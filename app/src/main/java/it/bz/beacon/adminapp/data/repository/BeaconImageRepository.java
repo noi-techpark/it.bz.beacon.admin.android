@@ -36,7 +36,7 @@ public class BeaconImageRepository {
 
     public void refreshBeaconImages(final String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getImageApi().getListUsingGET1Async(beaconId, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>>() {
+            AdminApplication.getImageApi().getListUsingGET2Async(beaconId, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconImage>>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {

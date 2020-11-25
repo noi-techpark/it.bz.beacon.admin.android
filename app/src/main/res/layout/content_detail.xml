@@ -44,12 +44,11 @@
 
             <Button
                 android:id="@+id/show_pending_config"
-                style="@style/ButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/app_default_margin"
-                android:background="@null"
                 android:enabled="false"
                 android:gravity="center_vertical|end"
                 android:text="@string/show_pending_config"
@@ -82,11 +81,11 @@
 
                 <Button
                     android:id="@+id/reset_pending_config"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginTop="@dimen/app_default_margin"
-                    android:background="@null"
                     android:gravity="center_vertical|end"
                     android:text="@string/pending_config_reset"
                     android:textAllCaps="true"
@@ -125,6 +124,7 @@
                     android:id="@+id/config_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     app:tabGravity="fill"
                     app:tabIconTint="@color/status_error"
                     app:tabIndicatorColor="@color/primaryLight"
@@ -326,6 +326,7 @@
                     android:id="@+id/info_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     app:tabGravity="fill"
                     app:tabIconTint="@color/status_error"
                     app:tabIndicatorColor="@color/primaryLight"
@@ -411,10 +412,10 @@
 
                 <Button
                     android:id="@+id/details_images_add"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:background="@null"
                     android:gravity="end"
                     android:padding="@dimen/app_default_margin"
                     android:text="@string/add_image"

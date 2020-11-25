@@ -20,29 +20,50 @@ import java.util.Objects;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * BaseMessage
+ * Group
  */
 
-public class BaseMessage {
-  @SerializedName("message")
-  private String message = null;
+public class Group {
+  @SerializedName("id")
+  private Long id = null;
 
-  public BaseMessage message(String message) {
-    this.message = message;
+  @SerializedName("name")
+  private String name = null;
+
+  public Group id(Long id) {
+    this.id = id;
     return this;
   }
 
    /**
-   * Get message
-   * @return message
+   * Get id
+   * @return id
   **/
   @ApiModelProperty(value = "")
-  public String getMessage() {
-    return message;
+  public Long getId() {
+    return id;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Group name(String name) {
+    this.name = name;
+    return this;
+  }
+
+   /**
+   * Get name
+   * @return name
+  **/
+  @ApiModelProperty(value = "")
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -54,22 +75,24 @@ public class BaseMessage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BaseMessage baseMessage = (BaseMessage) o;
-    return Objects.equals(this.message, baseMessage.message);
+    Group group = (Group) o;
+    return Objects.equals(this.id, group.id) &&
+        Objects.equals(this.name, group.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(message);
+    return Objects.hash(id, name);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BaseMessage {\n");
+    sb.append("class Group {\n");
     
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -13,11 +13,10 @@
         android:id="@+id/nameContainer"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="87dp"
         android:layout_marginTop="@dimen/app_default_margin"
         android:layout_marginBottom="@dimen/app_default_margin"
         android:visibility="gone"
-        app:hintTextAppearance="@style/TextAppearance.Hint"
         tools:visibility="visible">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -173,8 +172,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/app_default_margin"
-        android:layout_marginBottom="@dimen/app_default_margin"
-        app:hintTextAppearance="@style/TextAppearance.Hint">
+        android:layout_marginBottom="@dimen/app_default_margin">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/info_interval"

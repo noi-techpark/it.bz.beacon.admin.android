@@ -20,29 +20,29 @@ import java.util.Objects;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * BaseMessage
+ * GroupUpdate
  */
 
-public class BaseMessage {
-  @SerializedName("message")
-  private String message = null;
+public class GroupUpdate {
+  @SerializedName("name")
+  private String name = null;
 
-  public BaseMessage message(String message) {
-    this.message = message;
+  public GroupUpdate name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * Get message
-   * @return message
+   * Get name
+   * @return name
   **/
-  @ApiModelProperty(value = "")
-  public String getMessage() {
-    return message;
+  @ApiModelProperty(required = true, value = "")
+  public String getName() {
+    return name;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -54,22 +54,22 @@ public class BaseMessage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BaseMessage baseMessage = (BaseMessage) o;
-    return Objects.equals(this.message, baseMessage.message);
+    GroupUpdate groupUpdate = (GroupUpdate) o;
+    return Objects.equals(this.name, groupUpdate.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(message);
+    return Objects.hash(name);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BaseMessage {\n");
+    sb.append("class GroupUpdate {\n");
     
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

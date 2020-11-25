@@ -145,7 +145,7 @@ public class NewIssueActivity extends BaseActivity {
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
         try {
-            AdminApplication.getIssueApi().createUsingPOST2Async(issueCreation, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>() {
+            AdminApplication.getIssueApi().createUsingPOST3Async(issueCreation, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     runOnUiThread(new Runnable() {

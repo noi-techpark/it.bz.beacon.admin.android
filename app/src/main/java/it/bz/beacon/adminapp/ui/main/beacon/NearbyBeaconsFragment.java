@@ -46,7 +46,6 @@ import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
 import it.bz.beacon.adminapp.eventbus.PubSub;
 import it.bz.beacon.adminapp.eventbus.StatusFilterEvent;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
-import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
@@ -76,7 +75,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        trustedApi = new TrustedBeaconControllerApi(new ApiClient());
+        trustedApi = AdminApplication.getTrustedBeaconControllerApi();
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
             trustedApi.getApiClient().setUsername(getString(R.string.trustedApiUser));
             trustedApi.getApiClient().setPassword(getString(R.string.trustedApiPassword));
@@ -290,7 +289,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                         update.setBatteryLevel(profile.getBatteryLevel());
                         String[] nameParts = profile.getName().split("#");
-                        trustedApi.updateUsingPATCH1Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                        trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                             @Override
                             public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
                                 Log.e(AdminApplication.LOG_TAG, "updateBatteryStatus failed: " + e.getLocalizedMessage());

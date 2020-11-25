@@ -20,14 +20,35 @@ import java.util.Objects;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * AuthenticationTokenCheckRequest
+ * ResetPasswordChange
  */
 
-public class AuthenticationTokenCheckRequest {
+public class ResetPasswordChange {
+  @SerializedName("newPassword")
+  private String newPassword = null;
+
   @SerializedName("token")
   private String token = null;
 
-  public AuthenticationTokenCheckRequest token(String token) {
+  public ResetPasswordChange newPassword(String newPassword) {
+    this.newPassword = newPassword;
+    return this;
+  }
+
+   /**
+   * Get newPassword
+   * @return newPassword
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public String getNewPassword() {
+    return newPassword;
+  }
+
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
+  }
+
+  public ResetPasswordChange token(String token) {
     this.token = token;
     return this;
   }
@@ -54,21 +75,23 @@ public class AuthenticationTokenCheckRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AuthenticationTokenCheckRequest authenticationTokenCheckRequest = (AuthenticationTokenCheckRequest) o;
-    return Objects.equals(this.token, authenticationTokenCheckRequest.token);
+    ResetPasswordChange resetPasswordChange = (ResetPasswordChange) o;
+    return Objects.equals(this.newPassword, resetPasswordChange.newPassword) &&
+        Objects.equals(this.token, resetPasswordChange.token);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(token);
+    return Objects.hash(newPassword, token);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AuthenticationTokenCheckRequest {\n");
+    sb.append("class ResetPasswordChange {\n");
     
+    sb.append("    newPassword: ").append(toIndentedString(newPassword)).append("\n");
     sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();

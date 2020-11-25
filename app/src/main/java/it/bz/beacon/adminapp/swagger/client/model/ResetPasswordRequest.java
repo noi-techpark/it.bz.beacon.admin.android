@@ -20,29 +20,29 @@ import java.util.Objects;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * BaseMessage
+ * ResetPasswordRequest
  */
 
-public class BaseMessage {
-  @SerializedName("message")
-  private String message = null;
+public class ResetPasswordRequest {
+  @SerializedName("username")
+  private String username = null;
 
-  public BaseMessage message(String message) {
-    this.message = message;
+  public ResetPasswordRequest username(String username) {
+    this.username = username;
     return this;
   }
 
    /**
-   * Get message
-   * @return message
+   * Get username
+   * @return username
   **/
-  @ApiModelProperty(value = "")
-  public String getMessage() {
-    return message;
+  @ApiModelProperty(required = true, value = "")
+  public String getUsername() {
+    return username;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
 
@@ -54,22 +54,22 @@ public class BaseMessage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    BaseMessage baseMessage = (BaseMessage) o;
-    return Objects.equals(this.message, baseMessage.message);
+    ResetPasswordRequest resetPasswordRequest = (ResetPasswordRequest) o;
+    return Objects.equals(this.username, resetPasswordRequest.username);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(message);
+    return Objects.hash(username);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class BaseMessage {\n");
+    sb.append("class ResetPasswordRequest {\n");
     
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("}");
     return sb.toString();
   }

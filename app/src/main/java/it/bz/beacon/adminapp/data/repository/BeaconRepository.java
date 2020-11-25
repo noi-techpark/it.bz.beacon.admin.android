@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class BeaconRepository {
 
     public LiveData<List<BeaconMinimal>> getAll() {
         if (shouldSynchronize()) {
-            refreshBeacons(null);
+            refreshBeacons(null,null);
         }
         return beacons;
     }
@@ -66,9 +67,9 @@ public class BeaconRepository {
         return (storage.getLastSynchronizationBeacons() + synchronizationInterval * 60000L < System.currentTimeMillis());
     }
 
-    public void refreshBeacons(final DataUpdateEvent dataUpdateEvent) {
+    public void refreshBeacons(@Nullable Long groupId, final DataUpdateEvent dataUpdateEvent) {
         try {
-            AdminApplication.getBeaconApi().getListUsingGETAsync(new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.Beacon>>() {
+            AdminApplication.getBeaconApi().getListUsingGETAsync(groupId, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.Beacon>>() {
                 @Override
                 public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                     if (dataUpdateEvent != null) {
