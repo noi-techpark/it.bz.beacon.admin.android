@@ -20,17 +20,17 @@ import java.util.Objects;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * GroupUpdate
+ * GroupApiKey
  */
 
-public class GroupUpdate {
+public class GroupApiKey {
   @SerializedName("apiKey")
   private String apiKey = null;
 
-  @SerializedName("name")
-  private String name = null;
+  @SerializedName("groupId")
+  private Long groupId = null;
 
-  public GroupUpdate apiKey(String apiKey) {
+  public GroupApiKey apiKey(String apiKey) {
     this.apiKey = apiKey;
     return this;
   }
@@ -39,7 +39,7 @@ public class GroupUpdate {
    * Get apiKey
    * @return apiKey
   **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(value = "")
   public String getApiKey() {
     return apiKey;
   }
@@ -48,22 +48,22 @@ public class GroupUpdate {
     this.apiKey = apiKey;
   }
 
-  public GroupUpdate name(String name) {
-    this.name = name;
+  public GroupApiKey groupId(Long groupId) {
+    this.groupId = groupId;
     return this;
   }
 
    /**
-   * Get name
-   * @return name
+   * Get groupId
+   * @return groupId
   **/
-  @ApiModelProperty(required = true, value = "")
-  public String getName() {
-    return name;
+  @ApiModelProperty(value = "")
+  public Long getGroupId() {
+    return groupId;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setGroupId(Long groupId) {
+    this.groupId = groupId;
   }
 
 
@@ -75,24 +75,24 @@ public class GroupUpdate {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GroupUpdate groupUpdate = (GroupUpdate) o;
-    return Objects.equals(this.apiKey, groupUpdate.apiKey) &&
-        Objects.equals(this.name, groupUpdate.name);
+    GroupApiKey groupApiKey = (GroupApiKey) o;
+    return Objects.equals(this.apiKey, groupApiKey.apiKey) &&
+        Objects.equals(this.groupId, groupApiKey.groupId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(apiKey, name);
+    return Objects.hash(apiKey, groupId);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GroupUpdate {\n");
+    sb.append("class GroupApiKey {\n");
     
     sb.append("    apiKey: ").append(toIndentedString(apiKey)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    groupId: ").append(toIndentedString(groupId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

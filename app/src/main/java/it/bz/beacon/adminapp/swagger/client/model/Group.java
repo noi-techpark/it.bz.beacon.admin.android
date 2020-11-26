@@ -13,15 +13,11 @@
 
 package it.bz.beacon.adminapp.swagger.client.model;
 
-import java.util.Objects;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
+
+import java.util.Objects;
+
 import io.swagger.annotations.ApiModelProperty;
-import java.io.IOException;
 
 /**
  * Group
@@ -30,9 +26,6 @@ import java.io.IOException;
 public class Group {
   @SerializedName("id")
   private Long id = null;
-
-  @SerializedName("kontaktIoApiKey")
-  private String kontaktIoApiKey = null;
 
   @SerializedName("name")
   private String name = null;
@@ -53,24 +46,6 @@ public class Group {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Group kontaktIoApiKey(String kontaktIoApiKey) {
-    this.kontaktIoApiKey = kontaktIoApiKey;
-    return this;
-  }
-
-   /**
-   * Get kontaktIoApiKey
-   * @return kontaktIoApiKey
-  **/
-  @ApiModelProperty(value = "")
-  public String getKontaktIoApiKey() {
-    return kontaktIoApiKey;
-  }
-
-  public void setKontaktIoApiKey(String kontaktIoApiKey) {
-    this.kontaktIoApiKey = kontaktIoApiKey;
   }
 
   public Group name(String name) {
@@ -102,13 +77,12 @@ public class Group {
     }
     Group group = (Group) o;
     return Objects.equals(this.id, group.id) &&
-        Objects.equals(this.kontaktIoApiKey, group.kontaktIoApiKey) &&
         Objects.equals(this.name, group.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, kontaktIoApiKey, name);
+    return Objects.hash(id, name);
   }
 
 
@@ -118,7 +92,6 @@ public class Group {
     sb.append("class Group {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    kontaktIoApiKey: ").append(toIndentedString(kontaktIoApiKey)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();

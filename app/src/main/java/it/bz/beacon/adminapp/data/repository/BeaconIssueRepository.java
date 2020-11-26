@@ -69,7 +69,7 @@ public class BeaconIssueRepository {
     public void refreshBeaconIssues(@Nullable String beaconId, final DataUpdateEvent dataUpdateEvent) {
         try {
             if (beaconId != null) {
-                AdminApplication.getIssueApi().getListUsingGET4Async(beaconId, false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
+                AdminApplication.getIssueApi().getListUsingGET5Async(beaconId, false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         if (dataUpdateEvent != null) {
@@ -104,7 +104,7 @@ public class BeaconIssueRepository {
                 });
             }
             else {
-                AdminApplication.getIssueApi().getListUsingGET5Async(false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
+                AdminApplication.getIssueApi().getListUsingGET4Async(false, new ApiCallback<List<it.bz.beacon.adminapp.swagger.client.model.BeaconIssue>>() {
                     @Override
                     public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
                         Log.e(AdminApplication.LOG_TAG, "onFailure: " + e.getMessage());
