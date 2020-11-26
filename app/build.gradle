@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "it.bz.beacon.admin"
         minSdkVersion 24
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 23
         versionName "0.3.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -29,7 +29,7 @@ android {
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'it.bz.beacon:sdk:0.3.0'
+    implementation 'it.bz.beacon:sdk:0.4.2-SNAPSHOT'
     implementation 'com.kontaktio:sdk:4.0.3'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
