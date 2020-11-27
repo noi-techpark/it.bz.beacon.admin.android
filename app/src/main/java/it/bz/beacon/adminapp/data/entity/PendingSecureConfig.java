@@ -9,6 +9,8 @@ public class PendingSecureConfig {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String config;
+    private String apiKey;
+    private String beaconId;
 
     public PendingSecureConfig() {
     }
@@ -27,5 +29,21 @@ public class PendingSecureConfig {
 
     public void setConfig(String config) {
         this.config = config;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getBeaconId() {
+        return beaconId;
+    }
+
+    public void setBeaconId(String beaconId) {
+        this.beaconId = beaconId;
     }
 }

@@ -91,6 +91,7 @@ public class PendingConfigurationActivity extends BaseActivity {
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
+    private GroupApiKey groupApiKey;
     private boolean isPendingConfigNull = true;
 
     private BeaconViewModel beaconViewModel;
@@ -105,8 +106,6 @@ public class PendingConfigurationActivity extends BaseActivity {
     private ProgressDialog dialog;
 
     private TrustedBeaconControllerApi trustedApi;
-
-    private boolean activityRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +130,7 @@ public class PendingConfigurationActivity extends BaseActivity {
         groupApiKeyViewModel = ViewModelProviders.of(this).get(GroupApiKeyViewModel.class);
 
         loadBeacon();
+        initializeKontakt();
     }
 
     @Override
@@ -138,22 +138,16 @@ public class PendingConfigurationActivity extends BaseActivity {
         super.onResume();
         startScanningIfLocationPermissionGranted();
         setUpToolbar();
-        this.activityRunning = true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.activityRunning = false;
-        if(proximityManager != null) {
-            proximityManager.stopScanning();
-            proximityManager.disconnect();
-        }
+        proximityManager.stopScanning();
+        proximityManager.disconnect();
     }
 
-    private void initializeKontakt(String apiKey) {
-        KontaktSDK.initialize(apiKey);
-        kontaktCloud = KontaktCloudFactory.create();
+    private void initializeKontakt() {
         proximityManager = ProximityManagerFactory.create(this);
         proximityManager.setSecureProfileListener(createSecureProfileListener());
     }
@@ -173,10 +167,9 @@ public class PendingConfigurationActivity extends BaseActivity {
                     groupApiKeyViewModel.getByGroupId(beacon.getGroupId(), new LoadGroupApiKeyEvent() {
                         @Override
                         public void onSuccess(GroupApiKey groupApiKey) {
-                            initializeKontakt(groupApiKey.getApiKey());
-                            if(activityRunning) {
-                                startScanningIfLocationPermissionGranted();
-                            }
+                            PendingConfigurationActivity.this.groupApiKey = groupApiKey;
+                            KontaktSDK.initialize(groupApiKey.getApiKey());
+                            kontaktCloud = KontaktCloudFactory.create();
                             setUpToolbar();
                             if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
                                 showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
@@ -431,6 +424,8 @@ public class PendingConfigurationActivity extends BaseActivity {
                                         if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
                                             PendingSecureConfig pendingSecureConfig = new PendingSecureConfig();
                                             pendingSecureConfig.setConfig((new Gson()).toJson(secureConfig));
+                                            pendingSecureConfig.setApiKey(PendingConfigurationActivity.this.groupApiKey.getApiKey());
+                                            pendingSecureConfig.setBeaconId(PendingConfigurationActivity.this.beaconId);
                                             pendingSecureConfigViewModel.insert(pendingSecureConfig);
                                         }
                                     }
@@ -542,14 +537,12 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void startScanning() {
-        if(proximityManager != null) {
             proximityManager.connect(new OnServiceReadyListener() {
                 @Override
                 public void onServiceReady() {
                     proximityManager.startScanning();
                 }
             });
-        }
     }
 
     private void startScanningIfLocationPermissionGranted() {

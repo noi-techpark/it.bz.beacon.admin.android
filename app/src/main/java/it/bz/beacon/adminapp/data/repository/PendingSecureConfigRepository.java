@@ -23,6 +23,14 @@ public class PendingSecureConfigRepository {
         return pendingSecureConfigDao.getAll();
     }
 
+    public List<PendingSecureConfig> getListByApiKey(String apiKey) {
+        return pendingSecureConfigDao.getListByApiKey(apiKey);
+    }
+
+    public List<String> getAllDistinctApiKey() {
+        return pendingSecureConfigDao.getAllDistinctApiKey();
+    }
+
     public void insert(PendingSecureConfig pendingSecureConfig, InsertEvent event) {
         new InsertAsyncTask(pendingSecureConfigDao, event).execute(pendingSecureConfig);
     }

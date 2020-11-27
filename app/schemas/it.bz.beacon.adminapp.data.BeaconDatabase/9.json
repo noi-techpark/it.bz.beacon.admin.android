@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "f352847c380454b2056bf6eab9d22dec",
+    "identityHash": "d04854375d182c80a7b11fc307d2e3a5",
     "entities": [
       {
         "tableName": "Beacon",
@@ -309,7 +309,7 @@
       },
       {
         "tableName": "PendingSecureConfig",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `config` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `config` TEXT, `apiKey` TEXT, `beaconId` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -320,6 +320,18 @@
           {
             "fieldPath": "config",
             "columnName": "config",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "apiKey",
+            "columnName": "apiKey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "beaconId",
+            "columnName": "beaconId",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -511,7 +523,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f352847c380454b2056bf6eab9d22dec')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd04854375d182c80a7b11fc307d2e3a5')"
     ]
   }
 }
