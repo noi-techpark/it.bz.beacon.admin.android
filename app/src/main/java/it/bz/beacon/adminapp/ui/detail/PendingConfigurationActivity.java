@@ -54,10 +54,13 @@ import butterknife.OnClick;
 import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
+import it.bz.beacon.adminapp.data.entity.GroupApiKey;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
+import it.bz.beacon.adminapp.data.event.LoadGroupApiKeyEvent;
 import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.GroupApiKeyViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.PendingSecureConfigViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
@@ -88,10 +91,12 @@ public class PendingConfigurationActivity extends BaseActivity {
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
+    private GroupApiKey groupApiKey;
     private boolean isPendingConfigNull = true;
 
     private BeaconViewModel beaconViewModel;
     private PendingSecureConfigViewModel pendingSecureConfigViewModel;
+    private GroupApiKeyViewModel groupApiKeyViewModel;
 
     private KontaktCloud kontaktCloud;
     private KontaktDeviceConnection kontaktDeviceConnection;
@@ -122,6 +127,7 @@ public class PendingConfigurationActivity extends BaseActivity {
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
         pendingSecureConfigViewModel = ViewModelProviders.of(this).get(PendingSecureConfigViewModel.class);
+        groupApiKeyViewModel = ViewModelProviders.of(this).get(GroupApiKeyViewModel.class);
 
         loadBeacon();
         initializeKontakt();
@@ -142,8 +148,6 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void initializeKontakt() {
-        KontaktSDK.initialize(getString(R.string.apiKey));
-        kontaktCloud = KontaktCloudFactory.create();
         proximityManager = ProximityManagerFactory.create(this);
         proximityManager.setSecureProfileListener(createSecureProfileListener());
     }
@@ -160,14 +164,27 @@ public class PendingConfigurationActivity extends BaseActivity {
                 if (loadedBeacon != null) {
                     beacon = loadedBeacon;
                     beaconName = loadedBeacon.getName();
-                    setUpToolbar();
-                    if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
-                        showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
-                    } else {
-                        if (loadedBeacon.getPendingConfiguration() == null) {
-                            isPendingConfigNull = true;
+                    groupApiKeyViewModel.getByGroupId(beacon.getGroupId(), new LoadGroupApiKeyEvent() {
+                        @Override
+                        public void onSuccess(GroupApiKey groupApiKey) {
+                            PendingConfigurationActivity.this.groupApiKey = groupApiKey;
+                            KontaktSDK.initialize(groupApiKey.getApiKey());
+                            kontaktCloud = KontaktCloudFactory.create();
+                            setUpToolbar();
+                            if (!TextUtils.isEmpty(loadedBeacon.getPendingConfiguration())) {
+                                showDifferences(loadedBeacon, (new Gson()).fromJson(loadedBeacon.getPendingConfiguration(), PendingConfiguration.class));
+                            } else {
+                                if (loadedBeacon.getPendingConfiguration() == null) {
+                                    isPendingConfigNull = true;
+                                }
+                            }
                         }
-                    }
+
+                        @Override
+                        public void onError() {
+                            showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                        }
+                    });
                 }
             }
 
@@ -407,6 +424,8 @@ public class PendingConfigurationActivity extends BaseActivity {
                                         if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
                                             PendingSecureConfig pendingSecureConfig = new PendingSecureConfig();
                                             pendingSecureConfig.setConfig((new Gson()).toJson(secureConfig));
+                                            pendingSecureConfig.setApiKey(PendingConfigurationActivity.this.groupApiKey.getApiKey());
+                                            pendingSecureConfig.setBeaconId(PendingConfigurationActivity.this.beaconId);
                                             pendingSecureConfigViewModel.insert(pendingSecureConfig);
                                         }
                                     }
@@ -437,7 +456,11 @@ public class PendingConfigurationActivity extends BaseActivity {
         }
         showProgressDialog();
 
-        kontaktCloud.configs().secure().withIds(profile.getUniqueId()).execute(new CloudCallback<Configs>() {
+        kontaktCloud
+                .configs()
+                .secure()
+                .withIds(profile.getUniqueId())
+                .execute(new CloudCallback<Configs>() {
             @Override
             public void onSuccess(Configs response, CloudHeaders headers) {
                 if (response != null && response.getContent() != null && response.getContent().size() > 0) {
@@ -501,6 +524,8 @@ public class PendingConfigurationActivity extends BaseActivity {
                         }
                     });
                     kontaktDeviceConnection.connect();
+                } else {
+                    hideProgressDialog();
                 }
             }
 
@@ -512,12 +537,12 @@ public class PendingConfigurationActivity extends BaseActivity {
     }
 
     private void startScanning() {
-        proximityManager.connect(new OnServiceReadyListener() {
-            @Override
-            public void onServiceReady() {
-                proximityManager.startScanning();
-            }
-        });
+            proximityManager.connect(new OnServiceReadyListener() {
+                @Override
+                public void onServiceReady() {
+                    proximityManager.startScanning();
+                }
+            });
     }
 
     private void startScanningIfLocationPermissionGranted() {

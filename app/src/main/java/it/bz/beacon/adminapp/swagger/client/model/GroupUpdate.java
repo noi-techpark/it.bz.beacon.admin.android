@@ -24,8 +24,29 @@ import io.swagger.annotations.ApiModelProperty;
  */
 
 public class GroupUpdate {
+  @SerializedName("apiKey")
+  private String apiKey = null;
+
   @SerializedName("name")
   private String name = null;
+
+  public GroupUpdate apiKey(String apiKey) {
+    this.apiKey = apiKey;
+    return this;
+  }
+
+   /**
+   * Get apiKey
+   * @return apiKey
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public String getApiKey() {
+    return apiKey;
+  }
+
+  public void setApiKey(String apiKey) {
+    this.apiKey = apiKey;
+  }
 
   public GroupUpdate name(String name) {
     this.name = name;
@@ -55,12 +76,13 @@ public class GroupUpdate {
       return false;
     }
     GroupUpdate groupUpdate = (GroupUpdate) o;
-    return Objects.equals(this.name, groupUpdate.name);
+    return Objects.equals(this.apiKey, groupUpdate.apiKey) &&
+        Objects.equals(this.name, groupUpdate.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(apiKey, name);
   }
 
 
@@ -69,6 +91,7 @@ public class GroupUpdate {
     StringBuilder sb = new StringBuilder();
     sb.append("class GroupUpdate {\n");
     
+    sb.append("    apiKey: ").append(toIndentedString(apiKey)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();

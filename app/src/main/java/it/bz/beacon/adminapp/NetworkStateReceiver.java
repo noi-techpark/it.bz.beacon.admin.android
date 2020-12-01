@@ -21,11 +21,10 @@ import java.util.List;
 
 import it.bz.beacon.adminapp.data.Storage;
 import it.bz.beacon.adminapp.data.entity.PendingSecureConfig;
+import it.bz.beacon.adminapp.data.repository.BeaconRepository;
 import it.bz.beacon.adminapp.data.repository.PendingSecureConfigRepository;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
-
-    private KontaktCloud kontaktCloud;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -44,30 +43,44 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            KontaktSDK.initialize(context.getString(R.string.apiKey));
-                            kontaktCloud = KontaktCloudFactory.create();
                             Log.d(AdminApplication.LOG_TAG, "trying to send pending secureConfigs");
                             PendingSecureConfigRepository pendingSecureConfigRepository = new PendingSecureConfigRepository(context);
-                            List<PendingSecureConfig> pendingSecureConfigs = pendingSecureConfigRepository.getAll();
-                            for (final PendingSecureConfig pendingSecureConfig : pendingSecureConfigs) {
-                                Config secureConfig = (new Gson()).fromJson(pendingSecureConfig.getConfig(), Config.class);
-                                kontaktCloud.devices()
-                                        .applySecureConfigs(secureConfig)
-                                        .execute(new CloudCallback<Configs>() {
-                                            @Override
-                                            public void onSuccess(Configs response, CloudHeaders headers) {
-                                                if (response != null && response.getContent() != null && response.getContent().size() > 0) {
-                                                    Log.d(AdminApplication.LOG_TAG, "Response from sendToCloud: " + response.toString());
-                                                }
-                                                Log.d(AdminApplication.LOG_TAG, "sendToCloud successful");
-                                                pendingSecureConfigRepository.deletePendingSecureConfig(pendingSecureConfig);
-                                            }
+                            List<String> pendingSecureApiKeys = pendingSecureConfigRepository.getAllDistinctApiKey();
 
-                                            @Override
-                                            public void onError(CloudError error) {
-                                                Log.e(AdminApplication.LOG_TAG, "sendToCloud failed: " + error.getMessage());
-                                            }
-                                        });
+                            for (String pendingSecureApiKey: pendingSecureApiKeys) {
+                                KontaktSDK.initialize(pendingSecureApiKey);
+                                KontaktCloud kontaktCloud = KontaktCloudFactory.create();
+
+                                List<PendingSecureConfig> pendingSecureConfigs =
+                                        pendingSecureConfigRepository.getListByApiKey(pendingSecureApiKey);
+
+                                for (final PendingSecureConfig pendingSecureConfig : pendingSecureConfigs) {
+                                    Config secureConfig = (new Gson()).fromJson(pendingSecureConfig.getConfig(), Config.class);
+                                    kontaktCloud.devices()
+                                            .applySecureConfigs(secureConfig)
+                                            .execute(new CloudCallback<Configs>() {
+                                                @Override
+                                                public void onSuccess(Configs response, CloudHeaders headers) {
+                                                    if (response != null && response.getContent() != null && response.getContent().size() > 0) {
+                                                        Log.d(AdminApplication.LOG_TAG, "Response from sendToCloud: " + response.toString());
+                                                    }
+                                                    Log.d(AdminApplication.LOG_TAG, "sendToCloud successful");
+                                                    BeaconRepository beaconRepository = new BeaconRepository(context);
+                                                    beaconRepository.refreshBeacon(pendingSecureConfig.getBeaconId(), null);
+                                                    new Thread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            pendingSecureConfigRepository.deletePendingSecureConfig(pendingSecureConfig);
+                                                        }
+                                                    }).start();
+                                                }
+
+                                                @Override
+                                                public void onError(CloudError error) {
+                                                    Log.e(AdminApplication.LOG_TAG, "sendToCloud failed: " + error.getMessage());
+                                                }
+                                            });
+                                }
                             }
                             Log.d(AdminApplication.LOG_TAG, "finished sending pending secureConfigs");
                         }

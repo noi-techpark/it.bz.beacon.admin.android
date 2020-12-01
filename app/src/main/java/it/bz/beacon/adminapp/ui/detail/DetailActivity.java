@@ -2,6 +2,7 @@ package it.bz.beacon.adminapp.ui.detail;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -20,11 +21,14 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -89,6 +93,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -98,24 +103,31 @@ import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconImage;
+import it.bz.beacon.adminapp.data.entity.Group;
+import it.bz.beacon.adminapp.data.entity.Info;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
+import it.bz.beacon.adminapp.data.event.LoadInfoEvent;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconImageViewModel;
 import it.bz.beacon.adminapp.data.viewmodel.BeaconViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.GroupViewModel;
+import it.bz.beacon.adminapp.data.viewmodel.InfoViewModel;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.BaseMessage;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconBatteryLevelUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.BeaconUpdate;
+import it.bz.beacon.adminapp.swagger.client.model.InfoUpdate;
 import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
+import it.bz.beacon.adminapp.swagger.client.model.UserRoleGroup;
 import it.bz.beacon.adminapp.ui.BaseDetailActivity;
 import it.bz.beacon.adminapp.ui.adapter.GalleryAdapter;
+import it.bz.beacon.adminapp.ui.adapter.GroupAdapter;
 import it.bz.beacon.adminapp.ui.issue.NewIssueActivity;
 import it.bz.beacon.adminapp.util.BitmapTools;
 import it.bz.beacon.adminapp.util.DateFormatter;
 import it.bz.beacon.adminapp.util.OnImagesDownloadedCallback;
-import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
 public class DetailActivity extends BaseDetailActivity implements OnMapReadyCallback, IPickResult,
         GalleryAdapter.OnImageDeleteListener, GoogleMap.OnMapClickListener, TextWatcher {
@@ -139,6 +151,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.config_tablayout)
     protected TabLayout tabLayoutConfig;
 
+    @BindView(R.id.poi_tablayout)
+    protected TabLayout tabLayoutPoi;
+
     @BindView(R.id.info_tablayout)
     protected TabLayout tabLayoutLocation;
 
@@ -150,6 +165,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @BindView(R.id.nameContainer)
     protected TextInputLayout containerName;
+
+    @BindView(R.id.groupContainer)
+    protected TextInputLayout containerGroup;
 
     @BindView(R.id.uuidContainer)
     protected TextInputLayout containerUuid;
@@ -171,6 +189,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @BindView(R.id.info_name)
     protected TextInputEditText editName;
+
+    @BindView(R.id.group)
+    protected AutoCompleteTextView group;
 
     @BindView(R.id.ibeacon_content)
     protected ConstraintLayout contentIBeacon;
@@ -265,18 +286,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.eddystone_switch_url)
     protected SwitchCompat switchUrl;
 
-    @BindView(R.id.address_name)
-    protected TextView txtAddressName;
-
-    @BindView(R.id.address_address)
-    protected TextView txtAddress;
-
-    @BindView(R.id.address_latitude)
-    protected TextView txtAddressLatitude;
-
-    @BindView(R.id.address_longitude)
-    protected TextView txtAddressLongitude;
-
     @BindView(R.id.details_location_subtitle)
     protected TextView txtLocation;
 
@@ -313,10 +322,40 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     @BindView(R.id.show_pending_config)
     protected Button btnShowPendingConfig;
 
+    @BindView(R.id.details_poi_layout)
+    protected LinearLayout detailsPoiLayout;
+
+    @BindView(R.id.poi_info_content)
+    protected LinearLayout contentPoiInfo;
+
+    @BindView(R.id.poi_location_content)
+    protected LinearLayout contentPoiLocation;
+
+    @BindView(R.id.poiName)
+    protected TextInputEditText editPoiName;
+
+    @BindView(R.id.poiAddress)
+    protected TextInputEditText editPoiAddress;
+
+    @BindView(R.id.poiFloor)
+    protected TextInputEditText editPoiFloor;
+
+    @BindView(R.id.poiLatitude)
+    protected TextInputEditText editPoiLatitude;
+
+    @BindView(R.id.poiLongitude)
+    protected TextInputEditText editPoiLongitude;
+
+    @BindView(R.id.poiCap)
+    protected TextInputEditText editPoiCap;
+
+    @BindView(R.id.poiLocation)
+    protected TextInputEditText editPoiLocation;
+
     private String beaconId;
     private String beaconName;
     private Beacon beacon;
-    private it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo;
+    private Info info;
     private boolean isBatteryWarningShowing = false;
 
     protected GoogleMap map;
@@ -326,13 +365,17 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private GalleryAdapter galleryAdapter;
 
     private BeaconViewModel beaconViewModel;
+    private InfoViewModel infoViewModel;
     private BeaconImageViewModel beaconImageViewModel;
+    private GroupViewModel groupViewModel;
 
     private ProximityManager proximityManager;
 
     private boolean loadingImages = false;
 
     private TrustedBeaconControllerApi trustedApi;
+
+    private GroupAdapter groupAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -346,7 +389,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             beaconId = getIntent().getStringExtra(EXTRA_BEACON_ID);
         }
         configureTabListeners();
-        isEditing = false;
+        setIsEditing(false);
 
         trustedApi = AdminApplication.getTrustedBeaconControllerApi();
         if (!getString(R.string.trustedApiUser).isEmpty() && !getString(R.string.trustedApiPassword).isEmpty()) {
@@ -355,7 +398,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
 
         beaconViewModel = ViewModelProviders.of(this).get(BeaconViewModel.class);
+        infoViewModel = ViewModelProviders.of(this).get(InfoViewModel.class);
         beaconImageViewModel = ViewModelProviders.of(this).get(BeaconImageViewModel.class);
+        groupViewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
 
         mapView.onCreate(savedInstanceState);
 
@@ -366,6 +411,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         galleryAdapter = new GalleryAdapter(this, this);
         images.setAdapter(galleryAdapter);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(DetailActivity.this);
+
+        groupAdapter = new GroupAdapter(this);
+        group.setAdapter(groupAdapter);
+
 
         initializeKontakt();
     }
@@ -481,7 +530,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         startLocating();
         if (!isEditing) {
             loadBeacon();
-            loadInfo(beaconId);
         }
         startScanningIfLocationPermissionGranted();
         mapView.onResume();
@@ -531,14 +579,22 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     protected void setContentEnabled(boolean enabled) {
         setViewTreeEnabled(contentInfo, enabled);
+        setViewTreeClickable(containerGroup, enabled);
         setViewTreeEnabled(contentIBeacon, enabled);
         setViewTreeEnabled(contentEddystone, enabled);
         setViewTreeEnabled(contentGPS, enabled);
         setViewTreeEnabled(contentDescription, enabled);
+        setViewTreeEnabled(contentPoiInfo, enabled);
+        setViewTreeEnabled(contentPoiLocation, enabled);
 
         containerName.setVisibility(enabled ? View.VISIBLE : View.GONE);
         btnAddImage.setVisibility(enabled ? View.VISIBLE : View.GONE);
         if (isEditing) {
+            boolean isAdmin = AdminApplication.isAdmin();
+            if (!isAdmin) {
+                setViewTreeEnabled(containerGroup, false);
+                setViewTreeClickable(containerGroup, false);
+            }
             fabAddIssue.hide();
             rbSignalStrength.setPinColor(ContextCompat.getColor(this, R.color.primary));
             rbSignalStrength.setConnectingLineColor(ContextCompat.getColor(this, R.color.primary));
@@ -596,9 +652,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @Override
     protected void quitEditMode() {
-        isEditing = false;
+        setIsEditing(false);
         setContentEnabled(isEditing);
         showData();
+        showInfoData();
         invalidateOptionsMenu();
         clearValidationErrors();
     }
@@ -618,6 +675,23 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 onConfigTabTapped(tab.getPosition());
+            }
+        });
+
+        tabLayoutPoi.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                onPoiTabTapped(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                onPoiTabTapped(tab.getPosition());
             }
         });
 
@@ -679,11 +753,25 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
     }
 
+    private void onPoiTabTapped(int position) {
+        switch (position) {
+            case 0:
+                contentPoiInfo.setVisibility(View.VISIBLE);
+                contentPoiLocation.setVisibility(View.GONE);
+                break;
+            case 1:
+                contentPoiInfo.setVisibility(View.GONE);
+                contentPoiLocation.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     private void setViewTreeEnabled(ViewGroup viewGroup, boolean enabled) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
             if ((child instanceof SwitchCompat) ||
                     (child instanceof TextInputEditText) ||
+                    (child instanceof AutoCompleteTextView) ||
                     (child instanceof Button) || (child instanceof RangeBar)) {
                 child.setEnabled(enabled);
             } else {
@@ -694,8 +782,44 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         }
     }
 
+    private void setViewTreeClickable(ViewGroup viewGroup, boolean enabled) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            child.setClickable(enabled);
+            if (child instanceof ViewGroup) {
+                setViewTreeClickable((ViewGroup) child, enabled);
+            }
+        }
+    }
+
     private void loadBeacon() {
         showProgress(getString(R.string.loading));
+        groupViewModel.getAll().observe(DetailActivity.this, new Observer<List<Group>>() {
+            @Override
+            public void onChanged(@Nullable List<Group> groups) {
+                groupAdapter.setGroups(groups);
+                if(!isEditing && beacon != null) {
+                    group.setText(groupAdapter.getNameById(beacon.getGroupId()));
+                }
+            }
+        });
+
+        infoViewModel.getById(beaconId, new LoadInfoEvent() {
+            @Override
+            public void onSuccess(Info loadedInfo) {
+                info = loadedInfo;
+                if ((map != null) && (beacon != null) && (beacon.getLat() == 0) && (beacon.getLng() == 0)) {
+                    LatLng latlng = new LatLng(info.getLatitude(), info.getLongitude());
+                    setMarker(latlng);
+                }
+                showInfoData();
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
 
         beaconViewModel.getById(beaconId, new LoadBeaconEvent() {
             @Override
@@ -709,41 +833,6 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             @Override
             public void onError() {
                 showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
-            }
-        });
-    }
-
-    private void loadInfo(String beaconId) {
-        NearbyBeaconManager.getInstance().getBeacon(beaconId, new it.bz.beacon.beaconsuedtirolsdk.data.event.LoadBeaconEvent() {
-            @Override
-            public void onSuccess(it.bz.beacon.beaconsuedtirolsdk.data.entity.Beacon beaconInfo) {
-                txtAddressName.setText(beaconInfo.getName());
-                String address = "";
-                if (!TextUtils.isEmpty(beaconInfo.getAddress())) {
-                    address = beaconInfo.getAddress();
-                }
-                if (!TextUtils.isEmpty(address) || !TextUtils.isEmpty(beaconInfo.getCap()) || !TextUtils.isEmpty(beaconInfo.getLocation())) {
-                    address = address.concat(", ");
-                }
-                if (!TextUtils.isEmpty(beaconInfo.getCap())) {
-                    address = address.concat(beaconInfo.getCap()).concat(" ");
-                }
-                if (!TextUtils.isEmpty(beaconInfo.getLocation())) {
-                    address = address.concat(beaconInfo.getLocation());
-                }
-                txtAddress.setText(address);
-                txtAddressLatitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLatitude()));
-                txtAddressLongitude.setText(String.format(Locale.getDefault(), "%.6f", beaconInfo.getLongitude()));
-                DetailActivity.this.beaconInfo = beaconInfo;
-                if ((map != null) && (beacon != null) && (beacon.getLat() == 0) && (beacon.getLng() == 0)) {
-                    LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
-                    setMarker(latlng);
-                }
-            }
-
-            @Override
-            public void onError() {
-                Log.e(AdminApplication.LOG_TAG, "error");
             }
         });
     }
@@ -842,10 +931,33 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             });
             editDescription.setText(beacon.getDescription());
             editFloor.setText(beacon.getLocationDescription());
+
+            group.setText(groupAdapter.getNameById(beacon.getGroupId()));
         }
         fabAddIssue.show();
         content.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
+    }
+
+    protected void showInfoData() {
+        if (info != null) {
+            editPoiName.setText(info.getName());
+            editPoiAddress.setText(info.getAddress());
+            editPoiFloor.setText(info.getFloor());
+            editPoiCap.setText(info.getCap());
+            editPoiLocation.setText(info.getLocation());
+            if (info.getLatitude() != null) {
+                editPoiLatitude.setText(info.getLatitude().toString());
+            } else {
+                editPoiLatitude.setText("");
+            }
+            if (info.getLongitude() != null) {
+                editPoiLongitude.setText(info.getLongitude().toString());
+            } else {
+                editPoiLongitude.setText("");
+            }
+        }
+        detailsPoiLayout.setVisibility(View.VISIBLE);
     }
 
     private void showPendingData() {
@@ -956,8 +1068,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             LatLng latlng = new LatLng(beacon.getLat(), beacon.getLng());
             setMarker(latlng);
         } else {
-            if ((beaconInfo != null) && (beaconInfo.getLatitude() != 0) && (beaconInfo.getLongitude() != 0)) {
-                LatLng latlng = new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude());
+            if ((info != null) && (info.getLatitude() != 0) && (info.getLongitude() != 0)) {
+                LatLng latlng = new LatLng(info.getLatitude(), info.getLongitude());
                 setMarker(latlng);
             } else {
                 goToMyLocation();
@@ -1135,12 +1247,24 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         MenuItem saveItem = menu.findItem(R.id.menu_save);
 
         if (editItem != null) {
-            editItem.setVisible(!isEditing);
+            editItem.setVisible(!isEditing && canEditBeacon());
         }
         if (saveItem != null) {
             saveItem.setVisible(isEditing);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private boolean canEditBeacon() {
+        if (AdminApplication.isAdmin()) {
+            return true;
+        }
+        List<UserRoleGroup> userRoleGroups = AdminApplication.getUserRoleGroups();
+        return userRoleGroups.stream().filter(userRoleGroup -> beacon != null &&
+                    beacon.getGroupId() != null && beacon.getGroupId().equals(userRoleGroup.getGroup().getId()))
+                .anyMatch(userRoleGroup ->
+                        userRoleGroup.getRole() == UserRoleGroup.RoleEnum.MANAGER ||
+                                userRoleGroup.getRole() == UserRoleGroup.RoleEnum.BEACON_EDITOR);
     }
 
     @Override
@@ -1150,7 +1274,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         switch (id) {
             case R.id.menu_edit:
                 showPendingData();
-                isEditing = true;
+                setIsEditing(true);
                 if (map != null) {
                     map.setOnMapClickListener(this);
                 }
@@ -1169,6 +1293,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         int value;
         if ((editName.getText() == null) || (TextUtils.isEmpty(editName.getText().toString()))) {
             containerName.setError(getString(R.string.mandatory));
+            tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
+            valid = false;
+        }
+        if ((group.getText() == null) || (TextUtils.isEmpty(group.getText().toString())) ||
+                !groupAdapter.contains(group.getText().toString())) {
+            containerGroup.setError(getString(R.string.mandatory));
             tabLayoutConfig.getTabAt(0).setIcon(R.drawable.ic_error);
             valid = false;
         }
@@ -1276,6 +1406,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     protected void save() {
         BeaconUpdate beaconUpdate = new BeaconUpdate();
         beaconUpdate.setName(editName.getText().toString());
+        beaconUpdate.setGroup(groupAdapter.getGroupId(group.getText().toString()));
         beaconUpdate.setTxPower(rbSignalStrength.getRightIndex() + 1);
         beaconUpdate.setInterval(Integer.valueOf(editInterval.getText().toString()));
         beaconUpdate.setTelemetry(switchTelemetry.isChecked());
@@ -1305,6 +1436,21 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
         } else {
             beaconUpdate.setLocationType(BeaconUpdate.LocationTypeEnum.OUTDOOR);
         }
+
+        InfoUpdate infoUpdate = new InfoUpdate();
+        infoUpdate.setName(editPoiName.getText().toString());
+        infoUpdate.setAddress(editPoiAddress.getText().toString());
+        infoUpdate.setFloor(editPoiFloor.getText().toString());
+        if ((editPoiLatitude.getText() != null) && (!TextUtils.isEmpty(editPoiLatitude.getText().toString()))) {
+            infoUpdate.setLatitude(Float.parseFloat(editPoiLatitude.getText().toString().replace(',', '.')));
+        }
+        if ((editPoiLongitude.getText() != null) && (!TextUtils.isEmpty(editPoiLongitude.getText().toString()))) {
+            infoUpdate.setLongitude(Float.parseFloat(editPoiLongitude.getText().toString().replace(',', '.')));
+        }
+        infoUpdate.setCap(editPoiCap.getText().toString());
+        infoUpdate.setLocation(editPoiLocation.getText().toString());
+
+        beaconUpdate.setInfo(infoUpdate);
 
         SaveTask saveTask = new SaveTask();
         saveTask.execute(beaconUpdate);
@@ -1364,6 +1510,7 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 updatedBeacon.setManufacturerId(result.getManufacturerId());
                 updatedBeacon.setName(result.getName());
                 beaconName = result.getName();
+                updatedBeacon.setGroupId(result.getGroup() != null ? result.getGroup().getId() : null);
                 updatedBeacon.setNamespace(result.getNamespace());
                 updatedBeacon.setStatus(result.getStatus().getValue());
                 updatedBeacon.setTelemetry(result.isTelemetry());
@@ -1376,38 +1523,88 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     updatedBeacon.setPendingConfiguration(null);
                 }
 
-                beaconViewModel.insert(updatedBeacon, new InsertEvent() {
+                infoViewModel.getRefreshedById(beaconId, new LoadInfoEvent() {
                     @Override
-                    public void onSuccess(long id) {
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
-                        showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
-                        loadBeacon();
+                    public void onSuccess(Info info) {
+                        beaconViewModel.insert(updatedBeacon, new InsertEvent() {
+                            @Override
+                            public void onSuccess(long id) {
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+                                showToast(getString(R.string.saved), Toast.LENGTH_SHORT);
+                                loadBeacon();
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                            }
+                        });
+                        setIsEditing(false);
+                        setContentEnabled(isEditing);
+                        invalidateOptionsMenu();
+                        setUpToolbar(beaconName);
                     }
 
                     @Override
-                    public void onFailure() {
+                    public void onError() {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
                         showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
                     }
                 });
-                isEditing = false;
-                setContentEnabled(isEditing);
-                invalidateOptionsMenu();
-                setUpToolbar(beaconName);
             } else {
                 if (dialog != null) {
                     dialog.dismiss();
                 }
                 if ((exception != null) && ((exception.getCode() == 401) || (exception.getCode() == 403))) {
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
-                    builder.setMessage(getString(R.string.error_authorization));
+                    builder.setMessage(getString(exception.getCode() == 401? R.string.error_authorization: R.string.error_forbidden));
                     builder.setCancelable(false);
                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
-                            AdminApplication.renewLogin(DetailActivity.this);
+                            AdminApplication.renewLogin(DetailActivity.this, () -> {
+                                if(exception.getCode() == 403) {
+                                    final Dialog dialogTransparent = new Dialog(DetailActivity.this, android.R.style.Theme_Black);
+                                    View view = LayoutInflater.from(DetailActivity.this).inflate(
+                                            R.layout.remove_border, null);
+                                    dialogTransparent.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                    dialogTransparent.getWindow().setBackgroundDrawableResource(
+                                            R.color.semitransparent);
+                                    dialogTransparent.setContentView(view);
+                                    dialogTransparent.show();
+
+                                    beaconViewModel.getRefreshedById(beaconId, new LoadBeaconEvent() {
+                                        @Override
+                                        public void onSuccess(Beacon loadedBeacon) {
+                                            if(!Optional.ofNullable(beacon.getGroupId()).orElse(Long.valueOf(Long.MIN_VALUE)).equals(loadedBeacon.getGroupId())){
+                                                group.setText(groupAdapter.getNameById(loadedBeacon.getGroupId()));
+                                            }
+                                            beacon = loadedBeacon;
+                                            dialogTransparent.dismiss();
+                                            if(!canEditBeacon()) {
+                                                quitEditMode();
+                                                Snackbar.make(findViewById(android.R.id.content), getString(R.string.not_authorized_config_beacon), Snackbar.LENGTH_SHORT)
+                                                        .show();
+                                            } else {
+                                                Snackbar.make(findViewById(android.R.id.content), getString(R.string.data_reloaded_successfully), Snackbar.LENGTH_SHORT)
+                                                        .show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            dialogTransparent.dismiss();
+                                            showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                     AlertDialog alert = builder.create();
@@ -1486,9 +1683,9 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
 
     @OnClick(R.id.gps_provisional_position)
     public void useProvisionalPosition(View view) {
-        if (beaconInfo != null) {
-            setLatLngEditFields(beaconInfo.getLatitude(), beaconInfo.getLongitude());
-            setMarker(new LatLng(beaconInfo.getLatitude(), beaconInfo.getLongitude()));
+        if (info != null) {
+            setLatLngEditFields(info.getLatitude(), info.getLongitude());
+            setMarker(new LatLng(info.getLatitude(), info.getLongitude()));
         } else {
             showDialog(getString(R.string.position_not_available));
         }
@@ -1497,6 +1694,10 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     private void setLatLngEditFields(double latitude, double longitude) {
         editLatitude.setText(String.format(Locale.getDefault(), "%.6f", latitude));
         editLongitude.setText(String.format(Locale.getDefault(), "%.6f", longitude));
+    }
+
+    private void setIsEditing(boolean editing) {
+        this.isEditing = editing && canEditBeacon();
     }
 
     @Override

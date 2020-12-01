@@ -1,13 +1,17 @@
 package it.bz.beacon.adminapp.data.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
+import it.bz.beacon.adminapp.data.event.DataUpdateEvent;
 import it.bz.beacon.adminapp.data.event.InsertEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconEvent;
 import it.bz.beacon.adminapp.data.event.LoadBeaconMinimalEvent;
@@ -35,6 +39,25 @@ public class BeaconViewModel extends AndroidViewModel {
 
     public void getById(String id, LoadBeaconEvent loadEvent) {
         repository.getById(id, loadEvent);
+    }
+
+    public void getRefreshedById(String id, LoadBeaconEvent loadEvent) {
+        repository.refreshBeacon(id, new DataUpdateEvent() {
+            @Override
+            public void onSuccess() {
+                repository.getById(id, loadEvent);
+            }
+
+            @Override
+            public void onError() {
+                loadEvent.onError();
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                Log.d(AdminApplication.LOG_TAG, "onAuthenticationFailed: ignore");
+            }
+        });
     }
 
     public void getByInstanceId(String instanceId, LoadBeaconMinimalEvent loadEvent) {

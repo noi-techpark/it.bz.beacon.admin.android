@@ -67,6 +67,7 @@ public class Beacon {
     private String url;
     private String uuid;
     private String pendingConfiguration;
+    private Long groupId;
 
     public Beacon() {
     }
@@ -106,6 +107,9 @@ public class Beacon {
         }
         else {
             this.setPendingConfiguration(null);
+        }
+        if(remoteBeacon.getGroup() != null) {
+            this.setGroupId(remoteBeacon.getGroup().getId());
         }
     }
 
@@ -355,5 +359,13 @@ public class Beacon {
 
     public void setPendingConfiguration(String pendingConfiguration) {
         this.pendingConfiguration = pendingConfiguration;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }

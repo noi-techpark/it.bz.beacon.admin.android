@@ -125,6 +125,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="error_incorrect_login">Wrong username or password</string>
     <string name="error_field_required">Required field</string>
     <string name="error_authorization">Authorization expired. Please log in again!</string>
+    <string name="error_forbidden">Something got wrong. Please reload to check permissions!</string>
     <string name="loading" tools:override="true">Loading…</string>
     <string name="saving">Saving changes…</string>
     <string name="saving_issue">Saving issue…</string>
@@ -176,5 +177,14 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="version">Version %s</string>
     <string name="error_bluetooth_disable">Bluetooth is disabled!</string>
     <string name="enable">Enable</string>
+    <string name="details_group">Group</string>
+    <string name="default_group">non assigned</string>
+    <string name="data_reloaded_successfully">Data was reloaded successfully. Please try again!</string>
+    <string name="not_authorized_config_beacon">You are not authorized to configure this beacon!</string>
+    <string name="poi_cap">CAP</string>
+    <string name="poi_location">Location</string>
+    <string name="details_section_poi">POI</string>
+    <string name="details_poi_info">Info</string>
+    <string name="details_poi_location">Location</string>
 
 </resources>

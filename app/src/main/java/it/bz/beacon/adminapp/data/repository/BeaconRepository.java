@@ -2,7 +2,6 @@ package it.bz.beacon.adminapp.data.repository;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;

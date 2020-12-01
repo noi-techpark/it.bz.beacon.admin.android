@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/poi_location_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundBox"
+    android:orientation="vertical"
+    android:padding="@dimen/app_default_margin"
+    android:visibility="gone">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/poiLatitudeContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/poiLatitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/lat"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal"
+            android:maxLength="9"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:ignore="HardcodedText"
+            tools:text="46.49765" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/poiLongitudeContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/poiLongitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/lng"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:maxLength="9"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            tools:ignore="HardcodedText"
+            tools:text="11.35494" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

@@ -13,17 +13,17 @@
 
 package it.bz.beacon.adminapp.swagger.client.model;
 
+import java.util.Objects;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
-
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import it.bz.beacon.adminapp.swagger.client.model.InfoUpdate;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * BeaconUpdate
@@ -53,6 +53,9 @@ public class BeaconUpdate {
 
   @SerializedName("iBeacon")
   private Boolean iBeacon = null;
+
+  @SerializedName("info")
+  private InfoUpdate info = null;
 
   @SerializedName("instanceId")
   private String instanceId = null;
@@ -285,6 +288,24 @@ public class BeaconUpdate {
 
   public void setIBeacon(Boolean iBeacon) {
     this.iBeacon = iBeacon;
+  }
+
+  public BeaconUpdate info(InfoUpdate info) {
+    this.info = info;
+    return this;
+  }
+
+   /**
+   * Get info
+   * @return info
+  **/
+  @ApiModelProperty(value = "")
+  public InfoUpdate getInfo() {
+    return info;
+  }
+
+  public void setInfo(InfoUpdate info) {
+    this.info = info;
   }
 
   public BeaconUpdate instanceId(String instanceId) {
@@ -569,6 +590,7 @@ public class BeaconUpdate {
         Objects.equals(this.eddystoneUrl, beaconUpdate.eddystoneUrl) &&
         Objects.equals(this.group, beaconUpdate.group) &&
         Objects.equals(this.iBeacon, beaconUpdate.iBeacon) &&
+        Objects.equals(this.info, beaconUpdate.info) &&
         Objects.equals(this.instanceId, beaconUpdate.instanceId) &&
         Objects.equals(this.interval, beaconUpdate.interval) &&
         Objects.equals(this.lat, beaconUpdate.lat) &&
@@ -587,7 +609,7 @@ public class BeaconUpdate {
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, group, iBeacon, instanceId, interval, lat, lng, locationDescription, locationType, major, minor, name, namespace, telemetry, txPower, url, uuid);
+    return Objects.hash(description, eddystoneEid, eddystoneEtlm, eddystoneTlm, eddystoneUid, eddystoneUrl, group, iBeacon, info, instanceId, interval, lat, lng, locationDescription, locationType, major, minor, name, namespace, telemetry, txPower, url, uuid);
   }
 
 
@@ -604,6 +626,7 @@ public class BeaconUpdate {
     sb.append("    eddystoneUrl: ").append(toIndentedString(eddystoneUrl)).append("\n");
     sb.append("    group: ").append(toIndentedString(group)).append("\n");
     sb.append("    iBeacon: ").append(toIndentedString(iBeacon)).append("\n");
+    sb.append("    info: ").append(toIndentedString(info)).append("\n");
     sb.append("    instanceId: ").append(toIndentedString(instanceId)).append("\n");
     sb.append("    interval: ").append(toIndentedString(interval)).append("\n");
     sb.append("    lat: ").append(toIndentedString(lat)).append("\n");

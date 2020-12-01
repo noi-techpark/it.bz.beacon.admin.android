@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,23 +19,32 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import it.bz.beacon.adminapp.data.BeaconDatabase;
 import it.bz.beacon.adminapp.data.Storage;
+import it.bz.beacon.adminapp.data.event.RenewLoginEvent;
 import it.bz.beacon.adminapp.swagger.client.ApiCallback;
 import it.bz.beacon.adminapp.swagger.client.ApiClient;
 import it.bz.beacon.adminapp.swagger.client.ApiException;
 import it.bz.beacon.adminapp.swagger.client.api.AuthControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.BeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.GroupControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.ImageControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.InfoControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.IssueControllerApi;
 import it.bz.beacon.adminapp.swagger.client.api.TrustedBeaconControllerApi;
+import it.bz.beacon.adminapp.swagger.client.api.UserControllerApi;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationRequest;
 import it.bz.beacon.adminapp.swagger.client.model.AuthenticationToken;
+import it.bz.beacon.adminapp.swagger.client.model.UserRoleGroup;
 import it.bz.beacon.adminapp.ui.login.LoginActivity;
 import it.bz.beacon.beaconsuedtirolsdk.NearbyBeaconManager;
 
@@ -42,9 +52,12 @@ public class AdminApplication extends Application {
 
     private static AuthControllerApi authControllerApi;
     private static BeaconControllerApi beaconControllerApi;
+    private static InfoControllerApi infoControllerApi;
     private static ImageControllerApi imageControllerApi;
     private static IssueControllerApi issueControllerApi;
     private static TrustedBeaconControllerApi trustedBeaconControllerApi;
+    private static GroupControllerApi groupControllerApi;
+    private static UserControllerApi userControllerApi;
     private static Storage storage;
     public static final String LOG_TAG = "BeaconAdmin";
 
@@ -66,9 +79,12 @@ public class AdminApplication extends Application {
         it.bz.beacon.adminapp.swagger.client.Configuration.setDefaultApiClient(apiClient);
         authControllerApi = new AuthControllerApi();
         beaconControllerApi = new BeaconControllerApi();
+        infoControllerApi = new InfoControllerApi();
         imageControllerApi = new ImageControllerApi();
         issueControllerApi = new IssueControllerApi();
         trustedBeaconControllerApi = new TrustedBeaconControllerApi();
+        groupControllerApi = new GroupControllerApi();
+        userControllerApi = new UserControllerApi();
         if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
             setBearerToken(storage.getLoginUserToken());
         }
@@ -127,6 +143,10 @@ public class AdminApplication extends Application {
         return beaconControllerApi;
     }
 
+    public static InfoControllerApi getInfoControllerApi() {
+        return infoControllerApi;
+    }
+
     public static ImageControllerApi getImageApi() {
         return imageControllerApi;
     }
@@ -137,6 +157,14 @@ public class AdminApplication extends Application {
 
     public static TrustedBeaconControllerApi getTrustedBeaconControllerApi() {
         return trustedBeaconControllerApi;
+    }
+
+    public static GroupControllerApi getGroupControllerApi() {
+        return groupControllerApi;
+    }
+
+    public static UserControllerApi getUserControllerApi() {
+        return userControllerApi;
     }
 
     public static void logout(Context context) {
@@ -153,6 +181,10 @@ public class AdminApplication extends Application {
     }
 
     public static void renewLogin(final Activity activity) {
+        AdminApplication.renewLogin(activity, () -> {});
+    }
+
+    public static void renewLogin(final Activity activity, final RenewLoginEvent renewLoginEvent) {
         if (activity == null) {
             return;
         }
@@ -216,6 +248,7 @@ public class AdminApplication extends Application {
                             }
                             Snackbar.make(activity.findViewById(android.R.id.content), activity.getString(R.string.logged_in), Snackbar.LENGTH_SHORT)
                                     .show();
+                            renewLoginEvent.onSuccess();
                         }
                     });
                 }
@@ -236,5 +269,39 @@ public class AdminApplication extends Application {
             }
             Log.e(AdminApplication.LOG_TAG, e.getMessage());
         }
+    }
+
+    public static HashMap<String, Object> getTokenBody() {
+        String token = storage.getLoginUserToken();
+        if (!TextUtils.isEmpty(storage.getLoginUserToken())) {
+            try {
+                String[] split = token.split("\\.");
+                byte[] decodedBytes = Base64.decode(split[1], Base64.URL_SAFE);
+                String bodyJson = new String(decodedBytes, "UTF-8");
+                return new Gson().fromJson(bodyJson, new TypeToken<HashMap<String, Object>>() {
+                }.getType());
+            } catch (Exception e) {
+                Log.e(AdminApplication.LOG_TAG, e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    public static boolean isAdmin() {
+        HashMap<String, Object> tokenBody = getTokenBody();
+        if(tokenBody != null) {
+            return (boolean) tokenBody.getOrDefault("admin", false);
+        }
+        return false;
+    }
+
+    public static List<UserRoleGroup> getUserRoleGroups() {
+        HashMap<String, Object> tokenBody = getTokenBody();
+        if(tokenBody != null) {
+            return new Gson().fromJson(new Gson().toJson(tokenBody.getOrDefault("groups", new Object())),
+                    new TypeToken<ArrayList<UserRoleGroup>>() {
+                    }.getType());
+        }
+        return new ArrayList<>();
     }
 }
