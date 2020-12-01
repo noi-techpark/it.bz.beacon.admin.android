@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,10 +89,7 @@ public class GroupApiKeyRepository {
                                         public void onSuccess(List<it.bz.beacon.adminapp.swagger.client.model.GroupApiKey> result, int statusCode, Map<String, List<String>> responseHeaders) {
 
                                             if (result != null) {
-                                                saveGroupApiKeys(result);
-                                                if (dataUpdateEvent != null) {
-                                                    dataUpdateEvent.onSuccess();
-                                                }
+                                                saveGroupApiKeys(result, dataUpdateEvent);
                                                 storage.setLastSynchronizationGroupApiKeys(System.currentTimeMillis());
                                             }
                                         }
@@ -131,22 +129,17 @@ public class GroupApiKeyRepository {
         }
     }
 
-    private void saveGroupApiKeys(List<it.bz.beacon.adminapp.swagger.client.model.GroupApiKey> remoteGroupApiKeys) {
-        ArrayList<GroupApiKey> groupApiKeys = new ArrayList<>();
-        for (it.bz.beacon.adminapp.swagger.client.model.GroupApiKey remoteGroupApiKey : remoteGroupApiKeys) {
-            groupApiKeys.add(new GroupApiKey(remoteGroupApiKey));
+    private void saveGroupApiKeys(List<it.bz.beacon.adminapp.swagger.client.model.GroupApiKey> remoteGroupApiKeys, DataUpdateEvent dataUpdateEvent) {
+        GroupApiKey[] groupApiKeys = new GroupApiKey[remoteGroupApiKeys.size()];
+        for (int i = 0; i < remoteGroupApiKeys.size(); i++) {
+            groupApiKeys[i] = new GroupApiKey(remoteGroupApiKeys.get(i));
         }
-        insertMultiple(groupApiKeys);
+        insertMultiple(groupApiKeys, dataUpdateEvent);
     }
 
-    public void insertMultiple(ArrayList<GroupApiKey> groupApiKeys) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                groupApiKeyDao.deleteAll();
-                groupApiKeyDao.insertMultiple(groupApiKeys);
-            }
-        }).start();
+    public void insertMultiple(GroupApiKey[] groupApiKeys, DataUpdateEvent dataUpdateEvent) {
+        SaveGroupApiKeysTask task = new SaveGroupApiKeysTask(groupApiKeyDao, dataUpdateEvent);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupApiKeys);
     }
 
     public void getByGroupId(Long groupId, LoadGroupApiKeyEvent loadEvent) {
@@ -176,7 +169,6 @@ public class GroupApiKeyRepository {
     private static class LoadByGroupIdTask extends AsyncTask<Long, Void, GroupApiKey> {
 
         private GroupApiKeyDao asyncTaskDao;
-        private GroupApiKeyDao repository;
         private LoadGroupApiKeyEvent loadEvent;
 
         LoadByGroupIdTask(GroupApiKeyDao dao, LoadGroupApiKeyEvent event) {
@@ -195,6 +187,33 @@ public class GroupApiKeyRepository {
                 loadEvent.onSuccess(groupApiKey);
             } else {
                 loadEvent.onError();
+            }
+        }
+    }
+
+    private static class SaveGroupApiKeysTask extends AsyncTask<GroupApiKey, Void, Void> {
+
+        private GroupApiKeyDao asyncTaskDao;
+        private DataUpdateEvent updateEvent;
+
+        SaveGroupApiKeysTask(GroupApiKeyDao dao, DataUpdateEvent event) {
+            asyncTaskDao = dao;
+            updateEvent = event;
+        }
+
+        @Override
+        protected Void doInBackground(GroupApiKey... groupApiKeys) {
+            asyncTaskDao.deleteAll();
+            asyncTaskDao.insertMultiple(new ArrayList<GroupApiKey>(Arrays.asList(groupApiKeys)));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void mVoid) {
+            if ((updateEvent != null)) {
+                updateEvent.onSuccess();
+            } else {
+                updateEvent.onError();
             }
         }
     }
