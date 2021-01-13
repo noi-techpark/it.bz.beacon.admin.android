@@ -9,10 +9,10 @@ pipeline {
     }
     environment {
         GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
-        BEACON_SUEDTIROL_API_URL = "https://api.beacon.bz.it"
+        BEACON_SUEDTIROL_API_URL = "https://api.beacon.testingmachine.eu"
         KONTAKT_IO_API_KEY = credentials('beacon-admin-android-kontakt-io-api-key')
-        API_TRUSTED_USER = credentials('beacon-admin-android-api-trusted-user')
-        API_TRUSTED_PASSWORD = credentials('beacon-trusted-nonencrypted-password')
+        API_TRUSTED_USER = credentials('beacon-api-test-trusted-username')
+        API_TRUSTED_PASSWORD = credentials('beacon-api-test-trusted-password')
         GOOGLE_SERVICES_JSON_FILE = credentials('beacon-admin-android-google-services-json')
         KEYSTORE_FILE = credentials('beacon-admin-android-keystore-file')
         KEYSTORE_PASSWORD = credentials('beacon-admin-android-keystore-password')
