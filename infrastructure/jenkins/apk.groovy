@@ -4,9 +4,6 @@ pipeline {
             label 'mac'
         }
     }
-    parameters {
-        string(name: 'VERSION_NAME', defaultValue: '1.0.0', description: 'App Version Name')
-    }
     options {
         ansiColor('xterm')
     }
