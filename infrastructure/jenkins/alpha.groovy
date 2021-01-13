@@ -32,7 +32,7 @@ pipeline {
         stage('Configure') {
             steps {
                 sh '''
-                    cd ..
+                    cd ../..
 
                     cp config/google_maps_api.xml app/src/release/res/values/google_maps_api.xml
                     cp config/google_maps_api.xml app/src/debug/res/values/google_maps_api.xml
@@ -113,6 +113,7 @@ pipeline {
     post {
         always {
             sh '''
+                cd ../..
                 rm -rf keystore.jks
                 rm -rf app/keystore.jks  
                 rm -rf app/src/release/res/values/google_maps_api.xml
