@@ -140,6 +140,10 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="dont_show_again">Don\'t show again</string>
     <string name="no_internet">No internet connection detected!</string>
     <string name="general_error">An error occurred. Please try again!</string>
+    <string name="error">Error</string>
+    <string name="error_api_key_no_access_to_beacon">The beacon groups API key has no access to the beacon data.\n\nPlease contact the owner to share this beacon in the kontakt.io dashboard panel.</string>
+    <string name="error_applying_failed">Applying configuration to beacon failed.</string>
+    <string name="error_possible_api_key_no_access_to_beacon">Please retry or check if the beacon groups API key has access to the beacon data.\n\nIf it fails again, contact the owner to share this beacon in the kontakt.io dashboard panel.</string>
     <string name="show_pending_config">Show pending configuration</string>
     <string name="pending_config">Pending configuration</string>
     <string name="pending_config_empty">Pending configuration is empty</string>
