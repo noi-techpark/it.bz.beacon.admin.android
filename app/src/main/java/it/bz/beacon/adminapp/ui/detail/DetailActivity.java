@@ -949,12 +949,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             editPoiCap.setText(info.getCap());
             editPoiLocation.setText(info.getLocation());
             if (info.getLatitude() != null) {
-                editPoiLatitude.setText(info.getLatitude().toString());
+                editPoiLatitude.setText(String.format(Locale.getDefault(), "%.6f", info.getLatitude()));
             } else {
                 editPoiLatitude.setText("");
             }
             if (info.getLongitude() != null) {
-                editPoiLongitude.setText(info.getLongitude().toString());
+                editPoiLongitude.setText(String.format(Locale.getDefault(), "%.6f", info.getLongitude()));
             } else {
                 editPoiLongitude.setText("");
             }
