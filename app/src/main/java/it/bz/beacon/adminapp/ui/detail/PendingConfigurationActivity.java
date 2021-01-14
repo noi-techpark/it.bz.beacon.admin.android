@@ -526,6 +526,18 @@ public class PendingConfigurationActivity extends BaseActivity {
                     kontaktDeviceConnection.connect();
                 } else {
                     hideProgressDialog();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(PendingConfigurationActivity.this, R.style.AlertDialogCustom));
+                    builder.setTitle(getString(R.string.error_applying_failed));
+                    builder.setMessage(getString(R.string.error_possible_api_key_no_access_to_beacon));
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }
             }
 
