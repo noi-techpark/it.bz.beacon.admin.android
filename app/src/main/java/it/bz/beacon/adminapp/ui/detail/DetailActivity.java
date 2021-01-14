@@ -477,8 +477,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         if (profile.getBatteryLevel() > 0) {
                             BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                             update.setBatteryLevel(profile.getBatteryLevel());
-                            String[] nameParts = profile.getName().split("#");
-                            trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                            String manufacturerId = profile.getUniqueId();
+                            trustedApi.updateUsingPATCH2Async(update, manufacturerId, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                                 @Override
                                 public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
