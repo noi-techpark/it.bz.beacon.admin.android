@@ -24,7 +24,7 @@ pipeline {
         SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
         GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
 
-        MAIL = "info@opendatahub.bz.it"
+        MAIL = "support@beacon.bz.it"
         GITHUB_URL = "https://github.com/noi-techpark/beacon-suedtirol-administration-android"
         APP_TITLE = "Beacon Südtirol/Alto Adige Administration Android App"
     }
