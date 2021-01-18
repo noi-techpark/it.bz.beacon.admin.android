@@ -76,6 +76,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
 import com.kontakt.sdk.android.ble.manager.ProximityManagerFactory;
@@ -90,6 +91,7 @@ import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -477,8 +479,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                         if (profile.getBatteryLevel() > 0) {
                             BeaconBatteryLevelUpdate update = new BeaconBatteryLevelUpdate();
                             update.setBatteryLevel(profile.getBatteryLevel());
-                            String[] nameParts = profile.getName().split("#");
-                            trustedApi.updateUsingPATCH2Async(update, nameParts[1], new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
+                            String manufacturerId = profile.getUniqueId();
+                            trustedApi.updateUsingPATCH2Async(update, manufacturerId, new ApiCallback<it.bz.beacon.adminapp.swagger.client.model.Beacon>() {
                                 @Override
                                 public void onFailure(ApiException e, int i, Map<String, List<String>> map) {
 
@@ -947,12 +949,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
             editPoiCap.setText(info.getCap());
             editPoiLocation.setText(info.getLocation());
             if (info.getLatitude() != null) {
-                editPoiLatitude.setText(info.getLatitude().toString());
+                editPoiLatitude.setText(String.format(Locale.getDefault(), "%.6f", info.getLatitude()));
             } else {
                 editPoiLatitude.setText("");
             }
             if (info.getLongitude() != null) {
-                editPoiLongitude.setText(info.getLongitude().toString());
+                editPoiLongitude.setText(String.format(Locale.getDefault(), "%.6f", info.getLongitude()));
             } else {
                 editPoiLongitude.setText("");
             }
@@ -1562,14 +1564,14 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 if ((exception != null) && ((exception.getCode() == 401) || (exception.getCode() == 403))) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
-                    builder.setMessage(getString(exception.getCode() == 401? R.string.error_authorization: R.string.error_forbidden));
+                    builder.setMessage(getString(exception.getCode() == 401 ? R.string.error_authorization : R.string.error_forbidden));
                     builder.setCancelable(false);
                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
                             AdminApplication.renewLogin(DetailActivity.this, () -> {
-                                if(exception.getCode() == 403) {
+                                if (exception.getCode() == 403) {
                                     final Dialog dialogTransparent = new Dialog(DetailActivity.this, android.R.style.Theme_Black);
                                     View view = LayoutInflater.from(DetailActivity.this).inflate(
                                             R.layout.remove_border, null);
@@ -1582,12 +1584,12 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                                     beaconViewModel.getRefreshedById(beaconId, new LoadBeaconEvent() {
                                         @Override
                                         public void onSuccess(Beacon loadedBeacon) {
-                                            if(!Optional.ofNullable(beacon.getGroupId()).orElse(Long.valueOf(Long.MIN_VALUE)).equals(loadedBeacon.getGroupId())){
+                                            if (!Optional.ofNullable(beacon.getGroupId()).orElse(Long.valueOf(Long.MIN_VALUE)).equals(loadedBeacon.getGroupId())) {
                                                 group.setText(groupAdapter.getNameById(loadedBeacon.getGroupId()));
                                             }
                                             beacon = loadedBeacon;
                                             dialogTransparent.dismiss();
-                                            if(!canEditBeacon()) {
+                                            if (!canEditBeacon()) {
                                                 quitEditMode();
                                                 Snackbar.make(findViewById(android.R.id.content), getString(R.string.not_authorized_config_beacon), Snackbar.LENGTH_SHORT)
                                                         .show();
@@ -1609,6 +1611,31 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                     });
                     AlertDialog alert = builder.create();
                     alert.show();
+                } else if (exception != null && exception.getCode() == 400) {
+                    HashMap<String, Object> responseBodyMap =
+                            new Gson().fromJson(exception.getResponseBody(), new TypeToken<HashMap<String, Object>>() {
+                    }.getType());
+                    if(responseBodyMap != null && responseBodyMap.get("message") != null) {
+                        String message = responseBodyMap.get("message").toString();
+                        if(message.equals("No access to beacon") || message.equals("Invalid api key")) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(DetailActivity.this, R.style.AlertDialogCustom));
+                            builder.setMessage(getString(R.string.error_api_key_no_access_to_beacon));
+                            builder.setCancelable(false);
+                            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            Snackbar.make(content, getString(R.string.error) + ": " + message, Snackbar.LENGTH_INDEFINITE)
+                                    .show();
+                        }
+                    } else {
+                        showToast(getString(R.string.general_error), Toast.LENGTH_LONG);
+                    }
                 } else {
                     Snackbar.make(content, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.retry), new View.OnClickListener() {

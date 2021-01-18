@@ -47,4 +47,30 @@ platform :android do
         apk: "app/build/outputs/apk/release/app-release.apk"
     )
   end
+
+  desc "Just build the APK"
+  lane :apk do
+    android_set_version_name(
+      version_name: ENV["VERSION_NAME"],
+      gradle_file: "app/build.gradle"
+    )
+
+    increment_version_code(
+        gradle_file_path: "app/build.gradle"
+    )
+    
+    gradle(task: "clean")
+
+    gradle(
+        task: "assemble",
+        build_type: "Release",
+        print_command: false,
+        properties: {
+          "android.injected.signing.store.file" => "keystore.jks",
+          "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["KEYSTORE_ALIAS"],
+          "android.injected.signing.key.password" => ENV["KEYSTORE_ALIAS_PASSWORD"],
+        }
+    )
+  end
 end
