@@ -20,6 +20,7 @@ pipeline {
         KEYSTORE_ALIAS_PASSWORD = credentials('beacon-admin-android-keystore-alias-password')
         SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
         GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
+        APP_PACKAGE_NAME = "it.bz.beacon.admin.test"
     }
     stages {
         stage('Configure') {
@@ -40,6 +41,8 @@ pipeline {
                     sed -i "" "s%API_TRUSTED_USER%${API_TRUSTED_USER}%" app/src/debug/res/values/beacon_suedtirol_api.xml
                     sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/release/res/values/beacon_suedtirol_api.xml
                     sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/debug/res/values/beacon_suedtirol_api.xml
+
+                    sed -i "" "s%it.bz.beacon.admin%${APP_PACKAGE_NAME}%" fastlane/Appfile
 
                     cat "${GOOGLE_SERVICES_JSON_FILE}" > app/google-services.json
                     cat "${KEYSTORE_FILE}" > keystore.jks
