@@ -20,7 +20,6 @@ pipeline {
         KEYSTORE_ALIAS_PASSWORD = credentials('beacon-admin-android-keystore-alias-password')
         SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
         GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
-        APP_PACKAGE_NAME = "it.bz.beacon.admin.test"
     }
     stages {
         stage('Configure') {
