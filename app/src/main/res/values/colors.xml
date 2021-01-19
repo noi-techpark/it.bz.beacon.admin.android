@@ -20,6 +20,7 @@
     <color name="status_ok">#60da3c</color>
     <color name="status_warning">#f6dd00</color>
     <color name="status_error">#d20000</color>
+    <color name="status_not_accessible">#AA66CC</color>
     <color name="status_pending">@color/primary</color>
     <color name="semitransparent">#4d000000</color>
 

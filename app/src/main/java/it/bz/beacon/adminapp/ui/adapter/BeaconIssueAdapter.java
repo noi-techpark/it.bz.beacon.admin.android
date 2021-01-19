@@ -13,15 +13,16 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.bz.beacon.adminapp.R;
@@ -200,6 +201,9 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             }
             if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
+            }
+            if (issue.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_not_accessible)));
             }
             if (issue.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));

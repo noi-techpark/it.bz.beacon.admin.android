@@ -13,18 +13,17 @@
 
 package it.bz.beacon.adminapp.swagger.client.model;
 
-import java.util.Objects;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import it.bz.beacon.adminapp.swagger.client.model.Group;
-import it.bz.beacon.adminapp.swagger.client.model.PendingConfiguration;
+
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Beacon
@@ -217,7 +216,9 @@ public class Beacon {
     
     NO_SIGNAL("NO_SIGNAL"),
     
-    ISSUE("ISSUE");
+    ISSUE("ISSUE"),
+
+    NOT_ACCESSIBLE("NOT_ACCESSIBLE");
 
     private String value;
 

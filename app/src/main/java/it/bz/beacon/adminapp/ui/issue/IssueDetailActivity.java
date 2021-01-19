@@ -340,6 +340,9 @@ public class IssueDetailActivity extends BaseDetailActivity {
             if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
                 txtDeviceStatus.setText(getString(R.string.status_no_signal));
             }
+            if (issue.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
+                txtDeviceStatus.setText(getString(R.string.status_not_accessible));
+            }
             if (issue.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 txtDeviceStatus.setText(getString(R.string.status_configuration_pending));
             }

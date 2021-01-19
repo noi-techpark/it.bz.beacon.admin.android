@@ -880,6 +880,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
                 txtStatus.setText(getString(R.string.status_no_signal));
             }
+            if (beacon.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_not_accessible)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_not_accessible)));
+                txtStatus.setText(getString(R.string.status_not_accessible));
+            }
             if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
