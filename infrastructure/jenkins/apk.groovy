@@ -42,7 +42,7 @@ pipeline {
                     sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/release/res/values/beacon_suedtirol_api.xml
                     sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/debug/res/values/beacon_suedtirol_api.xml
 
-                    sed -i "" "s%it.bz.beacon.admin%${APP_PACKAGE_NAME}%" fastlane/Appfile
+                    sed -i "" "s%it.bz.beacon.admin%${APP_PACKAGE_NAME}%" app/build.gradle
 
                     cat "${GOOGLE_SERVICES_JSON_FILE}" > app/google-services.json
                     cat "${KEYSTORE_FILE}" > keystore.jks
