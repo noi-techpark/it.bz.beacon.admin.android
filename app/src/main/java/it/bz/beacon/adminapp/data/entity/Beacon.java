@@ -1,14 +1,14 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import it.bz.beacon.adminapp.R;
 
@@ -101,7 +101,9 @@ public class Beacon {
         this.setTelemetry(remoteBeacon.isTelemetry());
         this.setTxPower(remoteBeacon.getTxPower());
         this.setUrl(remoteBeacon.getUrl());
-        this.setUuid(remoteBeacon.getUuid().toString());
+        if(remoteBeacon.getUuid() != null) {
+            this.setUuid(remoteBeacon.getUuid().toString());
+        }
         if (remoteBeacon.getPendingConfiguration() != null) {
             this.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
         }
