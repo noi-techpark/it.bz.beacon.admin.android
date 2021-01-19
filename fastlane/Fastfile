@@ -62,7 +62,7 @@ platform :android do
     gradle(task: "clean")
 
     gradle(
-        task: "assembleDebug",
+        task: "assemble",
         build_type: "Debug",
         properties: {
           "android.injected.signing.store.file" => "keystore.jks",
