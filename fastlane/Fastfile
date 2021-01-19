@@ -51,7 +51,7 @@ platform :android do
   desc "Just build the APK"
   lane :apk do
     android_set_version_name(
-      version_name: ENV["VERSION_NAME"],
+      version_name: ENV["GIT_COMMIT"],
       gradle_file: "app/build.gradle"
     )
 
@@ -62,9 +62,8 @@ platform :android do
     gradle(task: "clean")
 
     gradle(
-        task: "assemble",
-        build_type: "Release",
-        print_command: false,
+        task: "assembleDebug",
+        build_type: "Debug",
         properties: {
           "android.injected.signing.store.file" => "keystore.jks",
           "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
