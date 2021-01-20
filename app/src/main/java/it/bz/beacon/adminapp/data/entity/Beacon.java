@@ -16,7 +16,7 @@ import it.bz.beacon.adminapp.R;
 public class Beacon {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_ISSUE, STATUS_CONFIGURATION_PENDING, STATUS_NO_SIGNAL, STATUS_NOT_ACCESSIBLE})
+    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_ISSUE, STATUS_CONFIGURATION_PENDING, STATUS_UNKNOWN_STATUS, STATUS_NOT_ACCESSIBLE})
     public @interface FilterStatus {
     }
 
@@ -25,7 +25,7 @@ public class Beacon {
     public static final String STATUS_BATTERY_LOW = "BATTERY_LOW";
     public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
-    public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
+    public static final String STATUS_UNKNOWN_STATUS = "UNKNOWN_STATUS";
     public static final String STATUS_NOT_ACCESSIBLE = "NOT_ACCESSIBLE";
     public static final String STATUS_INSTALLED = "INSTALLED";
     public static final String STATUS_NOT_INSTALLED = "NOT_INSTALLED";
@@ -126,8 +126,8 @@ public class Beacon {
             case Beacon.STATUS_CONFIGURATION_PENDING:
                 drawableId = R.drawable.marker_pending;
                 break;
-            case Beacon.STATUS_NO_SIGNAL:
-                drawableId = R.drawable.marker_nosignal;
+            case Beacon.STATUS_UNKNOWN_STATUS:
+                drawableId = R.drawable.marker_unknownstatus;
                 break;
             case Beacon.STATUS_NOT_INSTALLED:
                 drawableId = R.drawable.marker_provisional;

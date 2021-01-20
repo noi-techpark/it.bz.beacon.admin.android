@@ -337,8 +337,8 @@ public class IssueDetailActivity extends BaseDetailActivity {
             if (issue.getStatus().equals(Beacon.STATUS_ISSUE)) {
                 txtDeviceStatus.setText(getString(R.string.status_issue));
             }
-            if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
-                txtDeviceStatus.setText(getString(R.string.status_no_signal));
+            if (issue.getStatus().equals(Beacon.STATUS_UNKNOWN_STATUS)) {
+                txtDeviceStatus.setText(getString(R.string.status_unknown_status));
             }
             if (issue.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
                 txtDeviceStatus.setText(getString(R.string.status_not_accessible));

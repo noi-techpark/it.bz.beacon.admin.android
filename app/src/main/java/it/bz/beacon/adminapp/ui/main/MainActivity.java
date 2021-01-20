@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity
                 getString(R.string.status_configuration_pending),
                 getString(R.string.status_battery_low),
                 getString(R.string.status_issue),
-                getString(R.string.status_no_signal),
+                getString(R.string.status_unknown_status),
                 getString(R.string.status_not_accessible),
                 getString(R.string.status_installed),
                 getString(R.string.status_not_installed)};
@@ -145,7 +145,7 @@ public class MainActivity extends BaseActivity
                 Beacon.STATUS_CONFIGURATION_PENDING,
                 Beacon.STATUS_BATTERY_LOW,
                 Beacon.STATUS_ISSUE,
-                Beacon.STATUS_NO_SIGNAL,
+                Beacon.STATUS_UNKNOWN_STATUS,
                 Beacon.STATUS_NOT_ACCESSIBLE,
                 Beacon.STATUS_INSTALLED,
                 Beacon.STATUS_NOT_INSTALLED};

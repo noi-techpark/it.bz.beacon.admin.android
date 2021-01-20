@@ -214,7 +214,7 @@ public class Beacon {
     
     CONFIGURATION_PENDING("CONFIGURATION_PENDING"),
     
-    NO_SIGNAL("NO_SIGNAL"),
+    UNKNOWN_STATUS("UNKNOWN_STATUS"),
     
     ISSUE("ISSUE"),
 
