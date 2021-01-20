@@ -19,7 +19,8 @@ pipeline {
         KEYSTORE_ALIAS = credentials('beacon-admin-android-keystore-alias')
         KEYSTORE_ALIAS_PASSWORD = credentials('beacon-admin-android-keystore-alias-password')
         SUPPLY_JSON_KEY = credentials('beacon-admin-android-fastlane-google-play-api-key')
-        GIT_REPOSITORY = "git@github.com:idm-suedtirol/beacon-suedtirol-administration-android.git"
+        APP_NAME_FULL = "Beacon Administration (Testing)"
+        APP_NAME = "BeaconsTest"
     }
     stages {
         stage('Configure') {
@@ -42,8 +43,14 @@ pipeline {
                     sed -i "" "s%API_TRUSTED_PASSWORD%${API_TRUSTED_PASSWORD}%" app/src/debug/res/values/beacon_suedtirol_api.xml
 
                     cat "${GOOGLE_SERVICES_JSON_FILE}" > app/google-services.json
+                    sed -i "" "s%it.bz.beacon.admin%it.bz.beacon.admin.debug%" app/google-services.json
+                    sed -i "" "s%it.bz.beacon.admin%it.bz.beacon.admin.debug%" fastlane/Appfile
+                    sed -i "" "s%it.bz.beacon.admin%it.bz.beacon.admin.debug%" app/build.gradle
                     cat "${KEYSTORE_FILE}" > keystore.jks
                     cat "${KEYSTORE_FILE}" > app/keystore.jks
+
+                    sed -i "" 's%name="beacons">Beacons%name="beacons">'${APP_NAME}'%' app/src/main/res/values/strings.xml
+                    sed -i "" "s%Beacon Administration%${APP_NAME_FULL}%" app/src/main/res/values/strings.xml
                 '''
             }
         }
@@ -67,7 +74,8 @@ pipeline {
         }
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: 'app/build/outputs/apk/release/app-release.apk', onlyIfSuccessful: true
+                sh 'mv app/build/outputs/apk/debug/app-debug.apk beacon-admin-debug-build${BUILD_NUMBER}.apk'
+                archiveArtifacts artifacts: "beacon-admin-debug-build${BUILD_NUMBER}.apk", onlyIfSuccessful: true
             }
         }
     }
@@ -82,6 +90,7 @@ pipeline {
                 rm -rf app/src/debug/res/values/beacon_suedtirol_api.xml
                 rm -rf app/google-services.json
                 rm -rf app/src/debug/google-services.json
+                rm -rf beacon-admin-debug-build${BUILD_NUMBER}.apk
             '''
         }
     }

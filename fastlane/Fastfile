@@ -51,7 +51,7 @@ platform :android do
   desc "Just build the APK"
   lane :apk do
     android_set_version_name(
-      version_name: ENV["GIT_COMMIT"],
+      version_name: "debug-build" + ENV["BUILD_NUMBER"],
       gradle_file: "app/build.gradle"
     )
 
