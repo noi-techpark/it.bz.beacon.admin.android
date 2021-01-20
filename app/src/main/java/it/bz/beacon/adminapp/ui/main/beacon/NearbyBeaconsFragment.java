@@ -154,6 +154,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                         }
                     })
                     .show();
+            swipeBeacons.setRefreshing(false);
         }
     }
 
@@ -341,7 +342,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
 
     @Override
     public void onRefresh() {
+        super.onRefresh();
         startScanningIfLocationPermissionGranted();
-        swipeBeacons.setRefreshing(false);
     }
 }
