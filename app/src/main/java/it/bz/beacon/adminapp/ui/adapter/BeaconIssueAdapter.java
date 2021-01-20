@@ -199,7 +199,7 @@ public class BeaconIssueAdapter extends RecyclerView.Adapter<BeaconIssueAdapter.
             if ((issue.getStatus().equals(Beacon.STATUS_BATTERY_LOW)) || (issue.getStatus().equals(Beacon.STATUS_ISSUE))) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_warning)));
             }
-            if (issue.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
+            if (issue.getStatus().equals(Beacon.STATUS_UNKNOWN_STATUS)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
             }
             if (issue.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
