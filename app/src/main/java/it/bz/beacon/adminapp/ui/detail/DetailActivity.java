@@ -843,7 +843,8 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
     protected void showData() {
         if (beacon != null) {
             setUpToolbar(beacon.getName());
-            txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen()))));
+            if(beacon.getLastSeen() != null)
+                txtLastSeen.setText(getString(R.string.details_last_seen, DateFormatter.dateToDateString(new Date(beacon.getLastSeen()))));
 
             txtBattery.setText(getString(R.string.percent, beacon.getBatteryLevel()));
 
@@ -879,6 +880,11 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_error)));
                 txtStatus.setText(getString(R.string.status_no_signal));
             }
+            if (beacon.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
+                ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_not_accessible)));
+                ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_not_accessible)));
+                txtStatus.setText(getString(R.string.status_not_accessible));
+            }
             if (beacon.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(imgStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
                 ImageViewCompat.setImageTintList(imgInfoStatus, ColorStateList.valueOf(getColor(R.color.status_pending)));
@@ -889,14 +895,18 @@ public class DetailActivity extends BaseDetailActivity implements OnMapReadyCall
                 btnShowPendingConfig.setVisibility(View.GONE);
             }
 
-            rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower() - 1);
-            editInterval.setText(String.valueOf(beacon.getInterval()));
+            if(beacon.getTxPower() != null)
+                rbSignalStrength.setRangePinsByIndices(0, beacon.getTxPower() - 1);
+            if(beacon.getInterval() != null)
+                editInterval.setText(String.valueOf(beacon.getInterval()));
             switchTelemetry.setChecked(beacon.getTelemetry() != null && beacon.getTelemetry());
 
             switchIBeacon.setChecked(beacon.isIBeacon() != null && beacon.isIBeacon());
             editUuid.setText(beacon.getUuid());
-            editMajor.setText(String.valueOf(beacon.getMajor()));
-            editMinor.setText(String.valueOf(beacon.getMinor()));
+            if(beacon.getMajor() != null)
+                editMajor.setText(String.valueOf(beacon.getMajor()));
+            if(beacon.getMinor() != null)
+                editMinor.setText(String.valueOf(beacon.getMinor()));
 
             switchEid.setChecked(beacon.isEddystoneEid() != null && beacon.isEddystoneEid());
             switchEtlm.setChecked(beacon.isEddystoneEtlm() != null && beacon.isEddystoneEtlm());

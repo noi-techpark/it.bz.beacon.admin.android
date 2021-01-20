@@ -1,8 +1,5 @@
 package it.bz.beacon.adminapp.data.entity;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 import androidx.room.Entity;
@@ -10,13 +7,16 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import it.bz.beacon.adminapp.R;
 
 @Entity
 public class Beacon {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_ISSUE, STATUS_CONFIGURATION_PENDING, STATUS_NO_SIGNAL})
+    @StringDef({STATUS_OK, STATUS_BATTERY_LOW, STATUS_ISSUE, STATUS_CONFIGURATION_PENDING, STATUS_NO_SIGNAL, STATUS_NOT_ACCESSIBLE})
     public @interface FilterStatus {
     }
 
@@ -26,6 +26,7 @@ public class Beacon {
     public static final String STATUS_ISSUE = "ISSUE";
     public static final String STATUS_CONFIGURATION_PENDING = "CONFIGURATION_PENDING";
     public static final String STATUS_NO_SIGNAL = "NO_SIGNAL";
+    public static final String STATUS_NOT_ACCESSIBLE = "NOT_ACCESSIBLE";
     public static final String STATUS_INSTALLED = "INSTALLED";
     public static final String STATUS_NOT_INSTALLED = "NOT_INSTALLED";
 
@@ -101,7 +102,9 @@ public class Beacon {
         this.setTelemetry(remoteBeacon.isTelemetry());
         this.setTxPower(remoteBeacon.getTxPower());
         this.setUrl(remoteBeacon.getUrl());
-        this.setUuid(remoteBeacon.getUuid().toString());
+        if(remoteBeacon.getUuid() != null) {
+            this.setUuid(remoteBeacon.getUuid().toString());
+        }
         if (remoteBeacon.getPendingConfiguration() != null) {
             this.setPendingConfiguration((new Gson()).toJson(remoteBeacon.getPendingConfiguration()));
         }
@@ -128,6 +131,9 @@ public class Beacon {
                 break;
             case Beacon.STATUS_NOT_INSTALLED:
                 drawableId = R.drawable.marker_provisional;
+                break;
+            case Beacon.STATUS_NOT_ACCESSIBLE:
+                drawableId = R.drawable.marker_not_accessible;
                 break;
             default:
                 drawableId = R.drawable.marker_ok;

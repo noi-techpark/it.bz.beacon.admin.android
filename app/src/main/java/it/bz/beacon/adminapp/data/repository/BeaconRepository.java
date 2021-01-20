@@ -120,9 +120,7 @@ public class BeaconRepository {
     private void saveBeacons(List<it.bz.beacon.adminapp.swagger.client.model.Beacon> remoteBeacons) {
         ArrayList<Beacon> beacons = new ArrayList<>();
         for (it.bz.beacon.adminapp.swagger.client.model.Beacon remoteBeacon : remoteBeacons) {
-            if (remoteBeacon.getUuid() != null) {
                 beacons.add(new Beacon(remoteBeacon));
-            }
         }
         insertMultiple(beacons);
     }

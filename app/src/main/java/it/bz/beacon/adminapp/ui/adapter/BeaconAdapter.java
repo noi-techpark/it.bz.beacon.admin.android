@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.bz.beacon.adminapp.AdminApplication;
 import it.bz.beacon.adminapp.R;
 import it.bz.beacon.adminapp.data.entity.Beacon;
 import it.bz.beacon.adminapp.data.entity.BeaconMinimal;
@@ -208,6 +206,9 @@ public class BeaconAdapter extends RecyclerView.Adapter<BeaconAdapter.BeaconView
             }
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_NO_SIGNAL)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_error)));
+            }
+            if (beaconMinimal.getStatus().equals(Beacon.STATUS_NOT_ACCESSIBLE)) {
+                ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_not_accessible)));
             }
             if (beaconMinimal.getStatus().equals(Beacon.STATUS_CONFIGURATION_PENDING)) {
                 ImageViewCompat.setImageTintList(status, ColorStateList.valueOf(context.getColor(R.color.status_pending)));
