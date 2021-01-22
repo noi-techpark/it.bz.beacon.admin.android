@@ -78,6 +78,11 @@ pipeline {
                 archiveArtifacts artifacts: "beacon-admin-debug-build${BUILD_NUMBER}.apk", onlyIfSuccessful: true
             }
         }
+        stage('Upload') {
+            steps {
+                s3Upload(bucket: 'it.bz.beacon.webapp-test', path: 'attic/', acl: 'PublicRead', file: "beacon-admin-debug-build${BUILD_NUMBER}.apk")
+            }
+        }
     }
     post {
         always {
