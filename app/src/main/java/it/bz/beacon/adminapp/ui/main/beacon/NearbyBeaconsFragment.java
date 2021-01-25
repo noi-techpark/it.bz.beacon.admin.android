@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -138,14 +139,7 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
     }
 
     private void startScanning() {
-        if (isBluetoothAvailable()) {
-            proximityManager.connect(new OnServiceReadyListener() {
-                @Override
-                public void onServiceReady() {
-                    proximityManager.startScanning();
-                }
-            });
-        } else {
+        if (!isBluetoothAvailable()) {
             Snackbar.make(getActivity().findViewById(android.R.id.content), getActivity().getString(R.string.error_bluetooth_disable), Snackbar.LENGTH_LONG)
                     .setAction(getActivity().getString(R.string.enable), new View.OnClickListener() {
                         @Override
@@ -155,6 +149,23 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                     })
                     .show();
             swipeBeacons.setRefreshing(false);
+        } else if (!isLocationAvailable()) {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), getActivity().getString(R.string.error_location_disable), Snackbar.LENGTH_LONG)
+                    .setAction(getActivity().getString(R.string.enable), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            enableLocation();
+                        }
+                    })
+                    .show();
+            swipeBeacons.setRefreshing(false);
+        } else {
+            proximityManager.connect(new OnServiceReadyListener() {
+                @Override
+                public void onServiceReady() {
+                    proximityManager.startScanning();
+                }
+            });
         }
     }
 
@@ -166,12 +177,30 @@ public class NearbyBeaconsFragment extends BaseBeaconsFragment {
                 && bluetoothAdapter.getState() == BluetoothAdapter.STATE_ON;
     }
 
+    public boolean isLocationAvailable() {
+        int locationMode = Settings.Secure.LOCATION_MODE_OFF;
+        try {
+            locationMode = Settings.Secure.getInt(getActivity().getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.w(AdminApplication.LOG_TAG, e.getLocalizedMessage());
+        }
+        return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+    }
+
     public void enableBluetooth() {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!mBluetoothAdapter.isEnabled()) {
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             int REQUEST_ENABLE_BT = 1;
             startActivityForResult(intentBtEnabled, REQUEST_ENABLE_BT);
+        }
+    }
+
+    public void enableLocation() {
+        if (!isLocationAvailable()) {
+            Intent intentLocationEnabled = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            int REQUEST_ENABLE_LOCATION = 1;
+            startActivityForResult(intentLocationEnabled, REQUEST_ENABLE_LOCATION);
         }
     }
 

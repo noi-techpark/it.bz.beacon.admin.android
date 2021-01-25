@@ -181,6 +181,7 @@ This work package aims to develop Open Source pilot services and applications th
     <string name="open_website">Open Project Website</string>
     <string name="version">Version %s</string>
     <string name="error_bluetooth_disable">Bluetooth is disabled!</string>
+    <string name="error_location_disable">Location is disabled!</string>
     <string name="enable">Enable</string>
     <string name="details_group">Group</string>
     <string name="default_group">non assigned</string>
