@@ -17,12 +17,22 @@ pipeline {
         }
         stage('Load') {
             steps {
-                copyArtifacts projectName: 'it.bz.beacon.admin.android/admin.android.test-apk', target: 'build', flatten: true, selector: lastSuccessful(), fingerprintArtifacts: true
+                copyArtifacts projectName: '/it.bz.beacon/admin.android.test-apk/development',
+                    target: 'build',
+                    flatten: true,
+                    selector: lastSuccessful(),
+                    fingerprintArtifacts: true
             }
         }
         stage('Upload') {
             steps {
-                s3Upload(bucket: 'it.bz.beacon.webapp-test', path: 'attic/', acl: 'PublicRead', file: "beacon-admin-debug-build${BUILD_NUMBER}.apk")
+                s3Upload(
+                    bucket: 'it.bz.beacon.webapp-test',
+                    path: 'attic/',
+                    acl: 'PublicRead',
+                    workingDir: "build",
+                    includePathPattern: "*"
+                )
             }
         }
     }
