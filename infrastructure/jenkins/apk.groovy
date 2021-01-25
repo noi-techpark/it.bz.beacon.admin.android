@@ -8,9 +8,6 @@ pipeline {
         ansiColor('xterm')
     }
     environment {
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-
         GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
         BEACON_SUEDTIROL_API_URL = "https://api.beacon.testingmachine.eu"
         KONTAKT_IO_API_KEY = credentials('beacon-admin-android-kontakt-io-api-key')
@@ -79,11 +76,6 @@ pipeline {
             steps {
                 sh 'mv app/build/outputs/apk/debug/app-debug.apk beacon-admin-debug-build${BUILD_NUMBER}.apk'
                 archiveArtifacts artifacts: "beacon-admin-debug-build${BUILD_NUMBER}.apk", onlyIfSuccessful: true
-            }
-        }
-        stage('Upload') {
-            steps {
-                s3Upload(bucket: 'it.bz.beacon.webapp-test', path: 'attic/', acl: 'PublicRead', file: "beacon-admin-debug-build${BUILD_NUMBER}.apk")
             }
         }
     }
