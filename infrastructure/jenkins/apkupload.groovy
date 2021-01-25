@@ -22,6 +22,11 @@ pipeline {
                     flatten: true,
                     selector: lastSuccessful(),
                     fingerprintArtifacts: true
+
+                sh '''
+                    cd build
+                    tree -H '.' -L 1 --noreport --charset utf-8 -P "*.apk" > index.html
+                '''
             }
         }
         stage('Upload') {
