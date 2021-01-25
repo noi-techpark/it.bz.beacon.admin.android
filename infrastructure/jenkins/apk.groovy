@@ -6,7 +6,7 @@ pipeline {
     }
     options {
         ansiColor('xterm')
-        copyArtifactPermission('admin.android.test-apk-upload');
+        copyArtifactPermission('/it.bz.beacon/admin.android.test-apk-upload')
     }
     environment {
         GOOGLE_MAPS_API_KEY = credentials('beacon-admin-android-google-maps-api-key')
