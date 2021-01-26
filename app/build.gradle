@@ -7,8 +7,8 @@ android {
         applicationId "it.bz.beacon.admin"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 26
-        versionName "0.5.1"
+        versionCode 27
+        versionName "0.6.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
