@@ -1,0 +1,34 @@
+# version 1.0
+# added configure part (lines 15:21)
+name: CI
+
+on: push
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: configure
+      - run: \
+          cp config/beacon_suedtirol_api.xml app/src/release/res/values/beacon_suedtirol_api.xml
+          cp config/beacon_suedtirol_api.xml app/src/debug/res/values/beacon_suedtirol_api.xml
+          cp config/google_maps_api.xml app/src/release/res/values/google_maps_api.xml
+          cp config/google_maps_api.xml app/src/debug/res/values/google_maps_api.xml
+          cp config/google-services.json app/google-services.json
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+          bundler-cache: true
+
+      - name: update
+        run: bundle update
+        working-directory: android # or ios
+      
+      - name: test
+        run: bundle exec fastlane test
+        working-directory: android # or ios
