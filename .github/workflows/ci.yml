@@ -27,8 +27,6 @@ jobs:
 
       - name: update
         run: bundle update
-        working-directory: android # or ios
       
       - name: test
         run: bundle exec fastlane test
-        working-directory: android # or ios
