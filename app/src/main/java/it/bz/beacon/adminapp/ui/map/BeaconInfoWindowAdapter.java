@@ -1,10 +1,7 @@
-/*
- * com.suedtirol.android
- *
- * Created: Oct 27, 2017
- *
- * Copyright (C) 2017 Raiffeisen Online GmbH (Jürgen Sprenger, Aaron Falk) <info@raiffeisen.it>
- */
+// Copyright (C) 2017 Raiffeisen Online GmbH (Jürgen Sprenger, Aaron Falk) <info@raiffeisen.it>
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 package it.bz.beacon.adminapp.ui.map;
 

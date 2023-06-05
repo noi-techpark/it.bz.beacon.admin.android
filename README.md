@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Beacon Südtirol Administration App
 
 This project contains the Android app for administrators, to control and configure beacons.

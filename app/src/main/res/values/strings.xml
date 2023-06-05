@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" tools:override="true">Beacon Administration</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
