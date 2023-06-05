@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: it.bz.beacon.admin
+Upstream-Name: it.bz.beacon.admin.android
 Upstream-Contact: NOI Techpark <digital@noi.bz.it>
-Source: https://github.com/noi-techpark/it.bz.beacon.admin
+Source: https://github.com/noi-techpark/it.bz.beacon.admin.android
 
 Files: infrastructure/* .gitignore app/.gitignore LICENSE Gemfile Gemfile.lock *.properties gradlew swagger/* gradle/* fastlane/* config/* app/proguard-rules.pro app/src/main/res/**/*.png app/src/main/res/**/*.jpg app/src/main/res/**/*.json app/schemas/*
 Copyright: (c) NOI Techpark <digital@noi.bz.it>
