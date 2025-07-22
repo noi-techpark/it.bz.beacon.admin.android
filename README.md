@@ -35,7 +35,7 @@ To build the project, the following prerequisites must be met:
 Get a copy of the repository:
 
 ```bash
-git clone https://github.com/raiffeisennet/beacon-suedtirol-administration-android.git
+git clone https://github.com/raiffeisennet/beacon-suedtirol-administration-android
 ```
 
 ### Configure the project
